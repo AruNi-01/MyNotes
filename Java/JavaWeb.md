@@ -10,7 +10,7 @@ JDBC（Java DataBase Connectivity）是Java和数据库之间的一个桥梁，�
 
 ## 2. JDBC连接数据库
 
-**注意：**6.0版本以上，不用手动加载驱动(`Class.forName("com.mysql.jdbc.Driver")`)，直接使用即可！
+**注意：** 6.0版本以上，不用手动加载驱动(`Class.forName("com.mysql.jdbc.Driver")`)，直接使用即可！
 
 ```java
 public class JDBCTest {
