@@ -603,7 +603,7 @@ mappers 标签下有许多 mapper 标签，每一个 mapper 标签中配置的�
 
 
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718619.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718619.png)
 
 
 
@@ -633,7 +633,7 @@ mappers 标签下有许多 mapper 标签，每一个 mapper 标签中配置的�
 
 
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718134.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718134.png)
 
 每个Mapper对应一个具体的业务！！！
 
@@ -651,7 +651,7 @@ mappers 标签下有许多 mapper 标签，每一个 mapper 标签中配置的�
 
 1、查看之前的数据库的字段名
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718376.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718376.png)
 
 2、Java中的实体类设计
 
@@ -983,7 +983,7 @@ public class UserMapperTest {
 
 - 可以看到还生成了一个日志的文件 【需要修改file的日志级别】
 
-  ![image-20220318173302318](https://notes.stdcdn.com/2022/03/202203251717621.png)
+  ![image-20220318173302318](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717621.png)
 
 
 
@@ -1118,7 +1118,7 @@ public void testUserByRowBounds() {
 
 ### 6.3 PageHelper
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718398.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718398.png)
 
 了解即可，可以自己尝试使用
 
@@ -1213,15 +1213,15 @@ public void testGetAllUser() {
 
 4、利用Debug查看本质
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718089.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718089.png)
 
 5、本质上利用了jvm的动态代理机制
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718650.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718650.png)
 
 6、Mybatis详细的执行流程(源代码)
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718027.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718027.png)
 
 
 
@@ -1399,7 +1399,7 @@ public void testDeleteUser() {
 
 > 数据库设计
 
-![image-20220319094933576](https://notes.stdcdn.com/2022/03/202203251717623.png)
+![image-20220319094933576](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717623.png)
 
 ```sql
 CREATE TABLE `teacher` (
@@ -1893,7 +1893,7 @@ CREATE TABLE `blog` (
 
 
 
-![图片](https://notes.stdcdn.com/2022/03/202203251718509.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251718509.png)
 
 
 
@@ -2017,7 +2017,7 @@ public class MyTest {
 
 初始化数据完毕！
 
-![image-20220319141319642](https://notes.stdcdn.com/2022/03/202203251717624.png)
+![image-20220319141319642](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717624.png)
 
 
 
@@ -2418,7 +2418,7 @@ public void testQueryUserById(){
 
 5、结果分析
 
-![图片](https://notes.stdcdn.com/2022/03/202203251717562.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717562.png)
 
 
 
@@ -2615,7 +2615,7 @@ public void testQueryUserById(){
 }
 ```
 
-![image-20220319193828718](https://notes.stdcdn.com/2022/03/202203251717625.png)
+![image-20220319193828718](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717625.png)
 
 可以看到，使用了二级缓存后，即使是不同的sqlsession创建的mapper对象，去执行相同的sql语句，在第二次执行的时候是到缓存中去取结果的！
 
@@ -2635,7 +2635,7 @@ public void testQueryUserById(){
 
 ### 10.2 缓存原理图
 
-![图片](https://notes.stdcdn.com/2022/03/202203251717334.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717334.png)
 
 **执行顺序：**
 
@@ -2654,7 +2654,7 @@ public void testQueryUserById(){
 
 ### 10.3 EhCache
 
-![图片](https://notes.stdcdn.com/2022/03/202203251717330.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251717330.png)
 
 第三方缓存实现--EhCache: 查看百度百科
 

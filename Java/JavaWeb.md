@@ -4,7 +4,7 @@
 
 JDBC（Java DataBase Connectivity）是Java和数据库之间的一个桥梁，是一个规范而不是一个实现，能够执行SQL语句。它由一组用Java语言编写的类和接口组成。各种不同类型的数据库都有相应的实现。
 
-![image-20220312154210128](https://notes.stdcdn.com/2022/03/202203251743888.png)
+![image-20220312154210128](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743888.png)
 
 
 
@@ -66,7 +66,7 @@ public class JDBCTest {
 
 **通过一个登录demo来模仿一个SQL注入攻击：**
 
-user数据库表中的数据：![image-20220312173310046](https://notes.stdcdn.com/2022/03/202203251743889.png)
+user数据库表中的数据：![image-20220312173310046](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743889.png)
 
 ```java
 public class LoginTest {
@@ -419,7 +419,7 @@ public class CP30_test {
 
 打印结果：
 
-![img](https://notes.stdcdn.com/2022/03/202203251744484.png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251744484.png)
 
 说明配置已经成功。我们可以通过该连接池来获取连接对象，JDBC 的其他步骤跟不使用连接池时一样。
 
@@ -747,7 +747,7 @@ Servlet（Server Applet）是Java Servlet的简称，称为小服务程序或服
 
 **Servlet各类关系图：**
 
-![image-20220311203000847](https://notes.stdcdn.com/2022/03/202203251743890.png)
+![image-20220311203000847](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743890.png)
 
 
 
@@ -815,7 +815,7 @@ public class HelloServlet extends HttpServlet {
 
 配置Tomcat，启动程序，访问设置的url：
 
-![image-20220310235035889](https://notes.stdcdn.com/2022/03/202203251743891.png)
+![image-20220310235035889](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743891.png)
 
 
 
@@ -823,7 +823,7 @@ public class HelloServlet extends HttpServlet {
 
 Servlet是由Web服务器调用，Web服务器在接收到浏览器的请求后，会执行以下操作：
 
-![image-20220311010902698](https://notes.stdcdn.com/2022/03/202203251743892.png)
+![image-20220311010902698](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743892.png)
 
 
 
@@ -1170,7 +1170,7 @@ ServletContext官方叫servlet上下文。服务器会为每一个工程创建�
 
 4. 运行程序，访问该路径，发现读取出了资源文件中的数据
 
-   ![image-20220311134437608](https://notes.stdcdn.com/2022/03/202203251743893.png)
+   ![image-20220311134437608](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743893.png)
 
 
 
@@ -1325,7 +1325,7 @@ public class FileServlet extends HttpServlet {
 
 运行程序，访问该Servlet，发现可以直接下载图片
 
-![image-20220311150027847](https://notes.stdcdn.com/2022/03/202203251743894.png)
+![image-20220311150027847](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743894.png)
 
 #### 6.2.3 实现重定向（重点）
 
@@ -1335,7 +1335,7 @@ public class FileServlet extends HttpServlet {
 
 **重定向和转发的区别：**
 
-![](https://notes.stdcdn.com/2022/03/202203251743895.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743895.png)
 
 实现：只需要在响应的时候重定向即可
 
@@ -1463,11 +1463,11 @@ sendRedirect是页面重定向，地址栏信息改变，可以跳转到任意�
 
 4. 运行程序，输入账号密码后点击登录，可以看到`HttpServletRequest`已经接收到了来自jsp页面的参数(控制台有相应的输出)，接着页面跳转到了一个新的页面
 
-   ![image-20220311160604353](https://notes.stdcdn.com/2022/03/202203251743896.png)
+   ![image-20220311160604353](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743896.png)
 
-   ![image-20220311160702252](https://notes.stdcdn.com/2022/03/202203251743897.png)
+   ![image-20220311160702252](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743897.png)
 
-   ![image-20220311160725319](https://notes.stdcdn.com/2022/03/202203251743898.png)
+   ![image-20220311160725319](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743898.png)
 
 
 
@@ -1569,11 +1569,11 @@ Cookie实际上是一小段的文本信息。客户端请求服务器，如果�
 
 
 
-首页， Cookie中没有`lostLoginTime`：![image-20220311212925136](https://notes.stdcdn.com/2022/03/202203251743899.png)
+首页， Cookie中没有`lostLoginTime`：![image-20220311212925136](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743899.png)
 
-第一次访问：由于是第一次访问，所以没有时间，不显示 "这是您第一次访问本站点" 是因为网站中有一些默认的cookie，所以cookie并不为null：![image-20220311213209699](https://notes.stdcdn.com/2022/03/202203251743900.png)
+第一次访问：由于是第一次访问，所以没有时间，不显示 "这是您第一次访问本站点" 是因为网站中有一些默认的cookie，所以cookie并不为null：![image-20220311213209699](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743900.png)
 
-第二次访问：![image-20220311214013435](https://notes.stdcdn.com/2022/03/202203251743901.png)
+第二次访问：![image-20220311214013435](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743901.png)
 
 
 
@@ -1626,7 +1626,7 @@ public class SessionDemo01 extends HttpServlet {
 
 编写mapping映射路径，配置Tomcat，运行项目：
 
-![image-20220311221540261](https://notes.stdcdn.com/2022/03/202203251743903.png)
+![image-20220311221540261](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743903.png)
 
 
 
@@ -1659,7 +1659,7 @@ public class SessionDemo02 extends HttpServlet {
 
 先访问`/session`给Session里面存东西，再访问`/s2`获取
 
-![image-20220311223013996](https://notes.stdcdn.com/2022/03/202203251743904.png)
+![image-20220311223013996](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743904.png)
 
 
 
@@ -1887,7 +1887,7 @@ public void _jspService(final HttpServletRequest request, final HttpServletRespo
 
 大概流程图如下：
 
-![image-20220312105101008](https://notes.stdcdn.com/2022/03/202203251743905.png)
+![image-20220312105101008](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743905.png)
 
 **应用场景：**
 
@@ -2006,7 +2006,7 @@ public class LoginServlet extends HttpServlet {
 }
 ```
 
-![image-20220312144747909](https://notes.stdcdn.com/2022/03/202203251743906.png)
+![image-20220312144747909](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743906.png)
 
 
 
@@ -2025,7 +2025,7 @@ public class LoginServlet extends HttpServlet {
 </html>
 ```
 
-![image-20220312144803847](https://notes.stdcdn.com/2022/03/202203251743907.png)
+![image-20220312144803847](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743907.png)
 
 
 
@@ -2045,7 +2045,7 @@ public class LoginServlet extends HttpServlet {
 </html>
 ```
 
-![image-20220312144836761](https://notes.stdcdn.com/2022/03/202203251743908.png)
+![image-20220312144836761](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743908.png)
 
 
 
@@ -2077,7 +2077,7 @@ public class LogoutServlet extends HttpServlet {
 
 现在再进入登录成功的页面，发现显示登录失败：
 
-![image-20220312145216738](https://notes.stdcdn.com/2022/03/202203251743909.png)
+![image-20220312145216738](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251743909.png)
 
 在进入登录成功界面的时候，会先进入`SysFilter.java`过滤器：
 

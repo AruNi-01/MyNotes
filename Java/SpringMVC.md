@@ -21,7 +21,7 @@
 
 
 
-![图片](https://notes.stdcdn.com/2022/03/202203242356434.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203242356434.png)
 
 
 
@@ -30,7 +30,7 @@
 - 在web早期的开发中，通常采用的都是Model 1
 - Model 1中，主要分为两层，视图层和模型层
 
-![图片](https://notes.stdcdn.com/2022/03/202203250003674.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250003674.png)
 
 Model1优点：架构简单，比较适合小型项目开发；
 
@@ -42,7 +42,7 @@ Model1缺点：JSP职责不单一，职责过重，不便于维护。
 
 Model2把一个项目分成三部分，包括**视图、控制、模型。**
 
-<img src="https://notes.stdcdn.com/2022/03/202203251732266.png" alt="图片"  />
+<img src="https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251732266.png" alt="图片"  />
 
 1. 用户发请求
 2. Servlet接收请求数据，并调用对应的业务逻辑方法
@@ -218,9 +218,9 @@ Model2这样不仅提高的代码的复用率与项目的扩展性，且大大�
 
 9. - 进入`/from.jsp`页面，提交add方法：
 
-     ![image-20220324103032118](https://notes.stdcdn.com/2022/03/202203250002212.png)
+     ![image-20220324103032118](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002212.png)
 
-     ![image-20220324104300147](https://notes.stdcdn.com/2022/03/202203250002213.png)
+     ![image-20220324104300147](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002213.png)
 
    - 提交delete方法，也执行成功
 
@@ -276,17 +276,17 @@ DispatcherServlet的作用是将请求分发到不同的处理器。从Spring 2.
 
 ​	Spring MVC框架像许多其他MVC框架一样, **以请求为驱动** , **围绕一个中心Servlet分派请求及提供其他功能**，**DispatcherServlet是一个实际的Servlet (它继承自HttpServlet 基类)**。
 
-![图片](https://notes.stdcdn.com/2022/03/202203250004214.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250004214.png)
 
 SpringMVC的原理如下图所示：
 
 ​	当发起请求时被前置的控制器拦截到请求，根据请求参数生成代理请求，找到请求对应的实际控制器，控制器处理请求，创建数据模型，访问数据库，将模型响应给中心控制器，控制器使用模型与视图渲染视图结果，将结果返回给中心控制器，再将结果返回给请求者。
 
-![图片](https://notes.stdcdn.com/2022/03/202203250026102.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250026102.png)
 
 ### 2.3 执行原理
 
-![图片](https://notes.stdcdn.com/2022/03/202203250026867.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250026867.png)
 
 图为SpringMVC的一个较完整的流程图，实线表示SpringMVC框架提供的技术，不需要开发者实现，虚线表示需要开发者实现。
 
@@ -472,7 +472,7 @@ ${msg}
 
 11、配置Tomcat 启动测试，输入`/hello`进入到controller获取msg
 
-![image-20220324130845995](https://notes.stdcdn.com/2022/03/202203250002214.png)
+![image-20220324130845995](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002214.png)
 
 
 
@@ -484,7 +484,7 @@ ${msg}
 
 2. 如果jar包存在，显示无法输出，就在IDEA的项目发布中，添加lib依赖！
 
-   ![image-20220324130939614](https://notes.stdcdn.com/2022/03/202203250002215.png)
+   ![image-20220324130939614](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002215.png)
 
 3. 重启Tomcat 即可解决！
 
@@ -685,7 +685,7 @@ ${msg}
 
 配置Tomcat，开启服务器 ， 访问对应的请求路径！
 
-![image-20220324140246590](https://notes.stdcdn.com/2022/03/202203250002216.png)
+![image-20220324140246590](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002216.png)
 
 **运行成功！**
 
@@ -793,7 +793,7 @@ public interface Controller {
 
    
 
-   ![图片](https://notes.stdcdn.com/2022/03/202203250027104.png)
+   ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027104.png)
 
 **说明：**
 
@@ -833,7 +833,7 @@ public interface Controller {
 
 - 运行tomcat测试
 
-  ![图片](https://notes.stdcdn.com/2022/03/202203250027634.png)
+  ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027634.png)
 
   
 
@@ -961,7 +961,7 @@ Restful就是一个资源定位及资源操作的风格。不是标准也不是�
 
 3. 我们来测试请求查看下
 
-   ![图片](https://notes.stdcdn.com/2022/03/202203250027607.png)
+   ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027607.png)
 
 4. 思考：使用路径变量的好处？
 
@@ -973,7 +973,7 @@ Restful就是一个资源定位及资源操作的风格。不是标准也不是�
 
      
 
-     ![图片](https://notes.stdcdn.com/2022/03/202203250027184.png)
+     ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027184.png)
 
 6. 我们来修改下对应的p2参数类型，再次测试
 
@@ -993,7 +993,7 @@ Restful就是一个资源定位及资源操作的风格。不是标准也不是�
 
    
 
-   ![图片](https://notes.stdcdn.com/2022/03/202203250027533.png)
+   ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027533.png)
 
 
 
@@ -1016,7 +1016,7 @@ Restful就是一个资源定位及资源操作的风格。不是标准也不是�
 
 - 我们使用浏览器地址栏进行访问默认是Get请求，会报错405：
 
-  ![图片](https://notes.stdcdn.com/2022/03/202203250027956.png)
+  ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027956.png)
 
 - 如果将POST修改为GET则正常了；
 
@@ -1031,7 +1031,7 @@ Restful就是一个资源定位及资源操作的风格。不是标准也不是�
 
   
 
-  ![图片](https://notes.stdcdn.com/2022/03/202203250027608.png)
+  ![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027608.png)
 
 
 
@@ -1385,7 +1385,7 @@ public class Encoding {
 
 3、输入中文测试，发现乱码
 
-![图片](https://notes.stdcdn.com/2022/03/202203250027857.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027857.png)
 
 不得不说，乱码问题是在我们开发中十分常见的问题，也是让我们程序猿比较头大的问题！
 
@@ -1649,7 +1649,7 @@ var json = JSON.stringify({a: 'Hello', b: 'World'});
 
 3、在IDEA中使用浏览器打开，查看控制台输出！
 
-![图片](https://notes.stdcdn.com/2022/03/202203250027539.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250027539.png)
 
 
 
@@ -1803,7 +1803,7 @@ public class UserController {
 
 启动Tomcat，进行测试：
 
-![image-20220324204529665](https://notes.stdcdn.com/2022/03/202203250002217.png)
+![image-20220324204529665](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002217.png)
 
 
 
@@ -1896,7 +1896,7 @@ public class UserController {
 
 运行结果 : 十分完美，没有任何问题！
 
-![image-20220324205428107](https://notes.stdcdn.com/2022/03/202203250002218.png)
+![image-20220324205428107](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002218.png)
 
 
 
@@ -1920,7 +1920,7 @@ public class UserController {
 
 运行结果 :
 
-![image-20220324205728480](https://notes.stdcdn.com/2022/03/202203250002219.png)
+![image-20220324205728480](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002219.png)
 
 - 默认日期格式会变成一个数字，是1970年1月1日到当前日期的毫秒数！
 - Jackson 默认是会把时间转成timestamps时间戳的形式
@@ -1952,7 +1952,7 @@ public class UserController {
 
 运行结果 : 成功的输出了时间！
 
-![image-20220324210208546](https://notes.stdcdn.com/2022/03/202203250002220.png)
+![image-20220324210208546](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002220.png)
 
 
 
@@ -2011,7 +2011,7 @@ public class JsonUtil {
 
 大功告成！完美！
 
-![image-20220324213528469](https://notes.stdcdn.com/2022/03/202203250002221.png)
+![image-20220324213528469](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002221.png)
 
 
 
@@ -2130,7 +2130,7 @@ mybatis是对jdbc的封装，它让数据库底层操作变的透明。mybatis�
 
 页面发送请求给控制器，控制器调用业务层处理逻辑，逻辑层向持久层发送请求，持久层与数据库交互，后将结果返回给业务层，业务层将处理逻辑发送给控制器，控制器再调用视图展现数据。 
 
-![image-20220225180725425](https://notes.stdcdn.com/2022/03/202203250028795.png)
+![image-20220225180725425](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250028795.png)
 
 
 
@@ -2158,7 +2158,7 @@ controller层：控制器，导入service层，因为service中的方法是我�
 
 当然了，Service之间也是可以互相调用！
 
-![image-20220225151043812](https://notes.stdcdn.com/2022/03/202203250028861.png)
+![image-20220225151043812](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250028861.png)
 
 
 
@@ -2782,11 +2782,11 @@ public class BookController {
 
 此时配置好Tomcat，运行项目：
 
-![image-20220225175337634](https://notes.stdcdn.com/2022/03/202203250002224.png)
+![image-20220225175337634](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002224.png)
 
 点击后，跳转成功。
 
-![image-20220225175353427](https://notes.stdcdn.com/2022/03/202203250002225.png)
+![image-20220225175353427](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002225.png)
 
 > 注意事项/遇到的BUG
 
@@ -3152,7 +3152,7 @@ List<Books> queryBookByName(String name);
 
 ### 8. 最终项目结构图
 
-![image-20220309205343992](https://notes.stdcdn.com/2022/03/202203250002226.png)
+![image-20220309205343992](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203250002226.png)
 
 
 
@@ -3219,7 +3219,7 @@ List<Books> queryBookByName(String name);
 
 3、使用IDEA开浏览器测试一下！
 
-![image-20220325104239766](https://notes.stdcdn.com/2022/03/202203251042967.png)
+![image-20220325104239766](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251042967.png)
 
 
 

@@ -62,11 +62,11 @@ ls /
 
 你会看到如下图所示：
 
-![图片](https://notes.stdcdn.com/2022/03/202203251754004.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251754004.png)
 
 树状目录结构：（Linux的一切资源都挂载在这个 / 根节点下）
 
-![图片](https://notes.stdcdn.com/2022/03/202203251754360.jpeg)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251754360.jpeg)
 
 **以下是对这些目录的解释：**
 
@@ -418,7 +418,7 @@ Linux系统是一种典型的多用户系统，不同的用户处于不同的地
 
 在Linux中我们可以使用`ll`或者`ls –l`命令来显示一个文件的属性以及文件所属的用户和组，如：
 
-![image-20220313114743313](https://notes.stdcdn.com/2022/03/202203251752378.png)
+![image-20220313114743313](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251752378.png)
 
 实例中，boot文件的第一个属性用"d"表示。"d"在Linux中代表该文件是一个目录文件。
 
@@ -438,7 +438,7 @@ Linux系统是一种典型的多用户系统，不同的用户处于不同的地
 
 每个文件的属性由左边第一部分的10个字符来确定（如下图）：
 
-![图片](https://notes.stdcdn.com/2022/03/202203251753538.jpeg)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753538.jpeg)
 
 从左至右用0-9这些数字来表示。
 
@@ -535,11 +535,11 @@ chmod 770 filename
 
 **实例：**
 
-![image-20220313121420669](https://notes.stdcdn.com/2022/03/202203251752379.png)
+![image-20220313121420669](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251752379.png)
 
 再将文件的属性改回来：
 
-![image-20220313121731374](https://notes.stdcdn.com/2022/03/202203251752380.png)
+![image-20220313121731374](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251752380.png)
 
 
 
@@ -806,7 +806,7 @@ vim 则可以说是程序开发者的一项很好用的工具。
 
 vim 键盘图：
 
-![image-20220313173708018](https://notes.stdcdn.com/2022/03/202203251753710.png)
+![image-20220313173708018](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753710.png)
 
 
 
@@ -861,7 +861,7 @@ vim 键盘图：
 
 简单的说，我们可以将这三个模式想成底下的图标来表示：
 
-![图片](https://notes.stdcdn.com/2022/03/202203251753598.jpeg)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753598.jpeg)
 
 
 
@@ -875,7 +875,7 @@ vim 键盘图：
 
 然后就会进入文件
 
-![图片](https://notes.stdcdn.com/2022/03/202203251753251.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753251.png)
 
 **按下 i 进入输入模式(也称为编辑模式)，开始编辑文字**
 
@@ -885,13 +885,13 @@ vim 键盘图：
 
 这个时候，键盘上除了 `Esc`这个按键之外，其他的按键都可以视作为一般的输入按钮了，所以你可以进行任何的编辑。
 
-![图片](https://notes.stdcdn.com/2022/03/202203251753550.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753550.png)
 
 **按下 ESC 按钮回到一般模式**
 
 好了，假设我已经按照上面的样式给他编辑完毕了，那么应该要如何退出呢？是的！没错！就是给他按下 **Esc** 这个按钮即可！马上你就会发现画面左下角的 – INSERT – 不见了！然后按下`:`进入底线命令模式，接着按下`wq`储存后离开 vim！
 
-![图片](https://notes.stdcdn.com/2022/03/202203251753787.png)
+![图片](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251753787.png)
 
 OK! 这样我们就成功创建了一个 kuangstudy.txt 的文件。
 
@@ -1655,7 +1655,7 @@ ps -aux|grep 进程名字
 [root@iZf8z8w6unrnri0win92bzZ /]# pstree -pu
 ```
 
-![image-20220313184427377](https://notes.stdcdn.com/2022/03/202203251752382.png)
+![image-20220313184427377](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251752382.png)
 
 
 
@@ -1779,7 +1779,7 @@ Type  :quit<Enter>  to exit Vim
 
 刚刚安装的jdk，在`/usr/java`里，可以查看以下：
 
-![image-20220313202621919](https://notes.stdcdn.com/2022/03/202203251752383.png)
+![image-20220313202621919](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251752383.png)
 
 
 

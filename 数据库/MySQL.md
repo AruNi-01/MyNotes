@@ -20,7 +20,7 @@
 
 第一范式的合理遵循需要根据系统的实际需求来定。比如某些数据库系统中需要用到“地址”这个属性，本来直接将“地址”属性设计成一个数据库表的字段就行。但是如果系统经常会访问“地址”属性中的“城市”部分，那么就非要将“地址”这个属性重新拆分为省份、城市、详细地址等多个部分进行存储，这样在对地址中某一部分操作的时候将非常方便。这样设计才算满足了数据库的第一范式，如下表所示。
 
-![](https://notes.stdcdn.com/2022/03/202203251819999.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819999.png)
 
 上表所示的用户信息遵循了第一范式的要求，这样在对用户使用城市进行分类的时候就非常方便，也提高了数据库的性能。
 
@@ -30,13 +30,13 @@
 
 比如要设计一个订单信息表，因为订单中可能会有多种商品，所以要将订单编号和商品编号作为数据库表的联合主键，如下表所示。
 
-![](https://notes.stdcdn.com/2022/03/202203251819000.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819000.png)
 
 这样就产生一个问题：这个表中是以订单编号和商品编号作为联合主键。这样在该表中商品名称、单位、商品价格等信息不与该表的主键相关，而仅仅是与商品编号相关。所以在这里违反了第二范式的设计原则。
 
 而如果把这个订单信息表进行拆分，把商品信息分离到另一个表中，把订单项目表也分离到另一个表中，就非常完美了。如下所示。
 
-![](https://notes.stdcdn.com/2022/03/202203251819001.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819001.png)
 
 这样设计，在很大程度上减小了数据库的冗余。如果要获取订单的商品信息，使用商品编号到商品信息表中查询即可。
 
@@ -48,7 +48,7 @@
 
 比如在设计一个订单数据表的时候，可以将客户编号作为一个外键和订单表建立相应的关系。而不可以在订单表中添加关于客户其它信息（比如姓名、所属公司等）的字段。如下面这两个表所示的设计就是一个满足第三范式的数据库表。
 
-![](https://notes.stdcdn.com/2022/03/202203251819002.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819002.png)
 
 这样在查询订单信息的时候，就可以使用客户编号来引用客户信息表中的记录，也不必在订单信息表中多次输入客户信息的内容，减小了数据冗余。
 
@@ -928,7 +928,7 @@ mysql> select t1.name '姓名' from teacher t1,teacher t2 where t1.tid=t2.tid;
 
 * 通过使用`inner join`进行内连接（连接后加`on`来连接条件），只会返回两个表满足条件的交集部分：
 
-![](https://notes.stdcdn.com/2022/03/202203251819003.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819003.png)
 
 示例：查询student表和teach表中sid相同的数据（可以查询哪个tid的老师教此sid的学生）：
 
@@ -950,7 +950,7 @@ mysql> select * from student inner join teach on student.sid=teach.sid;
 
 - 通过使用`left join`进行左连接，不仅会返回两个表满足条件的交集部分，也会返回左边表中的全部数据，而在右表中缺失的数据会使用`null`来代替（右连接`right join`同理，只是反过来而已，这里就不再介绍了）：
 
-![](https://notes.stdcdn.com/2022/03/202203251819004.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819004.png)
 
 示例：先在student表中插入一个数据，该学生没有和teach表关联，在用左连接进行查询：
 
@@ -1234,7 +1234,7 @@ mysql> select * from womenstuinfos;
 
 也可以到Navicat中查看：
 
-![](https://notes.stdcdn.com/2022/03/202203251819005.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819005.png)
 
 
 
@@ -1311,15 +1311,15 @@ Query OK, 0 rows affected (0.03 sec)
 Records: 0  Duplicates: 0  Warnings: 0
 ```
 
-![](https://notes.stdcdn.com/2022/03/202203251819006.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819006.png)
 
-![](https://notes.stdcdn.com/2022/03/202203251819007.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819007.png)
 
 PRIMARY为主键的索引，默认创建的。索引方法都是BTREE(MySQL中是B+Tree)。
 
 在Navicat中查看该索引：
 
-![](https://notes.stdcdn.com/2022/03/202203251819008.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251819008.png)
 
 可以修改索引类型，不同的类型相当于不同的约束。
 
@@ -1379,13 +1379,13 @@ Hash表，在Java中的HashMap，TreeMap就是Hash表结构，以键值对的方
 
 二叉树，我想大家都会在心里有个图。
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821764.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821764.png)
 
 二叉树特点：每个节点最多有2个分叉，左子树和右子树数据顺序左小右大。
 
 这个特点就是为了保证每次查找都可以这折半而减少IO次数，但是二叉树就很考验第一个根节点的取值，因为很容易在这个特点下出现我们并发想发生的情况“树不分叉了”，这就很难受很不稳定。
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821036.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821036.png)
 
 显然这种情况不稳定的我们再选择设计上必然会避免这种情况的.
 
@@ -1395,7 +1395,7 @@ Hash表，在Java中的HashMap，TreeMap就是Hash表结构，以键值对的方
 
 使用平衡二叉查找树查询的性能接近于二分查找法，时间复杂度是 O(log2n)。查询id=6，只需要两次IO。
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821579.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821579.png)
 
 就这个特点来看，可能各位会觉得这就很好，可以达到二叉树的理想的情况了。然而依然存在一些问题：
 
@@ -1420,7 +1420,7 @@ MySQL的数据是存储在磁盘文件中的，查询处理数据时，需要先
 3. 父节点当中的元素不会出现在子节点中。
 4. 所有的叶子结点都位于同一层，叶节点具有相同的深度，叶节点之间没有指针连接。
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821295.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821295.png)
 
 举个例子，在b树中查询数据的情况：
 
@@ -1450,7 +1450,7 @@ B+树，作为B树的升级版，在B树基础上，MySQL在B树的基础上继�
 - B树：非叶子节点和叶子节点都会存储数据。
 - B+树：只有叶子节点才会存储数据，非叶子节点至存储键值。叶子节点之间使用双向指针连接，最底层的叶子节点形成了一个双向有序链表。
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821332.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821332.png)
 
 ```
 B+树的最底层叶子节点包含了所有的索引项。从图上可以看到，B+树在查找数据的时候，由于数据都存放在最底层的叶子节点上，所以每次查找都需要检索到叶子节点才能查询到数据。所以在需要查询数据的情况下每次的磁盘的IO跟树高有直接的关系，但是从另一方面来说，由于数据都被放到了叶子节点，所以放索引的磁盘块锁存放的索引数量是会跟这增加的，所以相对于B树来说，B+树的树高理论上情况下是比B树要矮的。也存在索引覆盖查询的情况，在索引中数据满足了当前查询语句所需要的全部数据，此时只需要找到索引即可立刻返回，不需要检索到最底层的叶子节点。
@@ -1471,7 +1471,7 @@ B+树的最底层叶子节点包含了所有的索引项。从图上可以看到
 过程如图：
 ```
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821318.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821318.png)
 
 ```
 范围查询：
@@ -1486,7 +1486,7 @@ B+树的最底层叶子节点包含了所有的索引项。从图上可以看到
 主键具备唯一性（后面不会有<=26的数据），不需再向后查找，查询终止。将结果集返回给用户。
 ```
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821433.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821433.png)
 
 可以看到B+树可以保证等值和范围查询的快速查找，MySQL的索引就采用了B+树的数据结构。
 
@@ -1657,7 +1657,7 @@ commit; #提交事务
 
 #### 2.2 全局E-R图
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821309.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821309.png)
 
 ### 3. 逻辑结构设计
 
@@ -1682,19 +1682,19 @@ scores表：学号（sid）、课程编号（cid）、分数（score），此为
 
 students表的表结构
 
-![img](https://notes.stdcdn.com/2022/03/202203251821524.png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821524.png)
 
 teachers表的表结构
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251821211.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251821211.png)
 
 courses表的表结构
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822180.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822180.png)
 
 scores表的表结构
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822781.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822781.png)
 
 ### 4. 物理设计和实施
 
@@ -1790,9 +1790,9 @@ GROUP BY stu.sid;
 
 查看视图：
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822844.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822844.png)
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822485.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822485.png)
 
 
 
@@ -1819,7 +1819,7 @@ SELECT get_student_info_by_sid(8);
 
 调用函数结果：
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822301.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822301.png)
 
 ##### 4.3.2 自定义函数 2：要求函数体中包含其中一种流程控制语句，要求输入学生学号sid、课程编号，显示学生姓名、课程名称、成绩是否及格（即成绩>=60)
 
@@ -1857,7 +1857,7 @@ SELECT get_student_scores_by_id(1, 2);
 
 调用函数结果：
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822734.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822734.png)
 
 
 
@@ -1900,7 +1900,7 @@ SELECT * FROM students;
 
 测试结果:
 
-![在这里插入图片描述](https://notes.stdcdn.com/2022/03/202203251822465.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251822465.png)
 
 
 
