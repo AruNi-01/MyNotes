@@ -332,7 +332,7 @@ public class Test {
 
    ​												         双色球中奖条件和奖金表
 
-   ![](D:\Snipaste截图\Snipaste_2022-01-04_12-06-40.png)
+   ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f22ce608a1e418179e1ec2127c367312.png)
 
 2. 用户输入一组双色球号码
 
@@ -475,7 +475,7 @@ public class 类名{
 
 ### 2.1 多个对象的内存图
 
-![](D:\Snipaste截图\Snipaste_2022-01-04_13-57-09.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e2d830ddcbcb1ac12759d8ece361d506.png)
 
 ### 2.2 两个对象指向同一个类
 
@@ -939,15 +939,15 @@ System.out.println(s3==s4);		//false
 
 内存图：
 
-![](D:\Snipaste截图\Snipaste_2022-01-05_10-54-06.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a0cce7b373c7e07d2af8219807f2d34d.png)
 
-![](D:\Snipaste截图\Snipaste_2022-01-05_10-54-27.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/92cb78c4a9f797d9c37ec70273007c95.png)
 
 ### 1.3 String常见问题
 
-![](D:\Snipaste截图\Snipaste_2022-01-05_10-59-24.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7fe35b360a5b9cbb3437b73b06add884.png)
 
-![](D:\Snipaste截图\Snipaste_2022-01-05_11-02-04.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/eb93d96d5cdc684cd528fe117ab09a4b.png)
 
 
 
@@ -1333,7 +1333,7 @@ public class Test {
 
 内存图分析：
 
-![](D:\Snipaste截图\Snipaste_2022-01-06_15-07-08.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/52c71d6adba8ccabb9c59b09d4e8e010.png)
 
 **结论：集合中存储的元素并不是对象本身，而是对象的地址。**
 
@@ -2120,7 +2120,7 @@ public class Test {
 
 **继承内存图：**
 
-![](D:\Snipaste截图\Snipaste_2022-01-07_00-10-24.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f3babb2ae2161a3ad7d4161a8bb586aa.png)
 
 
 
@@ -2293,7 +2293,7 @@ final关键字可以修饰方法，变量，类。
 
 
 
-![](D:\Snipaste截图\Snipaste_2022-01-07_13-02-16.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5ca4b17ab0c40bfd1446872b56ea4273.png)
 
 
 
@@ -3370,7 +3370,7 @@ public static boolean equals(Object a, Object b) {
 
 **String类拼接字符串的原理图：**
 
-![](D:\Snipaste截图\Snipaste_2022-01-08_16-16-57.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0db0b8f16a9cc178dbfd092a1e7d6e11.png)
 
 String类拼接字符串的原理：先创建StringBuilder对象，进行拼接后，再通过toString转换成String类型，每次用+号拼接时都会产生两个对象。
 
@@ -3378,7 +3378,7 @@ String类拼接字符串的原理：先创建StringBuilder对象，进行拼接�
 
 **StringBuilder拼接字符串的原理图：**
 
-![image-20220108161916846](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220108161916846.png)
+![image-20220108161916846](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0cc01831ff21eb082d5781944f1a9540.png)
 
 **拼接、反转字符串建议使用StringBuilder：**
 
@@ -5121,7 +5121,7 @@ public class CollectionDemo03 {
 
 重写电影案例：
 
-![](D:\Snipaste截图\Snipaste_2022-01-09_16-29-31.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cadadd4b25eb3df57149db5e7891e1d2.png)
 
 
 
@@ -5191,7 +5191,7 @@ public class CollectionDemo03 {
 
 
 
-![](D:\Snipaste截图\Snipaste_2022-01-09_16-55-37.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/369469110649322bafa02dcf8d144d6b.png)
 
 **二叉树查找树(二叉排序树or二叉搜索数)：**
 
@@ -5217,7 +5217,7 @@ public class CollectionDemo03 {
 
 - **平衡二叉树是在满足查找二叉树的大小规则下，让树尽可能矮小，以此提高查数据的性能。**
 
-  ![](D:\Snipaste截图\Snipaste_2022-01-09_16-59-20.png)
+  ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/86a4e1e57ff06312786a877f698df955.png)
 
 **平衡二叉树的要求：**
 
@@ -5244,7 +5244,7 @@ public class CollectionDemo03 {
 - 如果某一个节点是红色，那么它的子节点必须是黑色(**不能出现两个红色节点相连的情况**)。
 - **对每一个节点，从该节点到其所有后代叶节点的简单路径上，均包含相同数目的黑色节点。**
 
-![](D:\Snipaste截图\Snipaste_2022-01-09_17-12-00.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0acea7dafcf760ac4e5a437d9e631458.png)
 
 **添加节点**
 
@@ -5860,7 +5860,7 @@ public class SetDemo2 {
    - JDK 8中新元素挂在老元素下面
 7. 当数组存满到16*0.75=12时，就自动扩容，每次扩容原先的两倍
 
-![](D:\Snipaste截图\Snipaste_2022-01-09_21-23-40.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/df594772193684029d394e87c04613e7.png)
 
 **结论：哈希表是一种对于增删改查数据性能都较好的结构。**
 
@@ -8489,7 +8489,7 @@ public class Test3 {
 }
 ```
 
-![](D:\Snipaste截图\Snipaste_2022-01-12_15-59-31.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6f4f65bec4a90f78a9ce82ac39543c33.png)
 
 
 
@@ -8988,7 +8988,7 @@ public class OutputStreamDemo {
 
 - 磁盘 - 内存 - 磁盘  的一个过程
 
-![](D:\Snipaste截图\Snipaste_2022-01-12_22-23-09.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/97dc338ce56dcbad737da5c57a5a8c38.png)
 
 **使用字节流完成文件的复制，字节流支持一切文件类型的复制**
 
@@ -9078,7 +9078,7 @@ public class CopyDemo05 {
 
 - finally虽然可以用于释放资源，但是释放资源的代码过于繁琐，简化的方法：
 
-  ![](D:\Snipaste截图\Snipaste_2022-01-12_22-39-26.png)
+  ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/08c21379e92af99e37350e6f4e472cdb.png)
 
 **注意：**
 
@@ -9278,7 +9278,7 @@ public class FileWriterDemo03 {
 
 **IO流体系**
 
-![](D:\Snipaste截图\Snipaste_2022-01-13_00-11-29.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/26dc18f3338750b030d01ac2f4761be3.png)
 
 ## 1. 缓冲流
 
@@ -10659,7 +10659,7 @@ public class Account {
 
 - 模拟客服系统，系统可以不断的接入电话 和 分发给客服。
 
-  ![](D:\Snipaste截图\Snipaste_2022-01-22_21-08-06.png)
+  ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0e44c8b309be543a76f13325cd0ebc24.png)
 
 **线程通信的前提**：线程通信通常是在多个线程操作同一个共享资源的时候需要进行通信，且要保证线程安全。
 
@@ -10760,7 +10760,7 @@ public class Phone {
 
 - 如果用户每发起一个请求，后台就创建一个新线程来处理，下次新任务来了又要创建新线程，而**创建新线程的开销是很大的**，这样会严重影响系统的性能。
 
-![](D:\Snipaste截图\Snipaste_2022-01-22_22-06-41.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d5613e4020fba0aae337ed2dcec54a1d.png)
 
 
 
@@ -11081,7 +11081,7 @@ public class ThreadPoolDemo3 {
 
 
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_00-17-22.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5399b5ce260e990db30f26f84c45f81a.png)
 
 - Executors是否适合做大型互联网场景的线程池方案？
   - 不合适。建议使用ThreadPoolExecutor来指定线程池参数，这样可以明确线程池的运行规则，规避资源耗尽的风险。
@@ -11272,7 +11272,7 @@ public class Thread{
 | Timed Waiting(计时等待) | 同waiting状态，有几个方法有超时参数，调用他们将进入Timed Waiting状态。带有超时参数的常用方法有Thread.sleep 、Object.wait。 |
 |    Teminated(被终止)    | 因为run方法正常退出而死亡，或者因为没有捕获的异常终止了run方法而死亡。 |
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_09-23-29.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/adc75ae302a00116363c577c60751cbe.png)
 
 
 
@@ -11436,9 +11436,9 @@ public class InetAddressDemo1 {
 
 - 对信息安全要求较高的场景，例如：文件下载、金融等数据通信。
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_10-09-03.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/23c8e22ddc91ca7e0eab2da2a9beba2f.png)
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_10-09-24.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/57baf0f237f46d70ca21bda2f1800dc0.png)
 
 
 
@@ -11755,7 +11755,7 @@ UDP的接收端为什么可以接收很多发送端的消息？
 
 **TCP通信模式演示：** 
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_12-17-38.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ca7090ad4ad447b78faf202ef6bbca21.png)
 
 ==注意：在java中只要是使用java.net.Socket类实现通信，底层即是使用了TCP协议==
 
@@ -12142,7 +12142,7 @@ Process finished with exit code 130
 
 **引入线程池处理多个客户端消息**
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_13-53-48.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2348cbed0b391b75abfdc923ce7bd70c.png)
 
 
 
@@ -12260,7 +12260,7 @@ public class ServerDemo2 {
 - 服务端需要把在线的Socket管道存储起来。
 - 一旦收到一个消息要推送给其他管道。
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_14-32-38.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d2f8184c8095bf5c968a4e024c1a1f6b.png)
 
 
 
@@ -12429,7 +12429,7 @@ public class ServerDemo2 {
 
 **实现BS开发**
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_14-50-42.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cfc90fcfcf4a924a784380dcfaf11ca1.png)
 
 
 
@@ -12507,7 +12507,7 @@ public class BSserverDemo {
 
 启动服务端后，在浏览器输入本地ip地址和端口号
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_15-08-56.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4e451353b6689f8b9b899e3f26e9340e.png)
 
 
 
@@ -12669,7 +12669,7 @@ public class TestUserService {
 
 测试结果：
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_16-40-56.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4a237652b7c574b07f3692b83761cace.png)
 
 
 
@@ -12696,7 +12696,7 @@ public class TestUserService {
 
 ### 2.2 反射获取类对象
 
-![](D:\Snipaste截图\Snipaste_2022-01-23_17-06-39.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/94448a60a6c3bf4b0dbc0ec31b2e1675.png)
 
 **获取Class类的对象的三种方式**
 
@@ -14253,7 +14253,7 @@ XML的数据的作用是什么，最终需要怎么处理？
 
 **DOM解析解析文档对象模型**
 
-![](D:\Snipaste截图\Snipaste_2022-01-24_10-43-59.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ab9ac8c3d86712e61c6c3a1109e534e0.png)
 
 
 

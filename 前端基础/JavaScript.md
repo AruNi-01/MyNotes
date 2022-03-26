@@ -113,7 +113,7 @@ test.html
 ```
 
 浏览器必备调试须知：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508101436683.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508101436683.png)
 
 ## 2.3 数据类型
 
@@ -237,7 +237,7 @@ person.age
 
 ## 2.4 严格检查格式
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508105351996.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508105351996.png)
 
 ```html
 <!DOCTYPE html>
@@ -314,7 +314,7 @@ str.length
 ```
 
 6、字符串的可变性，不可变
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508110738649.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508110738649.png)
 7、大小写转换
 
 ```javascript
@@ -398,14 +398,14 @@ arr.reverse()
 ```
 
 **8、concat()**
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508153119816.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508153119816.png)
 注意：concat()并没有修改数组，只是会返回一个新的数组
 
 9、连接符join
 打印拼接数组，使用特定的字符串连接
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508153243846.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508153243846.png)
 10、多维数组
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508153447514.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508153447514.png)
 
 数组：存储数据（如何存，如何取，方法都可以自己实现！）
 
@@ -432,43 +432,43 @@ var person = {
 Js中对象，{…}表示一个对象，建制对描述属性xxx：xxx，多个属性之间用逗号隔开，最后一个属性不加逗号！
 JavaScript中的所有的键都是字符串，值是任意对象！
 1、对象赋值
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508155833832.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508155833832.png)
 2、使用一个不存在的对象属性，不会报错！undefined
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508155917394.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508155917394.png)
 3、动态的删减属性，通过delete删除对象的属性
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508160429505.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508160429505.png)
 4、动态的添加，直接给新的属性添加值即可
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508160409465.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508160409465.png)
 5、判断属性值是否在这个对象中！xxx in xxx
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508160704412.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508160704412.png)
 6、判断一个属性是否是这个对象自身拥有的 hasOwnProperty()
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508160950801.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508160950801.png)
 
 ## 3.4 流程控制
 
 if判断
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508161158507.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508161158507.png)
 
 while循环，避免程序死循环
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508161549241.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508161549241.png)
 for循环
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508161625832.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508161625832.png)
 forEach循环
 
 > ES5.1特性
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508162100917.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508162100917.png)
 for …in-------下标
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508162209421.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508162209421.png)
 
 ## 3.5 Map和Set
 
 > ES6的新特性~
 
 Map
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508163109596.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508163109596.png)
 Set：无序不重复的集合
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508163211654.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508163211654.png)
 
 ## 3.6 iterator
 
@@ -476,11 +476,11 @@ Set：无序不重复的集合
 
 作业：使用iterator来遍历迭代我们Map，Set！
 遍历数组
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050816410825.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050816410825.png)
 遍历Map
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508164125573.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508164125573.png)
 遍历set
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508164144469.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508164144469.png)
 
 # 4. 函数
 
@@ -489,13 +489,13 @@ Set：无序不重复的集合
 > 定义方式一
 
 绝对值函数
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050818170197.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050818170197.png)
 一旦执行到return代表函数结束，返回结果！
 如果没有执行return，函数执行完也会返回结果，结果就是undefined
 
 > 定义方式二
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508182120582.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508182120582.png)
 function(x){…}这是一个匿名函数。但是可以吧结果赋值给abs，通过abs就可以调用函数！
 方式一和方式二等价！
 
@@ -510,105 +510,105 @@ abs(-10) //10
 参数问题：javaScript可以传任意个参数，也可以不传递参数~
 参数进来是否存在问题？
 假设不存在参数，如何规避？
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508182908571.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508182908571.png)
 
 > arguments
 
 arguments是一个JS免费赠送的关键字；
 代表，传递进来的所有参数，是一个数组！
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508183337762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508183337762.png)
 问题：arguments包含所有的参数，我们有时候想使用多余的参数来进行附加操作。需要排除已有参数~
 
 > rest
 
 以前：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508183752806.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508183752806.png)
 
 ES6引入的新特性，获取除了已经定义的参数之外的所有参数~…
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508183918899.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508183918899.png)
 rest参数只能写在最后面，必须用…标识。
 
 ## 4.2 变量的作用域
 
 在javascript中，var定义变量实际是有作用于的。
 假设在函数体重声明，则在函数体外不可以使用~（闭包）
-![在这里插入图片描述](https://img-blog.csdnimg.cn/202005081843310.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202005081843310.png)
 如果两个函数使用了相同的变量名，只要在函数内部就不冲突
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508213017794.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508213017794.png)
 内部函数可以访问外部函数的成员，反之则不行
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050821304022.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050821304022.png)
 假设，内部函数变量和外部函数变量，重名！
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508214742767.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508214742767.png)
 假设在JavaScript中，函数查找变量从自身函数开始~， 由“内”向“外”查找，假设外部存在这个同名的函数变量，则内部函数会屏蔽外部函数的变量。
 
 > 提升变量的作用域
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508215241301.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508215241301.png)
 结果：x undefined
 说明：js执行引擎，自动提升了y的声明，但是不会提升变量y的赋值；
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508215909640.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508215909640.png)
 这个是在javascript建立之初就存在的特性。 养成规范：所有 的变量定义都放在函数的头部，不要乱放，便于代码维护；
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050822470141.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050822470141.png)
 
 > 全局变量
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508224905458.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508224905458.png)
 
 全局对象window
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508225326543.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508225326543.png)
 
 alert() 这个函数本身也是一个window的变量；
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508225810801.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508225810801.png)
 javascript实际上只有一个全局作用域，任何变量（函数也可以视为变量），假设没有在函数作用范围内找到，就会向外查找，如果在全局作用域都没有找到，就会报错 Refrence
 
 > 规范
 
 由于我们的所有变量都会绑定到window上，。如果不同的js文件，使用了相同的全局变量，就会产生冲突—>如何减少这样的冲突？
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508230620266.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508230620266.png)
 把自己的代码全部放入自己定义的唯一空间名字中，降低全局命名冲突问题~
 jQuery中就是使用的该方法：jQuery.name，简便写法：**$()**
 
 > 局部作用域
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508231056855.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508231056855.png)
 ES6的let关键字，解决了局部作用域冲突的问题！
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508231207856.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508231207856.png)
 建议大家都用let去定义局部作用域的变量；
 
 > 常量
 
 在ES6之前，怎么定义常量：只有用全部大写字母命名的变量就是常量；建议不要修改这样的值。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508231525623.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508231525623.png)
 在ES6引入了常量关键字 const
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508232049107.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508232049107.png)
 
 ## 4.3 方法
 
 > 定义方法
 
 方法就是把函数放在对象的里面，对象只有两个东西：属性和方法
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508232559873.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508232559873.png)
 this.代表什么？拆开上main的代码看看
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508232827102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508232827102.png)
 this是无法指向的，是默认指向调用它的那个对象的；
 
 > apply
 
 在js中可以控制this指向
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508233222629.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508233222629.png)
 
 # 5. 内部对象
 
 > 标准对象
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508233500524.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508233500524.png)
 
 ## 5.1 Date
 
 **基本使用**
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050823390552.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050823390552.png)
 转换
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508233954136.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508233954136.png)
 
 ## 5.2 JSON
 
@@ -623,10 +623,10 @@ this是无法指向的，是默认指向调用它的那个对象的；
 - 所有的键值对 都是用key:value
 
 JSON字符串和js对象转化
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508234804502.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508234804502.png)
 很多人搞不清楚，JSON和JS对象的区别
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200508235017515.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200508235017515.png)
 
 ## 5.3 AJAX
 
@@ -644,14 +644,14 @@ JSON字符串和js对象转化
 
 在javascript中，需要大家转换一下思维方式！
 原型：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509210303742.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509210627825.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509210303742.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509210627825.png)
 
 > class集继承
 
 class关键字，是在ES6引入的
 1、定义一个类、属性、方法
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509210756344.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509210756344.png)
 2、继承
 
 ```javascript
@@ -684,12 +684,12 @@ class关键字，是在ES6引入的
 ```
 
 本质：查看对象原型
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509211811667.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509211811667.png)
 
 > 原型链
 
 *proto*:
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509212115371.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509212115371.png)
 
 # 7. 操作BOM对象（重点）
 
@@ -712,12 +712,12 @@ BOM：浏览器对象模型
 > window
 
 window代表浏览器窗口
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509224733766.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509224733766.png)
 
 > Navigator（不建议使用）
 
 Navigator封装了浏览器的信息
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509225010877.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509225010877.png)
 大多数时候，我们不会使用navigator对象，因为会被认为修改!
 不建议使用这些属性来判断和编写代码
 
@@ -725,30 +725,30 @@ Navigator封装了浏览器的信息
 
 代表屏幕尺寸
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509225316614.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509225316614.png)
 
 > location(重要)
 
 location代表当前页面的URL信息
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509225614305.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509225614305.png)
 
 > document（内容DOM）
 
 document代表当前的页面，HTML DOM文档树
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509225911170.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509225911170.png)
 获取具体的文档树节点
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509225947396.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509225947396.png)
 获取cookie
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509230037645.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509230037645.png)
 劫持cookie原理
 www.taobao.com
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020050923025532.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050923025532.png)
 服务器端可以设置cookie为httpOnly
 
 > history（不建议使用 ）
 
 history代表浏览器的历史记录
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509230639949.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509230639949.png)
 
 # 8. 操作DOM对象（重点）
 
@@ -767,21 +767,21 @@ DOM：文档对象模型
 
 > 获得Dom节点
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509231806822.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509231806822.png)
 这是原生代码，之后我们尽量都使用jQuery();
 
 > 更新节点
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509232232560.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509232232560.png)
 操作文本
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509232256674.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509232256674.png)
 操作css
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509232439513.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509232439513.png)
 
 > 删除节点
 
 删除节点的步骤：先获取父节点，再通过父节点删除自己
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509232903448.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509232903448.png)
 注意：删除多个节点的时候，children是在时刻变化的，删除节点的时候一定要注意。
 
 > 插入节点
@@ -789,7 +789,7 @@ DOM：文档对象模型
 我们获得了某个Dom节点，假设这个dom节点是空的，我们通过innerHTML就可以增加一个元素了，但是这个Dom节点已经存在元素了，我们就不能这么干了！会产生覆盖
 
 追加
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200509233556254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Bhbl9oMTk5NQ==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/20200509233556254.png)
 ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2020050923363290.png)
 
 > 创建一个新的标签

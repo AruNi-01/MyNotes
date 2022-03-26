@@ -354,9 +354,9 @@ int main()
 
 写一个交换数据的函数：
 
-  ![](D:\Snipaste截图\Snipaste_2021-07-27_16-38-29.png)
+  ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/94273734a6968caed77c495b0a3b62b7.png)
 
-![](D:\Snipaste截图\Snipaste_2021-07-27_16-39-50.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/13d1e265dbd2dc82b7bcb515a7b94f7b.png)
 
 ![](D:\Snipaste截图\Snipaste_2021-07-27_16-40-17.png)
 
