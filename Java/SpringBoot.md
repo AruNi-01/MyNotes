@@ -145,7 +145,7 @@ Spring Initializr：[https://start.spring.io/](https://gitee.com/link?target=htt
 
 1、在主程序的同级目录下，新建一个controller包，一定要在同级目录下，否则识别不到
 
-![image-20220330162157176](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330162157176.png)
+![image-20220330162157176](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/222967cd76c4e042b741c8249e79824f.png)
 
 2、在包中新建一个HelloController类
 
@@ -162,7 +162,7 @@ public class HelloController {
 
 3、编写完毕后，从主程序启动项目，浏览器发起请求，看页面返回；控制台输出了 Tomcat 访问的端口号！
 
-![image-20220330160845131](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330160845131.png)
+![image-20220330160845131](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/eb426a0ab84e97b29971e3df2a36022f.png)
 
 简单几步，就完成了一个web接口的开发，SpringBoot就是这么简单。所以我们常用它来建立我们的微服务项目！
 
@@ -172,16 +172,16 @@ public class HelloController {
 
 - 如果打包成功，则会在target目录下生成一个 jar 包
 
-  ![image-20220330162331243](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330162331243.png)
+  ![image-20220330162331243](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dc8815b3dbd65a25fd1ca330223a9eb6.png)
 
 - 打成了jar包后，就可以在任何地方运行了！OK
 
-  ![image-20220330162928457](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330162928457.png)
+  ![image-20220330162928457](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/02ced036f0c4d049d60829bbb762216b.png)
 
 
 - 浏览器运行结果：
 
-![image-20220330162659667](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330162659667.png)
+![image-20220330162659667](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ab04187d584373593e2d61b7ae601f1d.png)
 
 
 
@@ -433,13 +433,13 @@ public class SpringbootApplication {
 
 我们在`spring-boot-autoconfigure-2.6.5.jar`中打开`spring.factories` ， 看到了很多自动配置的文件；这就是自动配置根源所在！
 
-![](D:\Snipaste截图\Snipaste_2022-03-30_17-41-00.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0b982638046fa1e11eeb4e6bd5b19bbd.png)
 
 
 
 我们在上面的自动配置类随便找一个打开看看，比如 ：`WebMvcAutoConfiguration`
 
-![](D:\Snipaste截图\Snipaste_2022-03-30_17-42-42.png)
+![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8b4dfc599bb978e2918b980fa8177a28.png)
 
 可以看到这些一个个的都是JavaConfig配置类，而且都注入了一些Bean，可以找一些自己认识的类，看着熟悉一下！
 
@@ -509,7 +509,7 @@ public SpringApplication(ResourceLoader resourceLoader, Class... primarySources)
 
 > run方法流程分析
 
-<img src="D:\Snipaste截图\2020033020092699.png"  />
+<img src="https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dfdcde651f89e493814da32edd37eaf3.png"  />
 
 跟着源码和这幅图就可以一探究竟了！
 
@@ -706,7 +706,7 @@ yaml文件更强大的地方在于，他可以给我们的**实体类直接注�
 
    结果成功输出，@Value注入成功，这是我们原来的办法。
 
-   ![image-20220330203504607](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330203504607.png)
+   ![image-20220330203504607](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/45e2c46f999caf6930d1354616674869.png)
 
 5. 我们在编写一个复杂一点的实体类：Person 类
 
@@ -769,11 +769,11 @@ yaml文件更强大的地方在于，他可以给我们的**实体类直接注�
 
 8. 添加了`ConfigurationProperties`后，IDEA会有爆红提示(不会报错)，springboot配置注解处理器没有找到
 
-   ![image-20220330204838949](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330204838949.png)
+   ![image-20220330204838949](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2cdf1126340cf9cd4d3cb7e22ede5f7e.png)
 
    此时可以点击Open Decumentation进入官网
 
-   ![image-20220330205007179](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330205007179.png)
+   ![image-20220330205007179](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/710f22d5e45984600d0645769ca59bc1.png)
 
    在pom中导入依赖
 
@@ -820,7 +820,7 @@ yaml文件更强大的地方在于，他可以给我们的**实体类直接注�
 
 【注意】`properties`配置文件在写中文的时候，会有乱码 ， 我们需要去IDEA中设置编码格式为UTF-8；settings-->FileEncodings 中配置；
 
-![image-20220330211829040](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330211829040.png)
+![image-20220330211829040](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b479cecf33cd4cec40631b9292bb3d5f.png)
 
 ## 4.5 加载指定的配置文件
 
@@ -853,7 +853,7 @@ yaml文件更强大的地方在于，他可以给我们的**实体类直接注�
 
 3. 再次输出测试一下：指定配置文件绑定成功！
 
-   ![image-20220330210523609](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330210523609.png)
+   ![image-20220330210523609](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dcce1c991f68d5648e48159b8ead707c.png)
 
 ## 4.6 配置文件占位符
 
@@ -1018,7 +1018,7 @@ Booelan检查
 
 可以在依赖中查看：
 
-![image-20220330213800143](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330213800143.png)
+![image-20220330213800143](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5166eab5ecf49fc95425afedef5550e6.png)
 
 ## 5.2 多环境切换
 
@@ -1036,7 +1036,7 @@ Booelan检查
 
 但是SpringBoot并不会直接启动这些配置文件，它**默认使用application.properties主配置文件**；
 
-![1595484043622](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2.assets/1595484043622.png)
+![1595484043622](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/df5895ccbfbb31138ec3a4142db42774.png)
 
 我们需要通过`spring.profiles.active`配置来选择需要激活的环境：
 
@@ -1084,11 +1084,11 @@ spring:
 
 可以在[官方外部配置文件说明参考文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.spring.io%2Fspring-boot%2Fdocs%2F2.3.1.RELEASE%2Freference%2Fhtml%2Fspring-boot-features.html%23boot-features-logging-color-coded-output)的Application Property Files中查看配置方式：
 
-![image-20220330215019389](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330215019389.png)
+![image-20220330215019389](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/839809ad09ed1c12847bc4701a551668.png)
 
 springBoot 启动会扫描以下位置的`application.properties`或者`application.yml`文件作为SpringBoot的默认配置文件：
 
-![image-20220330215151212](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220330215151212.png)
+![image-20220330215151212](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b60eaa658fa9fec8547d51f9cef0fe54.png)
 
 ```text
 优先级1：项目路径下的config文件夹配置文件
@@ -1288,7 +1288,7 @@ SpringBoot官方[配置文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.
 
 我们去配置文件里面试试前缀，看提示！
 
-![1595493884773](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595493884773.png)
+![1595493884773](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a1ad762f7f4b8917e8aab361eb79c7df.png)
 
 **这就是自动装配的原理！**
 
@@ -1624,17 +1624,17 @@ Webjars本质就是以jar包的方式引入我们的静态资源 ， 我们以�
 
 导入完毕，查看webjars目录结构，并访问`jquery.js`文件
 
-![image-20220331101345101](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331101345101.png)
+![image-20220331101345101](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fde22d82a3215824fe8bc6835d315691.png)
 
 访问：只要是静态资源，SpringBoot就会去对应的路径寻找资源，我们这里访问：
 
-http://localhost:8080/webjars/jquery/3.4.1/jquery.js![image-20220331101506669](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331101506669.png)
+http://localhost:8080/webjars/jquery/3.4.1/jquery.js![image-20220331101506669](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/558447143af0078da01d837c84f6cee5.png)
 
 ### 8.2.3 第二种静态资源映射规则
 
 1、那我们项目中要是使用自己的静态资源该怎么导入呢？我们看下一行代码；
 
-![image-20220331103730892](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331103730892.png)
+![image-20220331103730892](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/944078383e143e347c435a25d637f34a.png)
 
 2、我们去找`staticPathPattern`发现第二种映射规则 ：/** , 访问当前的项目任意资源，它会去找 `resourceProperties` 这个类，我们可以点进去看一下分析：
 
@@ -1667,11 +1667,11 @@ private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
 
 5、我们可以在resources根目录下新建对应的文件夹，都可以存放我们的静态文件；
 
-![1595517831392](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595517831392.png)
+![1595517831392](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f025be63d00ac2dc4e6106aedd7210c2.png)
 
 6、比如我们访问 [http://localhost:8080/1.js](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2F1.js) , 他就会去这些文件夹中寻找对应的静态资源文件；
 
-![1595517869049](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595517869049.png)
+![1595517869049](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/73d66c6f1aa13c7bfb4a261971e7ad95.png)
 
 ### 8.2.4 自定义静态资源路径
 
@@ -1685,7 +1685,7 @@ spring.resources.static-locations=classpath:/mystatic/,classpath:/mypath/
 
 自定义资源路径后再访问刚刚的静态资源，发现访问不到了。
 
-![1595518276475](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595518276475.png)
+![1595518276475](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fea0465faf93025276fc9e6ca3ba212b.png)
 
 ### 8.2.5 总结
 
@@ -1730,11 +1730,11 @@ private Resource getIndexHtml(String location) {
 
 截图说明：
 
-![image-20220331110603307](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331110603307.png)
+![image-20220331110603307](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7acc6bc8f9e3e01b65c5cf87fec79f62.png)
 
 继续往下看，找到`getWelcomePage()`方法：
 
-![image-20220331111500520](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331111500520.png)
+![image-20220331111500520](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/661a1c254e26a74037b56fbe78adea71.png)
 
 
 
@@ -1744,7 +1744,7 @@ private Resource getIndexHtml(String location) {
 
 - 新建一个 `index.html` ，在我们上面的3个目录中任意一个；然后访问测试  [http://localhost:8080/](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2F)  看结果：
 
-  ![image-20220331111620574](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331111620574.png)
+  ![image-20220331111620574](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/73cb64a3a2b8a866dc550796b3bedaaa.png)
 
 ## 8.4 网站图标
 
@@ -1764,11 +1764,11 @@ private Resource getIndexHtml(String location) {
 
 1. 自己放一个图标在静态资源目录static下
 
-   ![image-20220331113207608](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331113207608.png)
+   ![image-20220331113207608](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d03e362d0fa778fd34c02109063e57ab.png)
 
 2. 清除浏览器缓存`Ctrl + F5`！刷新网页，发现图标已经变成自己的了
 
-   ![image-20220331113225439](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331113225439.png)
+   ![image-20220331113225439](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4ae4ca6249b98f5a2fa6041a88c89773.png)
 
 
 
@@ -1784,7 +1784,7 @@ private Resource getIndexHtml(String location) {
 
 模板引擎，我们其实大家听到很多，其实jsp就是一个模板引擎，还有用的比较多的freemarker，包括SpringBoot给我们推荐的Thymeleaf，模板引擎有非常多，但再多的模板引擎，他们的思想都是一样的，什么样一个思想呢我们来看一下这张图：
 
-![1595555521951](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot11%EF%BC%9AThymeleaf%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E.assets/1595555521951.png)
+![1595555521951](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d83f39e64ba251ccfab25fdee7945822.png)
 
 模板引擎的作用就是我们来写一个页面模板，比如有些值呢，是动态的，我们写一些表达式。而这些值，从哪来呢，就是我们在后台封装一些数据。然后把这个模板和这个数据交给我们模板引擎，模板引擎按照我们这个数据帮你把这表达式解析、填充到我们指定的位置，然后把这个数据最终生成一个我们想要的内容给我们写出去，这就是我们这个模板引擎，不管是jsp还是其他模板引擎，都是这个思想。只不过呢，就是说不同模板引擎之间，他们可能这个语法有点不一样。其他的我就不介绍了，我主要来介绍一下SpringBoot给我们推荐的Thymeleaf模板引擎，这模板引擎呢，是一个高级语言的模板引擎，他的这个语法更简单。而且呢，功能更强大。
 
@@ -1810,7 +1810,7 @@ private Resource getIndexHtml(String location) {
 
 Maven会自动下载jar包，我们可以去看下下载的东西；
 
-![image-20220331114615254](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331114615254.png)
+![image-20220331114615254](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1128f4c3744a8b4f14fe1360a7b30a5d.png)
 
 ## 9.3 Thymeleaf分析
 
@@ -1883,7 +1883,7 @@ public class ThymeleafProperties {
 
 3. 启动项目请求测试
 
-   ![image-20220331120015992](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331120015992.png)
+   ![image-20220331120015992](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9019b29b4dd37675c86e028c2b6b64a1.png)
 
 ## 9.4 Thymeleaf语法
 
@@ -1941,7 +1941,7 @@ Thymeleaf 官网：[https://www.thymeleaf.org/](https://gitee.com/link?target=ht
 
 4. 启动测试
 
-   ![image-20220331124537066](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331124537066.png)
+   ![image-20220331124537066](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2a6736a8cf26bfe4a8d569fe3db66f26.png)
 
 **OK，入门搞定，接下来认真研究一下Thymeleaf的使用语法！**
 
@@ -2070,7 +2070,7 @@ public class TestController {
 
 3、启动项目测试
 
-![image-20220331130102379](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331130102379.png)
+![image-20220331130102379](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2ed0cff5fe693b165c40b4364f19c634.png)
 
 **我们看完语法，很多样式，我们即使现在学习了，也会忘记，所以我们在学习过程中，需要使用什么，根据官方文档来查询，才是最重要的，要熟练使用官方文档！**
 
@@ -2203,9 +2203,13 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 - 既然它是在容器中去找视图解析器，我们是否可以猜想，我们就可以去实现一个视图解析器了呢？
 
-**自定义视图解析器**
 
-我们可以自己给容器中去添加一个视图解析器；这个类就会帮我们自动的将它组合进来；**我们去实现一下**
+
+
+
+**自定义视图解析器**：
+
+我们可以自己给容器中去添加一个视图解析器；这个类就会帮我们自动的将它组合进来
 
 1. 我们在我们的主程序中去写一个视图解析器来试试；
 
@@ -2233,17 +2237,17 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 2. 我们给 DispatcherServlet 中的 doDispatch方法 加个断点进行调试一下，因为所有的请求都会走到这个方法中
 
-   ![1595564720595](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564720595.png)
+   ![1595564720595](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f0c4c188c426083c5874ce441d3db6ed.png)
 
 3. 我们启动我们的项目，然后随便访问一个页面，看一下Debug信息；
 
    找到this(就是DispatcherServlet)
 
-   ![1595564823239](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564823239.png)
+   ![1595564823239](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/829c52112cc328abbb395eb3bc0008e9.png)
 
    找到视图解析器（viewResolvers），我们看到我们自己定义的就在这里了；
 
-   ![1595564942873](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564942873.png)
+   ![1595564942873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/40b901100bc52e8e652f3b370cc23ef1.png)
 
 - 所以说，我们如果想要使用自己定制化的东西，我们只需要给容器中添加这个组件就好了！剩下的事情SpringBoot就会帮我们做了！
 
@@ -2273,7 +2277,7 @@ If you want to take complete control of Spring MVC, you can add your own @Config
     }
     
     /**
-    * Date format to use. For instance, `dd/MM/yyyy`. 默认的
+    * Date format to use. For instance, `dd/MM/yyyy`. 官方默认的
      */
     private String dateFormat;
     ```
@@ -2299,14 +2303,14 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
   - 2.2.x版本之前的
 
-    配置文件
+    配置文件：
 
     ```properties
     # 配置文件
     spring.nvc.date-format=
     ```
 
-    源码
+    源码：
 
     ```java
     @Deprecated
@@ -2317,13 +2321,13 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
   - 2.2.x版本之后的
 
-    配置文件
+    配置文件：
 
     ```properties
     spring.nvc.date=
     ```
 
-    源码
+    源码：
 
     ```java
     @Deprecated
@@ -2336,28 +2340,31 @@ If you want to take complete control of Spring MVC, you can add your own @Config
     }
     ```
 
-其余的就不一一举例了，大家可以下去多研究探讨即可！
+其余的就不一一举例了，可以自己去多研究探讨。
 
 ## 10.4 修改SpringBoot的默认配置
 
 - 这么多的自动配置，原理都是一样的，通过这个WebMVC的自动配置原理分析，我们要学会一种学习方式，通过源码探究，得出结论；这个结论一定是属于自己的，而且一通百通。
-
 - SpringBoot的底层，大量用到了这些设计细节思想，所以，没事需要多阅读源码！得出结论；
-
 - SpringBoot在自动配置很多组件的时候，先看容器中有没有用户自己配置的（如果用户自己配置@bean），如果有就用用户配置的，如果没有就用自动配置的；
-
 - 如果有些组件可以存在多个，比如我们的视图解析器，就将用户配置的和自己默认的组合起来！
 
-- **扩展使用SpringMVC**  官方文档如下：
+
+
+
+
+> 扩展使用SpringMVC
+
+- 官方文档如下：
 
   If you want to keep Spring Boot MVC features and you want to add  additional MVC configuration (interceptors, formatters, view  controllers, and other features), you can add your own `@Configuration` class of type `WebMvcConfigurer` **but without** `@EnableWebMvc`. If you wish to provide custom instances of `RequestMappingHandlerMapping`, `RequestMappingHandlerAdapter`, or `ExceptionHandlerExceptionResolver`, you can declare a WebMvcRegistrationsAdapter instance to provide such components.
 
-- 我们要做的就是编写一个`@Configuration`注解类，并且类型要为`WebMvcConfigurer`，还不能标注`@EnableWebMvc`注解；我们去自己写一个；
+- 我们要做的就是编写一个`@Configuration`注解类，并且类型要为`WebMvcConfigurer`，一定**不能标注**`@EnableWebMvc`注解，否则默认配置类全部失效；
 
-- 我们新建一个包叫config，写一个类MyMvcConfig；
+- 我们去自己写一个；新建一个包叫config，写一个类MyMvcConfig；
 
   ```java
-  // 如果我们要扩展springmvc，官方建议我们这样去做@Configuration
+  // 如果我们要扩展springmvc，官方建议使用@Configuration
   //因为类型要求为WebMvcConfigurer，所以我们实现其接口
   //扩展 springmvc      DispatchServlet
   //@EnableWebMvc		 //这个注解就是导入了一个类，DelegatingWebMvcConfiguration，从容器中获取所有的webMvcConfig
@@ -2367,15 +2374,15 @@ If you want to take complete control of Spring MVC, you can add your own @Config
   
       @Override
       public void addViewControllers(ViewControllerRegistry registry) {
-          // 浏览器发送/test ， 就会跳转到test页面；
+          // 浏览器发送/test2，就会跳转到test页面；
           registry.addViewController("/test2").setViewName("test");
       }
   }
   ```
 
-- 我们去浏览器访问一下：
+- 在resources的templates下新建`test.html`，我们去浏览器访问一下：
 
-  ![1595584684727](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595584684727.png)
+  ![image-20220331212750840](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bd8851c21937956b4a5abe5f804f8100.png)
 
 **确实也跳转过来了！所以说，我们要扩展SpringMVC，官方就推荐我们这么去使用，既保SpringBoot留所有的自动配置，也能用我们扩展的配置！**
 
@@ -2441,21 +2448,21 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 - 只需在我们的配置类中要加一个`@EnableWebMvc`。
 
-- 我们看下如果我们全面接管了SpringMVC了，我们之前SpringBoot给我们配置的静态资源映射一定会无效，我们可以去测试一下；
+- 如果我们全面接管了SpringMVC了，之前SpringBoot给我们配置的静态资源映射一定会无效，我们可以去测试一下；
 
 - 不加注解之前，访问首页：
 
-  ![1595587645715](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595587645715.png)
+  ![image-20220331213206709](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dcebce26ee1d24ecf012b9f50ec5eb6f.png)
 
 - 给配置类加上注解：`@EnableWebMvc`
 
-  我们发现所有的SpringMVC自动配置都失效了！回归到了最初的样子；
+  我们发现所有的SpringMVC自动配置都失效了：
 
-  ![1595587533039](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595587533039.png)
+  ![image-20220331213312358](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/52342131894e6a68ad5c73a59976f2f0.png)
 
 **当然，我们开发中，不推荐使用全面接管SpringMVC**
 
-思考问题？为什么加了一个注解，自动配置就失效了！我们看下源码：
+> 为什么加了一个注解，自动配置就失效了
 
 1. 这里发现它是导入了一个类，我们可以继续进去看
 
@@ -2494,272 +2501,6 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 - `@EnableWebMvc`将`WebMvcConfigurationSupport`组件导入进来了；
 - 导入的`WebMvcConfigurationSupport`只是SpringMVC最基本的功能！
 - **在springboot中，有非常多的xxxxconfigure帮助我们进行扩展配置，只要看到这个东西就要注意了**
-
-
-
-# 11. 页面国际化
-
-有的时候，我们的网站会去涉及中英文甚至多语言的切换，这时候我们就需要学习国际化了！
-
-## 11.1 准备工作
-
-先在IDEA中统一设置properties的编码问题！
-
-![1595594403624](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595594403624.png)
-
-编写国际化配置文件，抽取页面需要显示的国际化页面消息。我们可以去登录页面查看一下，哪些内容我们需要编写国际化的配置！
-
-## 11.2 配置文件编写
-
-1. 我们在resources资源文件下新建一个i18n（internationalization缩写）目录，存放国际化配置文件
-
-2. 建立一个`login.properties`文件，还有一个`login_zh_CN.properties`；发现IDEA自动识别了我们要做国际化操作；文件夹变了！
-
-   ![1595604595071](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595604595071.png)
-
-3. 我们可以在这上面去新建一个文件；
-
-   ![1595604664699](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595604664699.png)
-
-   弹出如下页面：我们再添加一个英文的；
-
-   ![1595605422294](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605422294.png)
-
-   这样就快捷多了！
-
-   ![1595605442883](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605442883.png)
-
-4. **接下来，我们就来编写配置，我们可以看到idea下面有另外一个视图；**
-
-   ![1595605469344](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605469344.png)
-
-   这个视图我们点击 + 号就可以直接添加属性了；我们新建一个login.tip，可以看到边上有三个文件框可以输入
-
-   ![1595605530046](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605530046.png)
-
-   然后依次添加其他页面内容即可！
-
-   ![1595605552329](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605552329.png)
-
-   然后去查看我们的配置文件；
-
-   login.properties ：
-
-   默认
-
-   ```
-   login.btn=登录
-   login.password=密码
-   login.remember=记住我
-   login.tip=请登录
-   login.username=用户名
-   ```
-
-   英文：
-
-   ```
-   login.btn=Sign in
-   login.password=Password
-   login.remember=Remember me
-   login.tip=Please sign in
-   login.username=Username
-   ```
-
-   中文：
-
-   ```
-   login.btn=登录
-   login.password=密码
-   login.remember=记住我
-   login.tip=请登录
-   login.username=用户名
-   ```
-
-   OK，配置文件步骤搞定！
-
-## 11.3 配置文件生效探究
-
-我们去看一下SpringBoot对国际化的自动配置！这里又涉及到一个类：`MessageSourceAutoConfiguration`
-
-里面有一个方法，这里发现SpringBoot已经自动配置好了管理我们国际化资源文件的组件 `ResourceBundleMessageSource`；
-
-```
-// 获取 properties 传递过来的值进行判断
-@Bean
-public MessageSource messageSource(MessageSourceProperties properties) {
-    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    if (StringUtils.hasText(properties.getBasename())) {
-        // 设置国际化文件的基础名（去掉语言国家代码的）
-        messageSource.setBasenames(
-            StringUtils.commaDelimitedListToStringArray(
-                                       StringUtils.trimAllWhitespace(properties.getBasename())));
-    }
-    if (properties.getEncoding() != null) {
-        messageSource.setDefaultEncoding(properties.getEncoding().name());
-    }
-    messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
-    Duration cacheDuration = properties.getCacheDuration();
-    if (cacheDuration != null) {
-        messageSource.setCacheMillis(cacheDuration.toMillis());
-    }
-    messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
-    messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
-    return messageSource;
-}
-```
-
-我们真实 的情况是放在了i18n目录下，所以我们要去配置这个messages的路径；
-
-```
-spring.messages.basename=i18n.login
-```
-
-## 11.4 配置页面国际化值
-
-去页面获取国际化的值，查看Thymeleaf的文档，找到message取值操作为：#{...}。我们去页面测试下：
-
-IDEA还有提示，非常智能的！
-
-![1595606566975](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595606566975.png)
-
-我们可以去启动项目，访问一下，发现已经自动识别为中文的了！
-
-![1595606666498](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595606666498.png)
-
-**但是我们想要更好！可以根据按钮自动切换中文英文！**
-
-## 11.5 配置国际化解析
-
-在Spring中有一个国际化的Locale （区域信息对象）；里面有一个叫做`LocaleResolver `（获取区域信息对象）的解析器！
-
-我们去我们webmvc自动配置文件，寻找一下！看到SpringBoot默认配置：
-
-```
-@Bean
-@ConditionalOnMissingBean
-@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
-public LocaleResolver localeResolver() {
-    // 容器中没有就自己配，有的话就用用户配置的
-    if (this.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
-        return new FixedLocaleResolver(this.mvcProperties.getLocale());
-    }
-    // 接收头国际化分解
-    AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-    localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
-    return localeResolver;
-}
-```
-
-`AcceptHeaderLocaleResolver` 这个类中有一个方法
-
-```
-public Locale resolveLocale(HttpServletRequest request) {
-    Locale defaultLocale = this.getDefaultLocale();
-    // 默认的就是根据请求头带来的区域信息获取Locale进行国际化
-    if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
-        return defaultLocale;
-    } else {
-        Locale requestLocale = request.getLocale();
-        List<Locale> supportedLocales = this.getSupportedLocales();
-        if (!supportedLocales.isEmpty() && !supportedLocales.contains(requestLocale)) {
-            Locale supportedLocale = this.findSupportedLocale(request, supportedLocales);
-            if (supportedLocale != null) {
-                return supportedLocale;
-            } else {
-                return defaultLocale != null ? defaultLocale : requestLocale;
-            }
-        } else {
-            return requestLocale;
-        }
-    }
-}
-```
-
-那假如我们现在想点击链接让我们的国际化资源生效，就需要让我们自己的Locale生效！
-
-我们去自己写一个自己的`LocaleResolver`，可以在链接上携带区域信息！
-
-修改一下前端页面的跳转连接：
-
-```
-<!-- 这里传入参数不需要使用 ？使用 （key=value）-->
-<a class="btn btn-sm" th:href="@{/index.html(l='zh_CN')}">中文</a>
-<a class="btn btn-sm" th:href="@{/index.html(l='en_US')}">English</a>
-```
-
-我们去写一个处理的组件类！
-
-```
-package nuc.ss.component;
-
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.LocaleResolver;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Locale;
-
-//可以在链接上携带区域信息
-public class MyLocaleResolver implements LocaleResolver {
-
- //解析请求
- @Override
- public Locale resolveLocale(HttpServletRequest request) {
-
-     String language = request.getParameter("l");
-     Locale locale = Locale.getDefault(); // 如果没有获取到就使用系统默认的
-     //如果请求链接不为空
-     if (!StringUtils.isEmpty(language)){
-         //分割请求参数
-         String[] split = language.split("_");
-         //国家，地区
-         locale = new Locale(split[0],split[1]);
-     }
-     return locale;
- }
-
- @Override
- public void setLocale(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Locale locale) {
-
- }
-}
-```
-
-为了让我们的区域化信息能够生效，我们需要再配置一下这个组件！在我们自己的`MvcConofig`下添加`bean`；
-
-```
-@Bean
-public LocaleResolver localeResolver(){
-    return new MyLocaleResolver();
-}
-```
-
-**我们重启项目，来访问一下，发现点击按钮可以实现成功切换！搞定收工！**
-
-![1595666066757](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595666066757.png)
-
-## 11.6 小结
-
-1. 首页配置：
-   - 注意点，所有页面的静态资源都需要使用thymeleaf接管
-   - url:@{}
-2. 页面国际化
-   - 我们需要配置i18n文件
-   - 我们如果需要在项目中进行按钮自动切换，我们需要定义一个组件`LocalResolver`
-   - 记得将自己写的组件配置到spring容器`@Bean`
-   - \#{}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
