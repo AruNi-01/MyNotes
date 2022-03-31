@@ -1138,18 +1138,27 @@ SpringBoot官方[配置文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.
 
 2. `@EnableAutoConfiguration` 作用：
 
-   - 利用EnableAutoConfigurationImportSelector给容器中导入一些组件
+   - 利用`EnableAutoConfigurationImportSelector`给容器中导入一些组件
 
-   - 可以查看selectImports()方法的内容,他返回了一个autoConfigurationEnty,来自`this.getAutoConfigurationEntry(autoConfigurationMetadata,annotationMetadata)`这个方法我们继续来跟踪：
+   - 可以查看上述类中的`selectImports()`方法的内容,他返回了一个`autoConfigurationEnty`，来自`this.getAutoConfigurationEntry(annotationMetadata)`这个方法，继续来跟踪：
 
-   - 这个方法有一个值：`List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);`叫做获取候选的配置 ，我们点击继续跟踪
+   - 这个方法有一个值：`List<String> configurations = getCandidateConfigurations(annotationMetadata, attributes);`叫做获取候选的配置 ，我们点击继续跟踪，进入这个类：
 
-     - `SpringFactoriesLoader.loadFactoryNames()`
-     - 扫描所有jar包类路径下`META-INF/spring.factories`
-     - 把扫描到的这些文件的内容包装成properties对象
-     - 从properties中获取到EnableAutoConfiguration.class类（类名）对应的值，然后把他们添加在容器中
+     ```java
+     protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+             List<String> configurations = SpringFactoriesLoader.loadFactoryNames(this.getSpringFactoriesLoaderFactoryClass(), this.getBeanClassLoader());
+             Assert.notEmpty(configurations, "No auto configuration classes found in META-INF/spring.factories. If you are using a custom packaging, make sure that file is correct.");
+             return configurations;
+         }
+     ```
 
-   - 在类路径下,`META-INF/spring.factories`里面配置的所有EnableAutoConfiguration的值加入到容器中：
+     
+
+     - `SpringFactoriesLoader.loadFactoryNames(......)`扫描所有jar包类路径`META-INF/spring.factories`
+     - 把扫描到的这些文件的内容包装成**properties对象**
+     - 从**properties对象**中获取到**EnableAutoConfiguration.class类（类名）**对应的值，然后把他们添加在容器中
+
+   - 在类路径下,`META-INF/spring.factories`里面配置的所有`EnableAutoConfiguration`的值加入到容器中：
 
      ```yaml
      # Initializers
@@ -1210,13 +1219,13 @@ SpringBoot官方[配置文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.
    @Configuration 
    
    //启动指定类的ConfigurationProperties功能；
-     //进入这个HttpProperties查看，将配置文件中对应的值和HttpProperties绑定起来；
-     //并把HttpProperties加入到ioc容器中
+   //进入这个HttpProperties查看，将配置文件中对应的值和HttpProperties绑定起来；
+   //并把HttpProperties加入到ioc容器中
    @EnableConfigurationProperties({HttpProperties.class}) 
    
    //Spring底层@Conditional注解
-     //根据不同的条件判断，如果满足指定的条件，整个配置类里面的配置就会生效；
-     //这里的意思就是判断当前应用是否是web应用，如果是，当前配置类生效
+   //根据不同的条件判断，如果满足指定的条件，整个配置类里面的配置就会生效；
+   //这里的意思就是判断当前应用是否是web应用，如果是，当前配置类生效
    @ConditionalOnWebApplication(
        type = Type.SERVLET
    )
@@ -1225,8 +1234,8 @@ SpringBoot官方[配置文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.
    @ConditionalOnClass({CharacterEncodingFilter.class})
    
    //判断配置文件中是否存在某个配置：spring.http.encoding.enabled；
-     //如果不存在，判断也是成立的
-     //即使我们配置文件中不配置pring.http.encoding.enabled=true，也是默认生效的；
+   //如果不存在，判断也是成立的
+   //即使我们配置文件中不配置pring.http.encoding.enabled=true，也是默认生效的；
    @ConditionalOnProperty(
        prefix = "spring.http.encoding",
        value = {"enabled"},
@@ -1263,7 +1272,7 @@ SpringBoot官方[配置文档](https://gitee.com/link?target=https%3A%2F%2Fdocs.
 
 - 一但这个配置类生效；这个配置类就会给容器中添加各种组件；
 
-- 这些组件的属性是从对应的properties类中获取的，这些类里面的每一个属性又是和配置文件绑定的；
+- 这些组件的属性是从对应的**properties类**中获取的，这些类里面的每一个属性又是**和配置文件绑定**的；
 
 - 所有在配置文件中能配置的属性都是在xxxxProperties类中封装着；
 
@@ -1336,7 +1345,9 @@ debug=true
 - **Positive matches:（自动配置类启用的：正匹配）**
 - **Negative matches:（没有启动，没有匹配成功的自动配置类：负匹配）**
 - **Unconditional classes: （没有条件的类）**
-- **【演示：查看输出的日志】**
+- **【演示：运行项目查看输出的日志】**
+
+
 
 # 7. 自定义Starter
 
@@ -1344,9 +1355,9 @@ debug=true
 
 ## 7.1 说明
 
-启动器模块是一个 空 jar 文件，仅提供辅助性依赖管理，这些依赖可能用于自动装配或者其他类库；
+启动器模块是一个空jar文件，仅提供辅助性依赖管理，这些依赖可能用于自动装配或者其他类库；
 
-**命名归约：**
+**命名归约**：
 
 官方命名：
 
@@ -1364,11 +1375,11 @@ debug=true
 
 2. 新建一个普通Maven模块：kuang-spring-boot-starter
 
-3. 新建一个Springboot模块：kuang-spring-boot-starter-autoconfigure
+3. 新建一个SpringBoot模块：kuang-spring-boot-starter-autoconfigure
 
 4. 点击apply即可，基本结构
 
-5. 在我们的 starter 中 导入  autoconfigure 的依赖！
+5. 在我们的starter中导入autoconfigure的依赖
 
    ```xml
    <!-- 启动器 -->
@@ -1382,7 +1393,7 @@ debug=true
    </dependencies>
    ```
 
-6. 将 autoconfigure 项目下多余的文件都删掉，Pom中只留下一个 starter，这是所有的启动器基本配置！
+6. 将autoconfigure项目下多余的文件都删掉，`pom.xml`中只留下一个starter，这是所有的启动器基本配置！
 
 7. 我们编写一个自己的服务
 
@@ -1440,7 +1451,7 @@ debug=true
    }
    ```
 
-9. 编写我们的自动配置类并注入bean，测试
+9. 编写自动配置类并注入bean，测试
 
    ```java
    package nuc.ss;
@@ -1523,406 +1534,1220 @@ debug=true
 
 
 
-# 8. 整合JDBC
+# 8. Web静态资源处理
 
-## 8.1 创建测试项目测试数据源
+## 8.1 简介
 
-1. 我去新建一个项目测试：springboot-data-jdbc ; 引入相应的模块！基础模块
+其实SpringBoot的东西用起来非常简单，因为SpringBoot最大的特点就是自动装配。
 
-   ![1595741635349](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC.assets/1595741635349.png)
+**使用SpringBoot的步骤：**
 
-2. 项目建好之后，发现自动帮我们导入了如下的启动器：
+1、创建一个SpringBoot应用，选择我们需要的模块，SpringBoot就会默认将我们的需要的模块自动配置好
 
-   ```
-   <dependency>
-       <groupId>org.springframework.boot</groupId>
-       <artifactId>spring-boot-starter-jdbc</artifactId>
-   </dependency>
-   <dependency>
-       <groupId>mysql</groupId>
-       <artifactId>mysql-connector-java</artifactId>
-       <scope>runtime</scope>
-   </dependency>
-   ```
+2、手动在配置文件中配置部分配置项目就可以运行起来了
 
-3. 编写yaml配置文件连接数据库；
+3、专注编写业务代码，不需要考虑以前那样一大堆的配置了
 
-   ```
-   spring:
-     datasource:
-       username: root
-       password: admin
-       #?serverTimezone=UTC解决时区的报错
-       url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
-       driver-class-name: com.mysql.cj.jdbc.Driver
-   ```
+要熟悉掌握开发，之前学习的自动配置的原理一定要搞明白
 
-4. 配置完这一些东西后，我们就可以直接去使用了，因为SpringBoot已经默认帮我们进行了自动配置；去测试类测试一下
+比如SpringBoot到底帮我们配置了什么？我们能不能修改？我们能修改哪些配置？我们能不能扩展？
 
-   ```
-   @SpringBootTest
-   class SpringbootDataJdbcApplicationTests {
-   
-       //DI注入数据源
-       @Autowired
-       DataSource dataSource;
-   
-       @Test
-       public void contextLoads() throws SQLException {
-           //看一下默认数据源
-           System.out.println(dataSource.getClass());
-           //获得连接
-           Connection connection = dataSource.getConnection();
-           System.out.println(connection);
-           //关闭连接
-           connection.close();
+- 向容器中自动配置组件 ：**Autoconfiguration**
+- 自动配置类，封装配置文件的内容：**Properties**
+
+## 8.2 静态资源处理
+
+### 8.2.1 静态资源映射规则
+
+**首先，我们搭建一个普通的SpringBoot项目，回顾一下HelloWorld程序**！
+
+写请求非常简单，那我们要引入我们前端资源，我们项目中有许多的静态资源，比如css，js等文件，这个SpringBoot怎么处理呢？
+
+如果我们是一个web应用，我们的main下会有一个webapp，我们以前都是将所有的页面导在这里面的，对吧！但是我们现在的pom呢，打包方式是为jar的方式，那么这种方式SpringBoot能不能来给我们写页面呢？当然是可以的，但是SpringBoot对于静态资源放置的位置，是有规定的！
+
+**静态资源映射规则**：
+
+- SpringBoot中，SpringMVC的web配置都在 `WebMvcAutoConfiguration` (spring.factories中) 这个配置类里面；
+
+- 我们可以去看看 `WebMvcAutoConfigurationAdapter` 中有很多配置方法；
+
+- 有一个方法：`addResourceHandlers` 添加资源处理
+
+  ```java
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+      if (!this.resourceProperties.isAddMappings()) {
+          // 已禁用默认资源处理
+          logger.debug("Default resource handling disabled");
+          return;
+      }
+      // 缓存控制
+      Duration cachePeriod = this.resourceProperties.getCache().getPeriod();
+      CacheControl cacheControl = this.resourceProperties.getCache().getCachecontrol().toHttpCacheControl();
+      // webjars 配置
+      if (!registry.hasMappingForPattern("/webjars/**")) {
+          customizeResourceHandlerRegistration(registry.addResourceHandler("/webjars/**")
+                                               .addResourceLocations("classpath:/META-INF/resources/webjars/")
+                                               .setCachePeriod(getSeconds(cachePeriod)).setCacheControl(cacheControl));
+      }
+      // 静态资源配置
+      String staticPathPattern = this.mvcProperties.getStaticPathPattern();
+      if (!registry.hasMappingForPattern(staticPathPattern)) {
+          customizeResourceHandlerRegistration(registry.addResourceHandler(staticPathPattern)
+                                               .addResourceLocations(getResourceLocations(this.resourceProperties.getStaticLocations()))
+                                               .setCachePeriod(getSeconds(cachePeriod)).setCacheControl(cacheControl));
+      }
+  }
+  ```
+
+  读一下源代码：比如所有的` /webjars/**` ， 都需要去 `classpath:/META-INF/resources/webjars/` 找对应的资源；
+
+> 什么是webjars
+
+Webjars本质就是以jar包的方式引入我们的静态资源 ， 我们以前要导入一个静态资源文件，直接导入即可。
+
+### 8.2.2 第一种静态资源映射规则
+
+使用SpringBoot需要使用Webjars，我们可以去搜索一下：
+
+网站：[https://www.webjars.org](https://gitee.com/link?target=https%3A%2F%2Fwww.webjars.org)
+
+要使用jQuery，我们只要要引入jQuery对应版本的pom依赖即可！
+
+```xml
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>jquery</artifactId>
+    <version>3.4.1</version>
+</dependency>
+```
+
+导入完毕，查看webjars目录结构，并访问`jquery.js`文件
+
+![image-20220331101345101](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331101345101.png)
+
+访问：只要是静态资源，SpringBoot就会去对应的路径寻找资源，我们这里访问：
+
+http://localhost:8080/webjars/jquery/3.4.1/jquery.js![image-20220331101506669](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331101506669.png)
+
+### 8.2.3 第二种静态资源映射规则
+
+1、那我们项目中要是使用自己的静态资源该怎么导入呢？我们看下一行代码；
+
+![image-20220331103730892](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331103730892.png)
+
+2、我们去找`staticPathPattern`发现第二种映射规则 ：/** , 访问当前的项目任意资源，它会去找 `resourceProperties` 这个类，我们可以点进去看一下分析：
+
+```java
+// 进入方法
+public String[] getStaticLocations() {
+    return this.staticLocations;
+}
+// 找到对应的值
+private String[] staticLocations = CLASSPATH_RESOURCE_LOCATIONS;
+// 找到路径
+private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { 
+    "classpath:/META-INF/resources/",
+  	"classpath:/resources/", 
+    "classpath:/static/", 
+    "classpath:/public/" 
+};
+```
+
+3、ResourceProperties 可以设置和我们静态资源有关的参数；这里面指向了它会去寻找资源的文件夹，即上面数组的内容。
+
+4、所以得出结论，以下四个目录存放的静态资源可以被我们识别：
+
+```java
+"classpath:/META-INF/resources/"
+"classpath:/resources/"
+"classpath:/static/"
+"classpath:/public/"
+```
+
+5、我们可以在resources根目录下新建对应的文件夹，都可以存放我们的静态文件；
+
+![1595517831392](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595517831392.png)
+
+6、比如我们访问 [http://localhost:8080/1.js](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2F1.js) , 他就会去这些文件夹中寻找对应的静态资源文件；
+
+![1595517869049](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595517869049.png)
+
+### 8.2.4 自定义静态资源路径
+
+我们也可以自己通过配置文件来指定一下，哪些文件夹是需要我们放静态资源文件的，在`application.properties`中配置；
+
+```java
+spring.resources.static-locations=classpath:/mystatic/,classpath:/mypath/
+```
+
+注意：一旦自定义了静态资源路径，原来的的就失效了，一般不会这么干，默认的就够用了！！！
+
+自定义资源路径后再访问刚刚的静态资源，发现访问不到了。
+
+![1595518276475](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86.assets/1595518276475.png)
+
+### 8.2.5 总结
+
+1. 在springboot，我们可以使用以下方式处理静态资源
+   - webjars：访问方式是`localhost:8080/webjars/xxxx`
+   - public，static，/**，resources：访问方式是`localhost:8080/xxxx`
+2. 优先级：resources > static（默认） > public
+
+## 8.3 首页处理
+
+静态资源文件夹说完后，我们继续向下看源码！可以看到一个欢迎页的映射，就是我们的首页！
+
+```java
+@Bean
+public WelcomePageHandlerMapping welcomePageHandlerMapping(ApplicationContext applicationContext,
+                                                           FormattingConversionService mvcConversionService, ResourceUrlProvider mvcResourceUrlProvider) {
+    WelcomePageHandlerMapping welcomePageHandlerMapping = new WelcomePageHandlerMapping(
+        new TemplateAvailabilityProviders(applicationContext), applicationContext, getWelcomePage(),
+        this.mvcProperties.getStaticPathPattern());
+    welcomePageHandlerMapping.setInterceptors(getInterceptors(mvcConversionService, mvcResourceUrlProvider));
+    welcomePageHandlerMapping.setCorsConfigurations(getCorsConfigurations());
+    return welcomePageHandlerMapping;
+}
+```
+
+点进去继续看
+
+```java
+private Optional<Resource> getWelcomePage() {
+    String[] locations = getResourceLocations(this.resourceProperties.getStaticLocations());
+    // ::是java8 中新引入的运算符
+    // Class::function的时候function是属于Class的，应该是静态方法。
+    // this::function的funtion是属于这个对象的。
+    // 简而言之，就是一种语法糖而已，是一种简写
+    return Arrays.stream(locations).map(this::getIndexHtml).filter(this::isReadable).findFirst();
+}
+// 欢迎页就是一个location下的的 index.html 而已
+private Resource getIndexHtml(String location) {
+    return this.resourceLoader.getResource(location + "index.html");
+}
+```
+
+截图说明：
+
+![image-20220331110603307](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331110603307.png)
+
+继续往下看，找到`getWelcomePage()`方法：
+
+![image-20220331111500520](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331111500520.png)
+
+
+
+- 欢迎页，静态资源文件夹下的所有 index.html 页面；被 /** 映射。
+
+- 比如我访问  [http://localhost:8080/](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2F) ，就会找静态资源文件夹下的 `index.html`
+
+- 新建一个 `index.html` ，在我们上面的3个目录中任意一个；然后访问测试  [http://localhost:8080/](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2F)  看结果：
+
+  ![image-20220331111620574](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331111620574.png)
+
+## 8.4 网站图标
+
+**欢迎页面(Welcome Page)**
+
+> Spring Boot supports both static and templated welcome pages. It first looks for an `index.html` file in the configured static content locations. If one is not found, it then looks for an `index template`. If either is found, it is automatically used as the welcome page of the application.
+
+**自定义应用图标（Custom Facicon）**
+
+> Spring Boot looks for a `favicon.ico` in the configured  static content locations and the root of the classpath (in that order).  If such a file is present, it is automatically used as the favicon of  the application.
+
+
+
+首页图标
+
+与其他静态资源一样，SpringBoot在配置的静态内容位置中查找 `favicon.ico`。如果存在这样的文件，它将自动用作应用程序的favicon。
+
+1. 自己放一个图标在静态资源目录static下
+
+   ![image-20220331113207608](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331113207608.png)
+
+2. 清除浏览器缓存`Ctrl + F5`！刷新网页，发现图标已经变成自己的了
+
+   ![image-20220331113225439](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331113225439.png)
+
+
+
+# 9. Thymeleaf模板引擎
+
+## 9.1 模板引擎
+
+- 前端交给我们的页面，是html页面。如果是我们以前开发，我们需要把他们转成jsp页面，jsp好处就是当我们查出一些数据转发到JSP页面以后，我们可以用jsp轻松实现数据的显示，及交互等。
+- jsp支持非常强大的功能，包括能写Java代码，但是呢，我们现在的这种情况，SpringBoot这个项目首先是以jar的方式，不是war，像第二，我们用的还是嵌入式的Tomcat，所以呢，**他现在默认是不支持jsp的**。
+- 那不支持jsp，如果我们直接用纯静态页面的方式，那给我们开发会带来非常大的麻烦，那怎么办呢？
+
+**SpringBoot推荐你可以来使用模板引擎：**
+
+模板引擎，我们其实大家听到很多，其实jsp就是一个模板引擎，还有用的比较多的freemarker，包括SpringBoot给我们推荐的Thymeleaf，模板引擎有非常多，但再多的模板引擎，他们的思想都是一样的，什么样一个思想呢我们来看一下这张图：
+
+![1595555521951](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot11%EF%BC%9AThymeleaf%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E.assets/1595555521951.png)
+
+模板引擎的作用就是我们来写一个页面模板，比如有些值呢，是动态的，我们写一些表达式。而这些值，从哪来呢，就是我们在后台封装一些数据。然后把这个模板和这个数据交给我们模板引擎，模板引擎按照我们这个数据帮你把这表达式解析、填充到我们指定的位置，然后把这个数据最终生成一个我们想要的内容给我们写出去，这就是我们这个模板引擎，不管是jsp还是其他模板引擎，都是这个思想。只不过呢，就是说不同模板引擎之间，他们可能这个语法有点不一样。其他的我就不介绍了，我主要来介绍一下SpringBoot给我们推荐的Thymeleaf模板引擎，这模板引擎呢，是一个高级语言的模板引擎，他的这个语法更简单。而且呢，功能更强大。
+
+我们呢，就来看一下这个模板引擎，那既然要看这个模板引擎。首先，我们来看SpringBoot里边怎么用。
+
+## 9.2 引入Thymeleaf
+
+怎么引入呢，对于SpringBoot来说，什么事情不都是一个start的事情嘛，我们去在项目中引入一下。给大家三个网址：
+
+- Thymeleaf 官网：[https://www.thymeleaf.org/](https://gitee.com/link?target=https%3A%2F%2Fwww.thymeleaf.org%2F)
+- Thymeleaf 在Github 的主页：[https://github.com/thymeleaf/thymeleaf](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Fthymeleaf%2Fthymeleaf)
+- Spring官方文档：找到我们对应的版本[https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#using-boot-starter ](https://gitee.com/link?target=https%3A%2F%2Fdocs.spring.io%2Fspring-boot%2Fdocs%2F2.2.5.RELEASE%2Freference%2Fhtmlsingle%2F%23using-boot-starter)
+
+找到对应的pom依赖：注意对应Spring的版本
+
+```xml
+<!--thymeleaf-->
+<dependency>
+    <groupId>org.thymeleaf</groupId>
+    <artifactId>thymeleaf-spring5</artifactId>
+</dependency>
+```
+
+Maven会自动下载jar包，我们可以去看下下载的东西；
+
+![image-20220331114615254](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331114615254.png)
+
+## 9.3 Thymeleaf分析
+
+前面呢，我们已经引入了Thymeleaf，那这个要怎么使用呢？
+
+我们首先得按照SpringBoot的自动配置原理看一下我们这个Thymeleaf的自动配置规则，在按照那个规则，我们进行使用。
+
+我们去找一下Thymeleaf的自动配置类：ctrl+n 全局搜索`ThymeleafProperties`
+
+```java
+@ConfigurationProperties(prefix = "spring.thymeleaf")
+public class ThymeleafProperties {
+
+	private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
+
+	public static final String DEFAULT_PREFIX = "classpath:/templates/";
+
+	public static final String DEFAULT_SUFFIX = ".html";
+
+	private boolean checkTemplate = true;
+
+	private boolean checkTemplateLocation = true;
+
+	private String prefix = DEFAULT_PREFIX;
+
+	private String suffix = DEFAULT_SUFFIX;
+
+	private String mode = "HTML";
+
+	private Charset encoding = DEFAULT_ENCODING;
+        
+        /.......
+```
+
+我们可以在其中看到默认的前缀和后缀！
+
+我们只需要把我们的html页面放在类路径下的templates下，thymeleaf就可以帮我们自动渲染了。
+
+使用thymeleaf什么都不需要配置，只需要将他放在指定的文件夹下即可！
+
+**测试**
+
+1. 编写一个TestController
+
+   ```java
+   @Controller
+   public class TestController {
+       @RequestMapping("/test")
+       public String test() {
+           //解析，自动加上前缀和后缀：classpath:/templates/leaf.html
+           return "leaf";
        }
    }
    ```
 
-结果：我们可以看到他默认给我们配置的数据源为 : class com.zaxxer.hikari.HikariDataSource ， 我们并没有手动配置
+2. 编写一个测试页面  test.html 放在 templates 目录下
 
-我们来全局搜索一下，找到数据源的所有自动配置都在 ：DataSourceAutoConfiguration文件：
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <title>Title</title>
+   </head>
+   <body>
+       <h1>Thymeleaf页面</h1>
+   </body>
+   </html>
+   ```
+
+3. 启动项目请求测试
+
+   ![image-20220331120015992](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331120015992.png)
+
+## 9.4 Thymeleaf语法
+
+要学习语法，还是参考官网文档最为准确，我们找到对应的版本看一下；
+
+Thymeleaf 官网：[https://www.thymeleaf.org/](https://gitee.com/link?target=https%3A%2F%2Fwww.thymeleaf.org%2F) 
+
+在线文档：[https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html](https://gitee.com/link?target=https%3A%2F%2Fwww.thymeleaf.org%2Fdoc%2Ftutorials%2F3.0%2Fusingthymeleaf.html)
+
+### 9.4.1 Thymeleaf入门
+
+**我们做个最简单的练习 ：我们需要查出一些数据，在页面中展示**
+
+1. 修改测试Controller请求，增加数据传输；
+
+   ```java
+   @Controller
+   public class TestController {
+       @RequestMapping("/test")
+       public String test(Model model) {
+           //存入数据
+           model.addAttribute("msg", "Hello, Thymeleaf");
+           //classpath:/templates/leaf.html
+           return "leaf";
+       }
+   }
+   ```
+
+2. 我们要使用thymeleaf，需要在html文件中导入命名空间的约束，方便提示。
+
+   我们可以去官方文档的#3中看一下命名空间拿来过来：
+
+   ```html
+   <html lang="en" xmlns:th="http://www.thymeleaf.org">
+   ```
+
+3. 我们去编写下前端页面
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="UTF-8">
+       <title>Thymeleaf</title>
+   </head>
+   <body>
+       <h1>Thymeleaf页面</h1>
+   
+       <!--所有的html标签都可以被thymeleaf接管，用th:标签名即可-->
+       <!--th:text就是将div中的内容设置为它指定的值，和之前学习的Vue一样-->
+       <div th:text="${msg}"></div>
+   </body>
+   </html>
+   ```
+
+4. 启动测试
+
+   ![image-20220331124537066](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331124537066.png)
+
+**OK，入门搞定，接下来认真研究一下Thymeleaf的使用语法！**
+
+### 9.4.2 Thymeleaf语法
+
+**1、我们可以使用任意的 th:attr 来替换Html中原生属性的值！**
+
+**2、我们能写哪些表达式呢？**
 
 ```
-@Import(
-    {Hikari.class, Tomcat.class, Dbcp2.class, Generic.class, DataSourceJmxConfiguration.class}
-)
-protected static class PooledDataSourceConfiguration {
-    protected PooledDataSourceConfiguration() {
+Simple expressions:（表达式语法）
+Variable Expressions: ${...}：获取变量值；OGNL；
+    1）、获取对象的属性、调用方法
+    2）、使用内置的基本对象：#18
+         #ctx : the context object.
+         #vars: the context variables.
+         #locale : the context locale.
+         #request : (only in Web Contexts) the HttpServletRequest object.
+         #response : (only in Web Contexts) the HttpServletResponse object.
+         #session : (only in Web Contexts) the HttpSession object.
+         #servletContext : (only in Web Contexts) the ServletContext object.
+
+    3）、内置的一些工具对象：
+　　　　　　#execInfo : information about the template being processed.
+　　　　　　#uris : methods for escaping parts of URLs/URIs
+　　　　　　#conversions : methods for executing the configured conversion service (if any).
+　　　　　　#dates : methods for java.util.Date objects: formatting, component extraction, etc.
+　　　　　　#calendars : analogous to #dates , but for java.util.Calendar objects.
+　　　　　　#numbers : methods for formatting numeric objects.
+　　　　　　#strings : methods for String objects: contains, startsWith, prepending/appending, etc.
+　　　　　　#objects : methods for objects in general.
+　　　　　　#bools : methods for boolean evaluation.
+　　　　　　#arrays : methods for arrays.
+　　　　　　#lists : methods for lists.
+　　　　　　#sets : methods for sets.
+　　　　　　#maps : methods for maps.
+　　　　　　#aggregates : methods for creating aggregates on arrays or collections.
+==================================================================================
+
+  Selection Variable Expressions: *{...}：选择表达式：和${}在功能上是一样；
+  Message Expressions: #{...}：获取国际化内容
+  Link URL Expressions: @{...}：定义URL；
+  Fragment Expressions: ~{...}：片段引用表达式
+
+Literals（字面量）
+      Text literals: 'one text' , 'Another one!' ,…
+      Number literals: 0 , 34 , 3.0 , 12.3 ,…
+      Boolean literals: true , false
+      Null literal: null
+      Literal tokens: one , sometext , main ,…
+      
+Text operations:（文本操作）
+    String concatenation: +
+    Literal substitutions: |The name is ${name}|
+    
+Arithmetic operations:（数学运算）
+    Binary operators: + , - , * , / , %
+    Minus sign (unary operator): -
+    
+Boolean operations:（布尔运算）
+    Binary operators: and , or
+    Boolean negation (unary operator): ! , not
+    
+Comparisons and equality:（比较运算）
+    Comparators: > , < , >= , <= ( gt , lt , ge , le )
+    Equality operators: == , != ( eq , ne )
+    
+Conditional operators:条件运算（三元运算符）
+    If-then: (if) ? (then)
+    If-then-else: (if) ? (then) : (else)
+    Default: (value) ?: (defaultvalue)
+    
+Special tokens:
+    No-Operation: _
+```
+
+
+
+
+
+**练习测试：**
+
+1、 我们编写一个Controller，放一些数据
+
+```java
+@Controller
+public class TestController {
+    @RequestMapping("/test")
+    public String test(Map<String, Object> map) {
+        //使用Map存数据，前端一样可以取出
+        map.put("msg", "<h1>Hello, Thymeleaf</h1>");
+        map.put("users", Arrays.asList("张三", "李四", "王五"));
+        return "leaf";
     }
 }
 ```
 
-这里导入的类都在 DataSourceConfiguration 配置类下，可以看出 Spring Boot 2.2.5  默认使用HikariDataSource 数据源，而以前版本，如 Spring Boot 1.5 默认使用  org.apache.tomcat.jdbc.pool.DataSource 作为数据源；
+2、测试页面取出数据
 
-**HikariDataSource 号称 Java WEB 当前速度最快的数据源，相比于传统的 C3P0 、DBCP、Tomcat jdbc 等连接池更加优秀；**
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf</title>
+</head>
+<body>
+    <h1>Thymeleaf语法</h1>
+    <hr>
+    <!--不转义-->
+    <div th:text="${msg}"></div>
+    <!--转义-->
+    <div th:utext="${msg}"></div>
 
-**可以使用 spring.datasource.type 指定自定义的数据源类型，值为 要使用的连接池实现的完全限定名。**
+    <hr>
+    <h1>遍历数据</h1>
+    <!--th:each每次遍历都会生成当前这个标签：官网#9-->
+    <h2 th:each="user:${users}" th:text="${user}"></h2>
+    <hr>
+    <!--行内写法：官网#12-->
+    <h2 th:each="user:${users}">[[ ${user} ]]</h2>
 
-关于数据源我们并不做介绍，有了数据库连接，显然就可以 CRUD 操作数据库了。但是我们需要先了解一个对象 JdbcTemplate
-
-## 8.2 JDBCTemplate
-
-1. 有了数据源(com.zaxxer.hikari.HikariDataSource)，然后可以拿到数据库连接(java.sql.Connection)，有了连接，就可以使用原生的 JDBC 语句来操作数据库；
-2. 即使不使用第三方第数据库操作框架，如 MyBatis等，Spring 本身也对原生的JDBC 做了轻量级的封装，即JdbcTemplate。
-3. 数据库操作的所有 CRUD 方法都在 JdbcTemplate 中。
-4. Spring Boot 不仅提供了默认的数据源，同时默认已经配置好了 JdbcTemplate 放在了容器中，程序员只需自己注入即可使用
-5. JdbcTemplate 的自动配置是依赖 org.springframework.boot.autoconfigure.jdbc 包下的 JdbcTemplateConfiguration 类
-
-**JdbcTemplate主要提供以下几类方法：**
-
-- execute方法：可以用于执行任何SQL语句，一般用于执行DDL语句；
-- update方法及batchUpdate方法：update方法用于执行新增、修改、删除等语句；batchUpdate方法用于执行批处理相关语句；
-- query方法及queryForXXX方法：用于执行查询相关语句；
-- call方法：用于执行存储过程、函数相关语句。
-
-## 8.3 测试
-
-编写一个Controller，注入 jdbcTemplate，编写测试方法进行访问测试；
-
-```
-package nuc.ss.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
-
-@RestController
-public class JDBCController {
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
-    // 查询数据库的所有信息
-    // 没有实体类，获取数据库的东西，怎么获取？ Map
-    @GetMapping("/userList")
-    public List<Map<String,Object>> userList() {
-        String sql = "select * from user";
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
-        return maps;
-    }
-
-    @GetMapping("/addUser")
-    public String addUser() {
-        String sql = "insert into mybatis.user(id, name, pwd) values(7,'小明','123456')";
-        jdbcTemplate.update(sql);
-        return "update-ok";
-    }
-
-    @GetMapping("/updateUser/{id}")
-    public String updateUser(@PathVariable("id") int id) {
-        String sql = "update mybatis.user set name  = ?,pwd = ? where id = " + id;
-        //封装
-        Object[] objects = new Object[2];
-
-        objects[0] = "小明2";
-        objects[1] = "aaaaaaa";
-
-        jdbcTemplate.update(sql,objects);
-        return "update-ok";
-    }
-
-    @GetMapping("/deleteUser/{id}")
-    public String deleteUser(@PathVariable("id") int id) {
-        String sql = "delete from mybatis.user where id = ?";
-        jdbcTemplate.update(sql,id);
-        return "update-ok";
-    }
-}
+</body>
+</html>
 ```
 
-测试请求，结果正常；
+3、启动项目测试
 
-到此，CURD的基本操作，使用 JDBC 就搞定了。
+![image-20220331130102379](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331130102379.png)
+
+**我们看完语法，很多样式，我们即使现在学习了，也会忘记，所以我们在学习过程中，需要使用什么，根据官方文档来查询，才是最重要的，要熟练使用官方文档！**
 
 
 
 
 
-# 9. 整合Druid
+# 10. MVC自动配置原理
 
-## 9.1 Druid简介
+## 10.1 官网阅读
 
-- Java程序很大一部分要操作数据库，为了提高性能操作数据库的时候，又不得不使用数据库连接池。
-- Druid 是阿里巴巴开源平台上一个数据库连接池实现，结合了 C3P0、DBCP 等 DB 池的优点，同时加入了日志监控。
-- Druid 可以很好的监控 DB 池连接和 SQL 的执行情况，天生就是针对监控而生的 DB 连接池。
-- Druid已经在阿里巴巴部署了超过600个应用，经过一年多生产环境大规模部署的严苛考验。
-- Spring Boot 2.0 以上默认使用 Hikari 数据源，可以说 Hikari 与 Driud 都是当前 Java Web 上最优秀的数据源，我们来重点介绍 Spring Boot 如何集成 Druid 数据源，如何实现数据库监控。
-- Github地址：[https://github.com/alibaba/druid/](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Falibaba%2Fdruid%2F)
+在进行项目编写前，我们还需要知道一个东西，就是SpringBoot对我们的SpringMVC还做了哪些配置，包括如何扩展，如何定制。
 
-**com.alibaba.druid.pool.DruidDataSource 基本配置参数如下：**
+只有把这些都搞清楚了，我们在之后使用才会更加得心应手。途径一：源码分析，途径二：官方文档！
 
-| **配置**                      | **缺省值**         | **说明**                                                     |
-| ----------------------------- | ------------------ | ------------------------------------------------------------ |
-| name                          |                    | 配置这个属性的意义在于，如果存在多个数据源，监控的时候可以通过名字来区分开来。 如果没有配置，将会生成一个名字，格式是：“DataSource-” + System.identityHashCode(this) |
-| jdbcUrl                       |                    | 连接数据库的url，不同数据库不一样。例如： mysql : jdbc:mysql://10.20.153.104:3306/druid2 oracle : jdbc:oracle:thin:@10.20.149.85:1521:ocnauto |
-| username                      |                    | 连接数据库的用户名                                           |
-| password                      |                    | 连接数据库的密码。如果你不希望密码直接写在配置文件中，可以使用ConfigFilter。详细看这里：[https://github.com/alibaba/druid/wiki/%E4%BD%BF%E7%94%A8ConfigFilter](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Falibaba%2Fdruid%2Fwiki%2F%E4%BD%BF%E7%94%A8ConfigFilter) |
-| driverClassName               | 根据url自动识别    | 这一项可配可不配，如果不配置druid会根据url自动识别dbType，然后选择相应的driverClassName(建议配置下) |
-| initialSize                   | 0                  | 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时 |
-| maxActive                     | 8                  | 最大连接池数量                                               |
-| maxIdle                       | 8                  | 已经不再使用，配置了也没效果                                 |
-| minIdle                       |                    | 最小连接池数量                                               |
-| maxWait                       |                    | 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。 |
-| poolPreparedStatements        | false              | 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。 |
-| maxOpenPreparedStatements     | -1                 | 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100 |
-| validationQuery               |                    | 用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用。 |
-| validationQueryTimeout        |                    | 单位:秒，检测连接是否有效的超时时间。底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法 |
-| testOnBorrow                  | true               | 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 |
-| testOnReturn                  | false              | 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 |
-| testWhileIdle                 | false              | 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效 |
-| timeBetweenEvictionRunsMillis | 1分钟 ( 1.0.14 )   | 有两个含义： 1) Destroy线程会检测连接的间隔时间 2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明 |
-| numTestsPerEvictionRun        |                    | 不再使用，一个DruidDataSource只支持一个EvictionRun           |
-| minEvictableIdleTimeMillis    | 30分钟 ( 1.0.14 )  | 连接保持空闲而不被驱逐的最长时间                             |
-| connectionInitSqls            |                    | 物理连接初始化的时候执行的sql                                |
-| exceptionSorter               | 根据dbType自动识别 | 当数据库抛出一些不可恢复的异常时，抛弃连接                   |
-| filters                       |                    | 属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有： 监控统计用的filter:stat日志用的filter:log4j防御sql注入的filter:wall |
-| proxyFilters                  |                    | 类型是List<com.alibaba.druid.filter.Filter>，如果同时配置了filters和proxyFilters，是组合关系，并非替换关系 |
+地址 ：[https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-auto-configuration](https://gitee.com/link?target=https%3A%2F%2Fdocs.spring.io%2Fspring-boot%2Fdocs%2F2.2.5.RELEASE%2Freference%2Fhtmlsingle%2F%23boot-features-spring-mvc-auto-configuration)
 
-## 9.2 配置数据源
+```text
+SpringMVC Auto-configuration
+// Spring Boot为Spring MVC提供了自动配置，它可以很好地与大多数应用程序一起工作。
+SpringBoot provides auto-configuration for Spring MVC that works well with most applications.
+// 自动配置在Spring默认设置的基础上添加了以下功能：
+The auto-configuration adds the following features on top of Spring’s defaults:
+// 包含视图解析器
+Inclusion of ContentNegotiatingViewResolver and BeanNameViewResolver beans.
+// 支持静态资源文件夹的路径，以及webjars
+Support for serving static resources, including support for WebJars 
+// 自动注册了Converter：
+// 转换器，这就是我们网页提交数据到后台自动封装成为对象的东西，比如把"1"字符串自动转换为int类型
+// Formatter：【格式化器，比如页面给我们了一个2019-8-10，它会给我们自动格式化为Date对象】
+Automatic registration of Converter, GenericConverter, and Formatter beans.
+// HttpMessageConverters
+// SpringMVC用来转换Http请求和响应的的，比如我们要把一个User对象转换为JSON字符串，可以去看官网文档解释；
+Support for HttpMessageConverters (covered later in this document).
+// 定义错误代码生成规则的
+Automatic registration of MessageCodesResolver (covered later in this document).
+// 首页定制
+Static index.html support.
+// 图标定制
+Custom Favicon support (covered later in this document).
+// 初始化数据绑定器：帮我们把请求数据绑定到JavaBean中！
+Automatic use of a ConfigurableWebBindingInitializer bean (covered later in this document).
 
-1. 添加上 Druid 数据源依赖，这个依赖可以从Maven仓库官网[Maven Respository](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Fcom.alibaba%2Fdruid)中获取
+/*
+如果您希望保留SpringBoot MVC功能，并且希望添加其他MVC配置（拦截器、格式化程序、视图控制器和其他功能），则可以添加自己
+的@configuration类，类型为webmvcconfiguer，但不添加@EnableWebMvc。如果希望提供
+RequestMappingHandlerMapping、RequestMappingHandlerAdapter或ExceptionHandlerExceptionResolver的自定义
+实例，则可以声明WebMVCregistrationAdapter实例来提供此类组件。
+*/
+If you want to keep Spring Boot MVC features and you want to add additional MVC configuration 
+(interceptors, formatters, view controllers, and other features), you can add your own 
+@Configuration class of type WebMvcConfigurer but without @EnableWebMvc. If you wish to provide 
+custom instances of RequestMappingHandlerMapping, RequestMappingHandlerAdapter, or 
+ExceptionHandlerExceptionResolver, you can declare a WebMvcRegistrationsAdapter instance to provide such components.
 
-   ```
-   <dependency>
-       <groupId>com.alibaba</groupId>
-       <artifactId>druid</artifactId>
-       <version>1.1.23</version>
-   </dependency>
-   ```
+// 如果您想完全控制Spring MVC，可以添加自己的@Configuration，并用@EnableWebMvc进行注释。
+If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc.
+```
 
-   ![image-20200727215315060](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727215315060.png)
+我们来仔细对照，看一下它怎么实现的，它告诉我们SpringBoot已经帮我们自动配置好了SpringMVC，然后自动配置了哪些东西呢？
 
-2. 切换数据源；之前已经说过 Spring Boot 2.0 以上默认使用 `com.zaxxer.hikari.HikariDataSource `数据源，但可以通过 `spring.datasource.type` 指定数据源。
+## 10.2 内容协商视图解析器
 
-   ```
-   spring:
-     datasource:
-       username: root
-       password: 123456
-       url: jdbc:mysql://localhost:3306/springboot?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
-       driver-class-name: com.mysql.cj.jdbc.Driver
-       type: com.alibaba.druid.pool.DruidDataSource # 自定义数据源
-   ```
+**ContentNegotiatingViewResolver**
 
-3. 数据源切换之后，在测试类中注入 DataSource，然后获取到它，输出一看便知是否成功切换；
+- 自动配置了ViewResolver，就是我们之前学习的SpringMVC的视图解析器；
 
-   ![image-20200727222109497](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727222109497.png)
+- 即根据方法的返回值取得视图对象（View），然后由视图对象决定如何渲染（转发，重定向）。
 
-4. 切换成功！既然切换成功，就可以设置数据源连接初始化大小、最大连接数、等待时间、最小连接数 等设置项；可以查看源码
+- 我们去看看这里的源码：我们找到 `WebMvcAutoConfiguration` ， 然后搜索`ContentNegotiatingViewResolver`。找到如下方法！
 
-   ```
-   spring:
-     datasource:
-       username: root
-       password: 123456
-       #?serverTimezone=UTC解决时区的报错
-       url: jdbc:mysql://localhost:3306/springboot?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
-       driver-class-name: com.mysql.cj.jdbc.Driver
-       type: com.alibaba.druid.pool.DruidDataSource
-   
-       #Spring Boot 默认是不注入这些属性值的，需要自己绑定
-       #druid 数据源专有配置
-       initialSize: 5
-       minIdle: 5
-       maxActive: 20
-       maxWait: 60000
-       timeBetweenEvictionRunsMillis: 60000
-       minEvictableIdleTimeMillis: 300000
-       validationQuery: SELECT 1 FROM DUAL
-       testWhileIdle: true
-       testOnBorrow: false
-       testOnReturn: false
-       poolPreparedStatements: true
-   
-       #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
-       #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
-       #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
-       filters: stat,wall,log4j
-       maxPoolPreparedStatementPerConnectionSize: 20
-       useGlobalDataSourceStat: true
-       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-   ```
+  ```java
+  @Bean
+  @ConditionalOnBean(ViewResolver.class)
+  @ConditionalOnMissingBean(name = "viewResolver", value = ContentNegotiatingViewResolver.class)
+  public ContentNegotiatingViewResolver viewResolver(BeanFactory beanFactory) {
+      ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+      resolver.setContentNegotiationManager(beanFactory.getBean(ContentNegotiationManager.class));
+      // ContentNegotiatingViewResolver使用所有其他视图解析器来定位视图，因此它应该具有较高的优先级
+      resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
+      return resolver;
+  }
+  ```
 
-5. 导入Log4j 的依赖
+- 我们可以点进这类看看！找到对应的解析视图的代码；
 
-   ```
-   <!-- https://mvnrepository.com/artifact/log4j/log4j -->
-   <dependency>
-       <groupId>log4j</groupId>
-       <artifactId>log4j</artifactId>
-       <version>1.2.17</version>
-   </dependency>
-   ```
+  ```java
+  @Nullable // 注解说明：@Nullable 即参数可为null
+  public View resolveViewName(String viewName, Locale locale) throws Exception {
+      RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
+      Assert.state(attrs instanceof ServletRequestAttributes, "No current ServletRequestAttributes");
+      List<MediaType> requestedMediaTypes = this.getMediaTypes(((ServletRequestAttributes)attrs).getRequest());
+      if (requestedMediaTypes != null) {
+          // 获取候选的视图对象
+          List<View> candidateViews = this.getCandidateViews(viewName, locale, requestedMediaTypes);
+          // 选择一个最适合的视图对象，然后把这个对象返回
+          View bestView = this.getBestView(candidateViews, requestedMediaTypes, attrs);
+          if (bestView != null) {
+              return bestView;
+          }
+      }
+      // .....
+  }
+  ```
 
-6. 现在需要程序员自己为 DruidDataSource 绑定全局配置文件中的参数，再添加到容器中，而不再使用 Spring Boot 的自动生成了；我们需要 自己添加 DruidDataSource 组件到容器中，并绑定属性；
+- 我们继续点进去看，他是怎么获得候选的视图的呢？
 
-   ```
-   package nuc.ss.config;
-   
-   import com.alibaba.druid.pool.DruidDataSource;
-   import org.springframework.boot.context.properties.ConfigurationProperties;
-   import org.springframework.context.annotation.Bean;
-   import org.springframework.context.annotation.Configuration;
-   
-   import javax.sql.DataSource;
-   
+  getCandidateViews中看到他是把所有的视图解析器拿来，进行while循环，挨个解析！
+
+  ```java
+  Iterator var5 = this.viewResolvers.iterator();
+  ```
+
+  所以得出结论：**ContentNegotiatingViewResolver 这个视图解析器就是用来组合所有的视图解析器的**
+
+- 我们再去研究下他的组合逻辑，看到有个属性viewResolvers，看看它是在哪里进行赋值的！
+
+  ```java
+  protected void initServletContext(ServletContext servletContext) {
+      // 这里它是从beanFactory工具中获取容器中的所有视图解析器
+      // ViewRescolver.class 把所有的视图解析器来组合的
+      Collection<ViewResolver> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(this.obtainApplicationContext(), ViewResolver.class).values();
+      ViewResolver viewResolver;
+      if (this.viewResolvers == null) {
+          this.viewResolvers = new ArrayList(matchingBeans.size());
+      }
+      // ...............
+  }
+  ```
+
+- 既然它是在容器中去找视图解析器，我们是否可以猜想，我们就可以去实现一个视图解析器了呢？
+
+**自定义视图解析器**
+
+我们可以自己给容器中去添加一个视图解析器；这个类就会帮我们自动的将它组合进来；**我们去实现一下**
+
+1. 我们在我们的主程序中去写一个视图解析器来试试；
+
+   ```java
+   //扩展 springmvc      DispatchServlet
    @Configuration
-   public class DruidConfig {
+   public class MyMvcConfig implements WebMvcConfigurer {
+       // public interface ViewResolver 实现了视图解析器接口的类，我们就可以吧它看做视图解析器
    
-       /*
-          将自定义的 Druid数据源添加到容器中，不再让 Spring Boot 自动创建
-          绑定全局配置文件中的 druid 数据源属性到 com.alibaba.druid.pool.DruidDataSource从而让它们生效
-          @ConfigurationProperties(prefix = "spring.datasource")：作用就是将 全局配置文件中
-          前缀为 spring.datasource的属性值注入到 com.alibaba.druid.pool.DruidDataSource 的同名参数中
-        */
-       @ConfigurationProperties(prefix = "spring.datasource")
        @Bean
-       public DataSource druidDataSource() {
-           return new DruidDataSource();
+       public ViewResolver myViewResolver() {
+           return new MyViewResolver();
+       }
+       // 自定义了一个自己的视图解析器
+       public static class MyViewResolver implements ViewResolver {
+   
+           @Override
+           public View resolveViewName(String s, Locale locale) throws Exception {
+   
+               return null;
+           }
+       }
+   }
+   ```
+
+2. 我们给 DispatcherServlet 中的 doDispatch方法 加个断点进行调试一下，因为所有的请求都会走到这个方法中
+
+   ![1595564720595](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564720595.png)
+
+3. 我们启动我们的项目，然后随便访问一个页面，看一下Debug信息；
+
+   找到this(就是DispatcherServlet)
+
+   ![1595564823239](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564823239.png)
+
+   找到视图解析器（viewResolvers），我们看到我们自己定义的就在这里了；
+
+   ![1595564942873](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595564942873.png)
+
+- 所以说，我们如果想要使用自己定制化的东西，我们只需要给容器中添加这个组件就好了！剩下的事情SpringBoot就会帮我们做了！
+
+## 10.3 转换器和格式化器
+
+- 在`WebMvcAutoConfiguration`中找到格式化转换器：
+
+  ```java
+  @Bean
+  @Override
+  public FormattingConversionService mvcConversionService() {
+      // 拿到配置文件中的格式化规则
+      WebConversionService conversionService = 
+          new WebConversionService(this.mvcProperties.getDateFormat());
+      addFormatters(conversionService);
+      return conversionService;
+  }
+  ```
+
+- 点击去：可以看到在我们的Properties文件中，我们可以进行自动配置它！
+
+  - 2.2.x之前版本
+
+    ```java
+    public String getDateFormat() {
+        return this.dateFormat;
+    }
+    
+    /**
+    * Date format to use. For instance, `dd/MM/yyyy`. 默认的
+     */
+    private String dateFormat;
+    ```
+
+  - 2.2.x之后的版本
+
+  ```java
+  public String getDateFormat() {
+      return this.format.getDate();
+  }
+  
+  public String getDate() {
+      return this.date;
+  }
+  
+  /**
+  	* Date format to use, for example `dd/MM/yyyy`.默认的
+  */
+  private String date;
+  ```
+
+- 如果配置了自己的格式化方式，就会注册到Bean中生效，我们可以在配置文件中配置日期格式化的规则：
+
+  - 2.2.x版本之前的
+
+    配置文件
+
+    ```properties
+    # 配置文件
+    spring.nvc.date-format=
+    ```
+
+    源码
+
+    ```java
+    @Deprecated
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+    ```
+
+  - 2.2.x版本之后的
+
+    配置文件
+
+    ```properties
+    spring.nvc.date=
+    ```
+
+    源码
+
+    ```java
+    @Deprecated
+    public void setDateFormat(String dateFormat) {
+        this.format.setDate(dateFormat);
+    }
+    
+    public void setDate(String date) {
+        this.date = date;
+    }
+    ```
+
+其余的就不一一举例了，大家可以下去多研究探讨即可！
+
+## 10.4 修改SpringBoot的默认配置
+
+- 这么多的自动配置，原理都是一样的，通过这个WebMVC的自动配置原理分析，我们要学会一种学习方式，通过源码探究，得出结论；这个结论一定是属于自己的，而且一通百通。
+
+- SpringBoot的底层，大量用到了这些设计细节思想，所以，没事需要多阅读源码！得出结论；
+
+- SpringBoot在自动配置很多组件的时候，先看容器中有没有用户自己配置的（如果用户自己配置@bean），如果有就用用户配置的，如果没有就用自动配置的；
+
+- 如果有些组件可以存在多个，比如我们的视图解析器，就将用户配置的和自己默认的组合起来！
+
+- **扩展使用SpringMVC**  官方文档如下：
+
+  If you want to keep Spring Boot MVC features and you want to add  additional MVC configuration (interceptors, formatters, view  controllers, and other features), you can add your own `@Configuration` class of type `WebMvcConfigurer` **but without** `@EnableWebMvc`. If you wish to provide custom instances of `RequestMappingHandlerMapping`, `RequestMappingHandlerAdapter`, or `ExceptionHandlerExceptionResolver`, you can declare a WebMvcRegistrationsAdapter instance to provide such components.
+
+- 我们要做的就是编写一个`@Configuration`注解类，并且类型要为`WebMvcConfigurer`，还不能标注`@EnableWebMvc`注解；我们去自己写一个；
+
+- 我们新建一个包叫config，写一个类MyMvcConfig；
+
+  ```java
+  // 如果我们要扩展springmvc，官方建议我们这样去做@Configuration
+  //因为类型要求为WebMvcConfigurer，所以我们实现其接口
+  //扩展 springmvc      DispatchServlet
+  //@EnableWebMvc		 //这个注解就是导入了一个类，DelegatingWebMvcConfiguration，从容器中获取所有的webMvcConfig
+  
+  @Configuration
+  public class MyMvcConfig implements WebMvcConfigurer {
+  
+      @Override
+      public void addViewControllers(ViewControllerRegistry registry) {
+          // 浏览器发送/test ， 就会跳转到test页面；
+          registry.addViewController("/test2").setViewName("test");
+      }
+  }
+  ```
+
+- 我们去浏览器访问一下：
+
+  ![1595584684727](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595584684727.png)
+
+**确实也跳转过来了！所以说，我们要扩展SpringMVC，官方就推荐我们这么去使用，既保SpringBoot留所有的自动配置，也能用我们扩展的配置！**
+
+我们可以去分析一下原理：
+
+1. `WebMvcAutoConfiguration` 是 SpringMVC的自动配置类，里面有一个类`WebMvcAutoConfigurationAdapter`
+
+2. 这个类上有一个注解，在做其他自动配置时会导入：`@Import(EnableWebMvcConfiguration.class)`
+
+3. 我们点进`EnableWebMvcConfiguration`这个类看一下，它继承了一个父类：`DelegatingWebMvcConfiguration`
+
+   这个父类中有这样一段代码：
+
+   ```java
+   public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
+       private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
+       
+     // 从容器中获取所有的webmvcConfigurer
+       @Autowired(required = false)
+       public void setConfigurers(List<WebMvcConfigurer> configurers) {
+           if (!CollectionUtils.isEmpty(configurers)) {
+               this.configurers.addWebMvcConfigurers(configurers);
+           }
+       }
+   }
+   ```
+
+4. 我们可以在这个类中去寻找一个我们刚才设置的viewController当做参考，发现它调用了一个
+
+   ```java
+   protected void addViewControllers(ViewControllerRegistry registry) {
+       this.configurers.addViewControllers(registry);
+   }
+   ```
+
+5. 我们点进去看一下
+
+   ```java
+   public void addViewControllers(ViewControllerRegistry registry) {
+       Iterator var2 = this.delegates.iterator();
+   
+       while(var2.hasNext()) {
+           // 将所有的WebMvcConfigurer相关配置来一起调用！包括我们自己配置的和Spring给我们配置的
+           WebMvcConfigurer delegate = (WebMvcConfigurer)var2.next();
+           delegate.addViewControllers(registry);
        }
    
    }
    ```
 
-7. 去测试类中测试一下；看是否成功！
+**得出结论**：所有的`WebMvcConfiguration`都会被作用，不止Spring自己的配置类，我们自己的配置类当然也会被调用；
 
-   ```
-   @SpringBootTest
-   class SpringbootDataJdbcApplicationTests {
-   
-       //DI注入数据源
-       @Autowired
-       DataSource dataSource;
-   
-       @Test
-       public void contextLoads() throws SQLException {
-           //看一下默认数据源
-           System.out.println(dataSource.getClass());
-           //获得连接
-           Connection connection =   dataSource.getConnection();
-           System.out.println(connection);
-   
-           DruidDataSource druidDataSource = (DruidDataSource) dataSource;
-           System.out.println("druidDataSource 数据源最大连接数：" + druidDataSource.getMaxActive());
-           System.out.println("druidDataSource 数据源初始化连接数：" + druidDataSource.getInitialSize());
-   
-           //关闭连接
-           connection.close();
-       }
+## 10.5 全面接管SpringMVC
+
+- 官方文档：
+
+  ```text
+  If you want to take complete control of Spring MVC
+  you can add your own @Configuration annotated with @EnableWebMvc.
+  ```
+
+- 全面接管即：SpringBoot对SpringMVC的自动配置不需要了，所有都是我们自己去配置！
+
+- 只需在我们的配置类中要加一个`@EnableWebMvc`。
+
+- 我们看下如果我们全面接管了SpringMVC了，我们之前SpringBoot给我们配置的静态资源映射一定会无效，我们可以去测试一下；
+
+- 不加注解之前，访问首页：
+
+  ![1595587645715](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595587645715.png)
+
+- 给配置类加上注解：`@EnableWebMvc`
+
+  我们发现所有的SpringMVC自动配置都失效了！回归到了最初的样子；
+
+  ![1595587533039](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot12%EF%BC%9AMVC%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86.assets/1595587533039.png)
+
+**当然，我们开发中，不推荐使用全面接管SpringMVC**
+
+思考问题？为什么加了一个注解，自动配置就失效了！我们看下源码：
+
+1. 这里发现它是导入了一个类，我们可以继续进去看
+
+   ```java
+   @Import({DelegatingWebMvcConfiguration.class})
+   public @interface EnableWebMvc {
    }
    ```
 
-8. 输出结果 ：可见配置参数已经生效！
+2. 它继承了一个父类 WebMvcConfigurationSupport
 
-   ![image-20200727233746228](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233746228.png)
+   ```java
+   public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
+     // ......
+   }
+   ```
 
-## 9.3 配置Druid数据源监控
+3. 我们来回顾一下Webmvc自动配置类
 
-Druid 数据源具有监控的功能，并提供了一个 web 界面方便用户查看，类似安装 路由器 时，人家也提供了一个默认的 web 页面。
+   ```java
+   @Configuration(proxyBeanMethods = false)
+   @ConditionalOnWebApplication(type = Type.SERVLET)
+   @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
+   // 这个注解的意思就是：容器中没有这个组件的时候，这个自动配置类才生效
+   @ConditionalOnMissingBean(WebMvcConfigurationSupport.class)
+   @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+   @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
+       ValidationAutoConfiguration.class })
+   public class WebMvcAutoConfiguration {
+       
+   }
+   ```
 
-所以第一步需要设置 Druid 的后台管理页面，比如 登录账号、密码 等；配置后台管理；
+**总结：**
+
+- `@EnableWebMvc`将`WebMvcConfigurationSupport`组件导入进来了；
+- 导入的`WebMvcConfigurationSupport`只是SpringMVC最基本的功能！
+- **在springboot中，有非常多的xxxxconfigure帮助我们进行扩展配置，只要看到这个东西就要注意了**
+
+
+
+# 11. 页面国际化
+
+有的时候，我们的网站会去涉及中英文甚至多语言的切换，这时候我们就需要学习国际化了！
+
+## 11.1 准备工作
+
+先在IDEA中统一设置properties的编码问题！
+
+![1595594403624](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595594403624.png)
+
+编写国际化配置文件，抽取页面需要显示的国际化页面消息。我们可以去登录页面查看一下，哪些内容我们需要编写国际化的配置！
+
+## 11.2 配置文件编写
+
+1. 我们在resources资源文件下新建一个i18n（internationalization缩写）目录，存放国际化配置文件
+
+2. 建立一个`login.properties`文件，还有一个`login_zh_CN.properties`；发现IDEA自动识别了我们要做国际化操作；文件夹变了！
+
+   ![1595604595071](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595604595071.png)
+
+3. 我们可以在这上面去新建一个文件；
+
+   ![1595604664699](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595604664699.png)
+
+   弹出如下页面：我们再添加一个英文的；
+
+   ![1595605422294](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605422294.png)
+
+   这样就快捷多了！
+
+   ![1595605442883](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605442883.png)
+
+4. **接下来，我们就来编写配置，我们可以看到idea下面有另外一个视图；**
+
+   ![1595605469344](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605469344.png)
+
+   这个视图我们点击 + 号就可以直接添加属性了；我们新建一个login.tip，可以看到边上有三个文件框可以输入
+
+   ![1595605530046](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605530046.png)
+
+   然后依次添加其他页面内容即可！
+
+   ![1595605552329](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595605552329.png)
+
+   然后去查看我们的配置文件；
+
+   login.properties ：
+
+   默认
+
+   ```
+   login.btn=登录
+   login.password=密码
+   login.remember=记住我
+   login.tip=请登录
+   login.username=用户名
+   ```
+
+   英文：
+
+   ```
+   login.btn=Sign in
+   login.password=Password
+   login.remember=Remember me
+   login.tip=Please sign in
+   login.username=Username
+   ```
+
+   中文：
+
+   ```
+   login.btn=登录
+   login.password=密码
+   login.remember=记住我
+   login.tip=请登录
+   login.username=用户名
+   ```
+
+   OK，配置文件步骤搞定！
+
+## 11.3 配置文件生效探究
+
+我们去看一下SpringBoot对国际化的自动配置！这里又涉及到一个类：`MessageSourceAutoConfiguration`
+
+里面有一个方法，这里发现SpringBoot已经自动配置好了管理我们国际化资源文件的组件 `ResourceBundleMessageSource`；
 
 ```
-//配置 Druid 监控管理后台的Servlet；
-//内置 Servlet 容器时没有web.xml文件，所以使用 Spring Boot 的注册 Servlet 方式
+// 获取 properties 传递过来的值进行判断
 @Bean
-public ServletRegistrationBean statViewServlet() {
-    ServletRegistrationBean bean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
-
-    // 这些参数可以在 com.alibaba.druid.support.http.StatViewServlet 
-    // 的父类 com.alibaba.druid.support.http.ResourceServlet 中找到
-    Map<String, String> initParams = new HashMap<>();
-    initParams.put("loginUsername", "root"); //后台管理界面的登录账号
-    initParams.put("loginPassword", "admin"); //后台管理界面的登录密码
-
-    //后台允许谁可以访问
-    //initParams.put("allow", "localhost")：表示只有本机可以访问
-    //initParams.put("allow", "")：为空或者为null时，表示允许所有访问
-    initParams.put("allow", "");
-    //deny：Druid 后台拒绝谁访问
-    //initParams.put("kuangshen", "192.168.1.20");表示禁止此ip访问
-
-    //设置初始化参数
-    bean.setInitParameters(initParams);
-    return bean;
+public MessageSource messageSource(MessageSourceProperties properties) {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    if (StringUtils.hasText(properties.getBasename())) {
+        // 设置国际化文件的基础名（去掉语言国家代码的）
+        messageSource.setBasenames(
+            StringUtils.commaDelimitedListToStringArray(
+                                       StringUtils.trimAllWhitespace(properties.getBasename())));
+    }
+    if (properties.getEncoding() != null) {
+        messageSource.setDefaultEncoding(properties.getEncoding().name());
+    }
+    messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+    Duration cacheDuration = properties.getCacheDuration();
+    if (cacheDuration != null) {
+        messageSource.setCacheMillis(cacheDuration.toMillis());
+    }
+    messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+    messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
+    return messageSource;
 }
 ```
 
-配置完毕后，我们可以选择访问 ：[http://localhost:8080/druid/login.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdruid%2Flogin.html)
-
-![image-20200727233409312](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233409312.png)
-
-进入之后
-
-![image-20200727233436583](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233436583.png)
-
-**配置 Druid web 监控 filter 过滤器**
+我们真实 的情况是放在了i18n目录下，所以我们要去配置这个messages的路径；
 
 ```
-//配置 Druid 监控 之  web 监控的 filter
-//WebStatFilter：用于配置Web和Druid数据源之间的管理关联监控统计
+spring.messages.basename=i18n.login
+```
+
+## 11.4 配置页面国际化值
+
+去页面获取国际化的值，查看Thymeleaf的文档，找到message取值操作为：#{...}。我们去页面测试下：
+
+IDEA还有提示，非常智能的！
+
+![1595606566975](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595606566975.png)
+
+我们可以去启动项目，访问一下，发现已经自动识别为中文的了！
+
+![1595606666498](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595606666498.png)
+
+**但是我们想要更好！可以根据按钮自动切换中文英文！**
+
+## 11.5 配置国际化解析
+
+在Spring中有一个国际化的Locale （区域信息对象）；里面有一个叫做`LocaleResolver `（获取区域信息对象）的解析器！
+
+我们去我们webmvc自动配置文件，寻找一下！看到SpringBoot默认配置：
+
+```
 @Bean
-public FilterRegistrationBean webStatFilter() {
-    FilterRegistrationBean bean = new FilterRegistrationBean();
-    bean.setFilter(new WebStatFilter());
-
-    //exclusions：设置哪些请求进行过滤排除掉，从而不进行统计
-    Map<String, String> initParams = new HashMap<>();
-    initParams.put("exclusions", "*.js,*.css,/druid/*,/jdbc/*");
-    bean.setInitParameters(initParams);
-
-    //"/*" 表示过滤所有请求
-    bean.setUrlPatterns(Arrays.asList("/*"));
-    return bean;
+@ConditionalOnMissingBean
+@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
+public LocaleResolver localeResolver() {
+    // 容器中没有就自己配，有的话就用用户配置的
+    if (this.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
+        return new FixedLocaleResolver(this.mvcProperties.getLocale());
+    }
+    // 接收头国际化分解
+    AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+    localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
+    return localeResolver;
 }
 ```
+
+`AcceptHeaderLocaleResolver` 这个类中有一个方法
+
+```
+public Locale resolveLocale(HttpServletRequest request) {
+    Locale defaultLocale = this.getDefaultLocale();
+    // 默认的就是根据请求头带来的区域信息获取Locale进行国际化
+    if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
+        return defaultLocale;
+    } else {
+        Locale requestLocale = request.getLocale();
+        List<Locale> supportedLocales = this.getSupportedLocales();
+        if (!supportedLocales.isEmpty() && !supportedLocales.contains(requestLocale)) {
+            Locale supportedLocale = this.findSupportedLocale(request, supportedLocales);
+            if (supportedLocale != null) {
+                return supportedLocale;
+            } else {
+                return defaultLocale != null ? defaultLocale : requestLocale;
+            }
+        } else {
+            return requestLocale;
+        }
+    }
+}
+```
+
+那假如我们现在想点击链接让我们的国际化资源生效，就需要让我们自己的Locale生效！
+
+我们去自己写一个自己的`LocaleResolver`，可以在链接上携带区域信息！
+
+修改一下前端页面的跳转连接：
+
+```
+<!-- 这里传入参数不需要使用 ？使用 （key=value）-->
+<a class="btn btn-sm" th:href="@{/index.html(l='zh_CN')}">中文</a>
+<a class="btn btn-sm" th:href="@{/index.html(l='en_US')}">English</a>
+```
+
+我们去写一个处理的组件类！
+
+```
+package nuc.ss.component;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.LocaleResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+
+//可以在链接上携带区域信息
+public class MyLocaleResolver implements LocaleResolver {
+
+ //解析请求
+ @Override
+ public Locale resolveLocale(HttpServletRequest request) {
+
+     String language = request.getParameter("l");
+     Locale locale = Locale.getDefault(); // 如果没有获取到就使用系统默认的
+     //如果请求链接不为空
+     if (!StringUtils.isEmpty(language)){
+         //分割请求参数
+         String[] split = language.split("_");
+         //国家，地区
+         locale = new Locale(split[0],split[1]);
+     }
+     return locale;
+ }
+
+ @Override
+ public void setLocale(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Locale locale) {
+
+ }
+}
+```
+
+为了让我们的区域化信息能够生效，我们需要再配置一下这个组件！在我们自己的`MvcConofig`下添加`bean`；
+
+```
+@Bean
+public LocaleResolver localeResolver(){
+    return new MyLocaleResolver();
+}
+```
+
+**我们重启项目，来访问一下，发现点击按钮可以实现成功切换！搞定收工！**
+
+![1595666066757](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96.assets/1595666066757.png)
+
+## 11.6 小结
+
+1. 首页配置：
+   - 注意点，所有页面的静态资源都需要使用thymeleaf接管
+   - url:@{}
+2. 页面国际化
+   - 我们需要配置i18n文件
+   - 我们如果需要在项目中进行按钮自动切换，我们需要定义一个组件`LocalResolver`
+   - 记得将自己写的组件配置到spring容器`@Bean`
+   - \#{}
 
 
 
