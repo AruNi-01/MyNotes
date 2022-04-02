@@ -955,7 +955,7 @@ public LocaleResolver localeResolver(){
 
 1. 我去新建一个项目测试：springboot-data-jdbc ; 引入相应的模块！基础模块
 
-   ![1595741635349](https://gitee.com/lzh_gitee/SpringBoot/raw/master/SpringBoot%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC.assets/1595741635349.png)
+   ![image-20220402124510910](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402124510910.png)
 
 2. 项目建好之后，发现自动帮我们导入了如下的启动器：
 
@@ -1024,9 +1024,9 @@ protected static class PooledDataSourceConfiguration {
 
 **HikariDataSource号称JavaWeb当前速度最快的数据源，相比于传统的 C3P0 、DBCP、Tomcat jdbc 等连接池更加优秀**；
 
-**可以使用 spring.datasource.type 指定自定义的数据源类型，值为要使用的连接池实现的完全限定名**。
+**可以使用 `spring.datasource.type` 指定自定义的数据源类型，只为要使用的连接池实现的完全限定名**。
 
-关于数据源我们并不做介绍，有了数据库连接，显然就可以 CRUD 操作数据库了。但是我们需要先了解一个对象 JdbcTemplate
+有了数据库连接，显然就可以 CRUD 操作数据库了。但是我们需要先了解一个对象 JdbcTemplate
 
 ## 12.2 JDBCTemplate
 
@@ -1048,17 +1048,6 @@ protected static class PooledDataSourceConfiguration {
 编写一个Controller，注入 jdbcTemplate，编写测试方法进行访问测试；
 
 ```java
-package nuc.ss.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
-
 @RestController
 public class JDBCController {
 
@@ -1155,19 +1144,19 @@ public class JDBCController {
 
 1. 添加上 Druid 数据源依赖，这个依赖可以从Maven仓库官网[Maven Respository](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Fcom.alibaba%2Fdruid)中获取
 
-   ```
+   ```xml
    <dependency>
-       <groupId>com.alibaba</groupId>
-       <artifactId>druid</artifactId>
-       <version>1.1.23</version>
+           <groupId>com.alibaba</groupId>
+           <artifactId>druid</artifactId>
+           <version>1.0.9</version>
    </dependency>
    ```
 
-   ![image-20200727215315060](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727215315060.png)
+   
 
 2. 切换数据源；之前已经说过 Spring Boot 2.0 以上默认使用 `com.zaxxer.hikari.HikariDataSource `数据源，但可以通过 `spring.datasource.type` 指定数据源。
 
-   ```
+   ```yaml
    spring:
      datasource:
        username: root
@@ -1177,13 +1166,13 @@ public class JDBCController {
        type: com.alibaba.druid.pool.DruidDataSource # 自定义数据源
    ```
 
-3. 数据源切换之后，在测试类中注入 DataSource，然后获取到它，输出一看便知是否成功切换；
+3. 数据源切换之后，在测试类中注入DataSource，然后获取到它，输出一看便知是否成功切换；
 
-   ![image-20200727222109497](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727222109497.png)
+   ![image-20220402130148743](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402130148743.png)
 
 4. 切换成功！既然切换成功，就可以设置数据源连接初始化大小、最大连接数、等待时间、最小连接数 等设置项；可以查看源码
 
-   ```
+   ```yaml
    spring:
      datasource:
        username: root
@@ -1218,7 +1207,7 @@ public class JDBCController {
 
 5. 导入Log4j 的依赖
 
-   ```
+   ```xml
    <!-- https://mvnrepository.com/artifact/log4j/log4j -->
    <dependency>
        <groupId>log4j</groupId>
@@ -1227,39 +1216,29 @@ public class JDBCController {
    </dependency>
    ```
 
-6. 现在需要程序员自己为 DruidDataSource 绑定全局配置文件中的参数，再添加到容器中，而不再使用 Spring Boot 的自动生成了；我们需要 自己添加 DruidDataSource 组件到容器中，并绑定属性；
+6. 现在需要程序员自己为 DruidDataSource 绑定全局配置文件中的参数，再添加到容器中，而不再使用 SpringBoot 的自动生成了；我们需要 自己添加 DruidDataSource 组件到容器中，并绑定属性；
 
-   ```
-   package nuc.ss.config;
-   
-   import com.alibaba.druid.pool.DruidDataSource;
-   import org.springframework.boot.context.properties.ConfigurationProperties;
-   import org.springframework.context.annotation.Bean;
-   import org.springframework.context.annotation.Configuration;
-   
-   import javax.sql.DataSource;
-   
-   @Configuration
+   ```java
+   @Controller
    public class DruidConfig {
-   
+       
        /*
-          将自定义的 Druid数据源添加到容器中，不再让 Spring Boot 自动创建
-          绑定全局配置文件中的 druid 数据源属性到 com.alibaba.druid.pool.DruidDataSource从而让它们生效
-          @ConfigurationProperties(prefix = "spring.datasource")：作用就是将 全局配置文件中
-          前缀为 spring.datasource的属性值注入到 com.alibaba.druid.pool.DruidDataSource 的同名参数中
+          @ConfigurationProperties(prefix = "spring.datasource")：作用就是将 yaml全局配置文件中
+          前缀为spring.datasource的属性值注入到com.alibaba.druid.pool.DruidDataSource的同名参数中
+          @Bean：注入到Spring容器中
         */
        @ConfigurationProperties(prefix = "spring.datasource")
        @Bean
        public DataSource druidDataSource() {
            return new DruidDataSource();
        }
-   
+       
    }
    ```
 
 7. 去测试类中测试一下；看是否成功！
 
-   ```
+   ```java
    @SpringBootTest
    class SpringbootDataJdbcApplicationTests {
    
@@ -1287,38 +1266,39 @@ public class JDBCController {
 
 8. 输出结果 ：可见配置参数已经生效！
 
-   ![image-20200727233746228](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233746228.png)
+   ![image-20220402131634755](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402131634755.png)
 
 ## 13.3 配置Druid数据源监控
 
-Druid 数据源具有监控的功能，并提供了一个 web 界面方便用户查看，类似安装 路由器 时，人家也提供了一个默认的 web 页面。
+Druid 数据源具有监控的功能，并提供了一个web界面方便用户查看，类似安装路由器 时，人家也提供了一个默认的web页面。
 
-所以第一步需要设置 Druid 的后台管理页面，比如 登录账号、密码 等；配置后台管理；
+所以第一步需要设置 Druid 的后台管理页面，比如登录账号、密码等；去`DruidConfig`类中配置后台管理：
 
-```
-//配置 Druid 监控管理后台的Servlet；
-//内置 Servlet 容器时没有web.xml文件，所以使用 Spring Boot 的注册 Servlet 方式
-@Bean
-public ServletRegistrationBean statViewServlet() {
-    ServletRegistrationBean bean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
+```java
+    //配置Druid监控管理后台的Servlet；
+    //内置Servlet容器时没有web.xml文件，所以使用SpringBoot的注册Servlet方式
+    @Bean
+    public ServletRegistrationBean statViewServlet() {
+        //如果报错需要导入servlet-api的依赖
+        ServletRegistrationBean bean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
 
-    // 这些参数可以在 com.alibaba.druid.support.http.StatViewServlet 
-    // 的父类 com.alibaba.druid.support.http.ResourceServlet 中找到
-    Map<String, String> initParams = new HashMap<>();
-    initParams.put("loginUsername", "root"); //后台管理界面的登录账号
-    initParams.put("loginPassword", "admin"); //后台管理界面的登录密码
+        // 这些参数可以在 com.alibaba.druid.support.http.StatViewServlet
+        // 的父类 com.alibaba.druid.support.http.ResourceServlet 中找到
+        Map<String, String> initParams = new HashMap<>();
+        initParams.put("loginUsername", "root"); //后台管理界面的登录账号
+        initParams.put("loginPassword", "123456"); //后台管理界面的登录密码
 
-    //后台允许谁可以访问
-    //initParams.put("allow", "localhost")：表示只有本机可以访问
-    //initParams.put("allow", "")：为空或者为null时，表示允许所有访问
-    initParams.put("allow", "");
-    //deny：Druid 后台拒绝谁访问
-    //initParams.put("kuangshen", "192.168.1.20");表示禁止此ip访问
+        //后台允许谁可以访问
+        //initParams.put("allow", "localhost")：表示只有本机可以访问
+        //initParams.put("allow", "")：为空或者为null时，表示允许所有访问
+        initParams.put("allow", "");
+        //deny：Druid 后台拒绝谁访问
+        //initParams.put("kuangshen", "192.168.1.20");  表示禁止此ip访问
 
-    //设置初始化参数
-    bean.setInitParameters(initParams);
-    return bean;
-}
+        //设置初始化参数
+        bean.setInitParameters(initParams);
+        return bean;
+    }
 ```
 
 配置完毕后，我们可以选择访问 ：[http://localhost:8080/druid/login.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdruid%2Flogin.html)
@@ -1329,9 +1309,9 @@ public ServletRegistrationBean statViewServlet() {
 
 ![image-20200727233436583](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233436583.png)
 
-**配置 Druid web 监控 filter 过滤器**
+**`DruidConfig`类中配置Druid web监控filter过滤器**
 
-```
+```java
 //配置 Druid 监控 之  web 监控的 filter
 //WebStatFilter：用于配置Web和Druid数据源之间的管理关联监控统计
 @Bean
@@ -1350,29 +1330,17 @@ public FilterRegistrationBean webStatFilter() {
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
 # 14. 整合MyBatis
 
 官方文档：[http://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/](https://gitee.com/link?target=http%3A%2F%2Fmybatis.org%2Fspring-boot-starter%2Fmybatis-spring-boot-autoconfigure%2F)
 
 Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/2.1.3](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Forg.mybatis.spring.boot%2Fmybatis-spring-boot-starter%2F2.1.3)
 
-![image-20200728083023851](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728083023851.png)
-
 ## 14.1 整合步骤
 
 1. 导入 MyBatis 所需要的依赖
 
-   ```
+   ```xml
    <dependency>
        <groupId>org.mybatis.spring.boot</groupId>
        <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -1380,13 +1348,13 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
    </dependency>
    ```
 
-2. 配置数据库连接信息（不变）
+2. 导入Druid依赖，配置数据库连接信息（不变）
 
-   ```
+   ```yaml
    spring:
      datasource:
        username: root
-       password: admin
+       password: 123456
        #?serverTimezone=UTC解决时区的报错
        url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
        driver-class-name: com.mysql.cj.jdbc.Driver
@@ -1417,17 +1385,9 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
 
 3. **测试数据库是否连接成功！**
 
-4. **创建实体类，导入 Lombok！**
+4. **导入Lombok，创建实体类**：`User.java`
 
-   `User.java`
-
-   ```
-   package nuc.ss.pojo;
-   
-   import lombok.AllArgsConstructor;
-   import lombok.Data;
-   import lombok.NoArgsConstructor;
-   
+   ```java
    @Data
    @AllArgsConstructor
    @NoArgsConstructor
@@ -1437,20 +1397,10 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
        private String pwd;
    }
    ```
-
-5. **创建mapper目录以及对应的 Mapper 接口**
-
-   `UserMapper.java`
-
-   ```
-   package nuc.ss.mapper;
    
-   import nuc.ss.pojo.User;
-   import org.apache.ibatis.annotations.Mapper;
-   import org.springframework.stereotype.Repository;
-   
-   import java.util.List;
-   
+5. **创建mapper包以及对应的Mapper接口**：`UserMapper.java`
+
+   ```java
    // 这个注解表示了这是一个 mybatis 的 mapper 类
    @Mapper
    @Repository
@@ -1467,12 +1417,23 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
        int deleteUser(int id);
    }
    ```
+   
+6. 在`application.yaml`中配置mybatis，起别名和`mapper.xml`的路径等：
 
-6. **对应的Mapper映射文件**
-
-   `UserMapper.xml`
-
+   ```yaml
+   #配置mybatis
+   mybatis:
+     # 配置XML映射文件中指定的实体类别名路径
+     type-aliases-package: com.run.pojo
+     # 配置MyBatis的xml配置文件路径
+     mapper-locations: classpath:mybatis/mapper/*.xml
+     # 开启驼峰uName自动映射到u_name
+     map-underscore-to-camel-case: true
    ```
+   
+7. **在`resources`目录下新建mybatis目录，创建mapper目录，编写对应的Mapper映射文件**：`UserMapper.xml`
+
+   ```xml
    <?xml version="1.0" encoding="UTF-8" ?>
    <!DOCTYPE mapper
            PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
@@ -1502,9 +1463,9 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
    </mapper>
    ```
 
-7. **maven配置资源过滤问题**
+8. **maven配置资源过滤问题**
 
-   ```
+   ```xml
    <resources>
        <resource>
            <directory>src/main/java</directory>
@@ -1516,9 +1477,9 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
    </resources>
    ```
 
-8. **编写部门的 UserController 进行测试！**
+9. **编写 UserController 进行测试！**
 
-   ```
+   ```java
    @RestController
    public class UserController {
        @Autowired
@@ -1558,21 +1519,1401 @@ Maven仓库地址：[https://mvnrepository.com/artifact/org.mybatis.spring.boot/
    }
    ```
 
-**启动项目访问进行测试！**
+10. 启动项目测试。
+
+
+
+# 15. SpringSecurity
+
+## 15.1 安全简介
+
+1、在 Web  开发中，安全一直是非常重要的一个方面。安全虽然属于应用的非功能性需求，但是应该在应用开发的初期就考虑进来。如果在应用开发的后期才考虑安全的问题，就可能陷入一个两难的境地：一方面，应用存在严重的安全漏洞，无法满足用户的要求，并可能造成用户的隐私数据被攻击者窃取；另一方面，应用的基本架构已经确定，要修复安全漏洞，可能需要对系统的架构做出比较重大的调整，因而需要更多的开发时间，影响应用的发布进程。因此，从应用开发的第一天就应该把安全相关的因素考虑进来，并在整个应用的开发过程中。
+
+2、市面上存在比较有名的：Shiro，Spring Security ！
+
+3、这里需要阐述一下的是，每一个框架的出现都是为了解决某一问题而产生了，那么Spring Security框架的出现是为了解决什么问题呢？
+
+4、首先我们看下它的官网介绍：Spring Security官网地址
+
+```text
+Spring Security is a powerful and highly customizable  authentication and access-control framework. It is the de-facto standard for securing Spring-based applications.
+Spring Security is a framework that focuses on providing both  authentication and authorization to Java applications. Like all Spring  projects, the real power of Spring Security is found in how easily it  can be extended to meet custom requirements
+```
+
+5、Spring Security是一个功能强大且高度可定制的身份验证和访问控制框架。它实际上是保护基于spring的应用程序的标准。
+
+6、Spring Security是一个框架，侧重于为Java应用程序提供身份验证和授权。与所有Spring项目一样，Spring安全性的真正强大之处在于它可以轻松地扩展以满足定制需求
+
+7、从官网的介绍中可以知道这是一个权限框架。想我们之前做项目是没有使用框架是怎么控制权限的？对于权限 一般会细分为功能权限，访问权限，和菜单权限。代码会写的非常的繁琐，冗余。
+
+8、怎么解决之前写权限代码繁琐，冗余的问题，一些主流框架就应运而生而Spring Scecurity就是其中的一种。
+
+9、Spring 是一个非常流行和成功的 Java 应用开发框架。Spring Security 基于 Spring 框架，提供了一套  Web 应用安全性的完整解决方案。一般来说，Web  应用的安全性包括用户认证（Authentication）和用户授权（Authorization）两个部分。
+
+- 用户认证指的是验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码。系统通过校验用户名和密码来完成认证过程。
+- 用户授权指的是验证某个用户是否有权限执行某个操作。在一个系统中，不同用户所具有的权限是不同的。比如对一个文件来说，有的用户只能进行读取，而有的用户可以进行修改。一般来说，系统会为不同的用户分配不同的角色，而每个角色则对应一系列的权限。
+
+10、对于上面提到的两种应用情景，Spring Security 框架都有很好的支持。
+
+- 在用户认证方面，Spring Security 框架支持主流的认证方式，包括 HTTP 基本认证、HTTP 表单验证、HTTP 摘要认证、OpenID 和 LDAP 等。
+- 在用户授权方面，Spring Security 提供了基于角色的访问控制和访问控制列表（Access Control List，ACL），可以对应用中的领域对象进行细粒度的控制。
+
+## 15.2 实战测试
+
+### 15.2.1 实验环境搭建
+
+1. 新建一个初始的springboot项目web模块，thymeleaf模块，在pom文件中添加thymeleaf依赖
+
+2. 导入静态资源
+
+   ![image-20220402151410667](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402151410667.png)
+
+3. controller层跳转页面：
+
+   ```java
+   @Controller
+   public class RouterController {
+   
+       @RequestMapping({"/","/index"})
+       public String index() {
+           return "index";
+       }
+   
+       @RequestMapping("/toLogin")
+       public String toLogin() {
+           return "views/login";
+       }
+   
+       @RequestMapping("/level1/{id}")
+       public String level1(@PathVariable("id") int id) {
+           return "views/level1/" + id;
+       }
+   
+       @RequestMapping("/level2/{id}")
+       public String level2(@PathVariable("id") int id) {
+           return "views/level2/" + id;
+       }
+   
+       @RequestMapping("/level3/{id}")
+       public String level3(@PathVariable("id") int id) {
+           return "views/level3/" + id;
+       }
+   }
+   ```
+
+4. 测试实验环境是否OK！
+
+   ![image-20220402154524753](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402154524753.png)
+
+
+### 15.2.2 认识SpringSecurity
+
+Spring Security 是针对Spring项目的安全框架，也是Spring  Boot底层安全模块默认的技术选型，他可以实现强大的Web安全控制，对于安全控制，我们仅需要引入  spring-boot-starter-security 模块，进行少量的配置，即可实现强大的安全管理！
+
+记住几个类：
+
+- `WebSecurityConfigurerAdapter`：自定义Security策略
+- `AuthenticationManagerBuilder`：自定义认证策略
+- `@EnableWebSecurity`：开启WebSecurity模式
+
+Spring Security的两个主要目标是 “认证” 和 “授权”（访问控制）。
+
+**“认证”（Authentication）**
+
+- 身份验证是关于验证您的凭据，如用户名/用户ID和密码，以验证您的身份。
+
+- 身份验证通常通过用户名和密码完成，有时与身份验证因素结合使用。
+
+**“授权” （Authorization）**
+
+- 授权发生在系统成功验证您的身份后，最终会授予您访问资源（如信息，文件，数据库，资金，位置，几乎任何内容）的完全权限。
+
+这个概念是通用的，而不是只在Spring Security 中存在。
+
+### 15.2.3 认证和授权
+
+目前，我们的测试环境，是谁都可以访问的，我们使用 Spring Security 增加上认证和授权的功能
+
+1. 引入 Spring Security 模块
+
+   ```xml
+   <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+   </dependency>
+   ```
+
+2. 编写 Spring Security 配置类
+
+   - 参考官网：[https://spring.io/projects/spring-security](https://gitee.com/link?target=https%3A%2F%2Fspring.io%2Fprojects%2Fspring-security)
+
+   - 查看我们自己项目中的版本，找到对应的帮助文档：[https://docs.spring.io/spring-security/site/docs/5.3.0.RELEASE/reference/html5](https://gitee.com/link?target=https%3A%2F%2Fdocs.spring.io%2Fspring-security%2Fsite%2Fdocs%2F5.3.0.RELEASE%2Freference%2Fhtml5)
+
+   - servlet-applications 8.16.4
+
+     ```java
+     @EnableWebSecurity
+     public class Config extends WebSecurityConfigurerAdapter {
+         @Override
+         protected void configure(HttpSecurity http) throws Exception {
+             http
+                 .apply(customDsl())
+                     .flag(true)
+                     .and()
+                 ...;
+         }
+     }
+     ```
+
+3. 新建SecurityConfig类，编写基础配置；需要继承`WebSecurityConfigurerAdapter`，重写configure方法，注意选择参数是`http:HttpSecurity`的：
+
+   ```java
+   @EnableWebSecurity// 开启WebSecurity模式
+   public class SecurityConfig extends WebSecurityConfigurerAdapter {
+   
+       @Override
+       protected void configure(HttpSecurity http) throws Exception {
+           super.configure(http);
+       }
+   }
+   ```
+
+4. 定制请求的授权规则。先点击`super.configure(http)`看源码：
+
+   ![image-20220402155719261](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402155719261.png)
+
+   自己仿写，首页所有人都可以访问，功能页只有对应有权限的人才能访问到：
+
+   ```java
+   @EnableWebSecurity
+   public class SecurityConfig extends WebSecurityConfigurerAdapter {
+       @Override
+       protected void configure(HttpSecurity http) throws Exception {
+           http.authorizeRequests()
+                   .antMatchers("/").permitAll()
+                   .antMatchers("/level1/**").hasRole("vip1")
+                   .antMatchers("/level2/**").hasRole("vip2")
+                   .antMatchers("/level3/**").hasRole("vip3");
+       }
+   }
+   ```
+
+5. 测试一下：发现除了首页都进不去了！因为我们目前没有登录的角色，因为请求需要登录的角色拥有对应的权限才可以！
+
+   ![image-20220402160154398](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402160154398.png)
+
+6. 在`configure()`方法中加入以下配置，开启自动配置的登录功能！
+
+   ```java
+   // 开启自动配置的登录功能
+   //   /login 请求来到登录页
+   //   /login?error 重定向到这里表示登录失败
+   http.formLogin();
+   ```
+
+7. 随便点击一个需要权限的level，发现没有权限的时候，会跳转到登录的页面：
+
+   ![image-20220402160536691](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402160536691.png)
+
+8. 我们可以自定义认证规则，重写configure的另一个方法，参数为`AuthenticationManagerBuilder`：
+
+   先查看源码：
+
+   ![image-20220402161204046](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161204046.png)
+
+   自己仿写：
+
+   ```java
+       @Override
+       protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+           //这些用户正常应该从数据库中读取，这里用内存模拟
+           auth.inMemoryAuthentication()
+                   .withUser("AruNi").password("123456").roles("vip2", "vip3")
+                   .and()
+                   .withUser("root").password("123456").roles("vip1", "vip2", "vip3")
+                   .and()
+                   .withUser("guest").password("123456").roles("vip1");
+       }
+   ```
+
+9. 测试，我们可以使用这些账号登录进行测试，发现会报错！
+
+   ![image-20220402161700260](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161700260.png)
+
+   ![image-20220402161636119](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161636119.png)
+
+   
+
+   
+
+10. 原因，我们要将前端传过来的密码进行某种方式加密，否则就无法登录，修改代码：
+
+    ```java
+    //密码编码： PasswordEncoder
+        //在spring Secutiry 5.0+ 新增了很多加密方法
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            //这些用户正常应该从数据库中读取，这里用内存模拟
+            auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                    .withUser("AruNi").password(new BCryptPasswordEncoder().encode("123456")).roles("vip2", "vip3")
+                    .and()
+                    .withUser("root").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1", "vip2", "vip3")
+                    .and()
+                    .withUser("guest").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1");
+        }
+    ```
+
+11. 测试，发现，登录成功，并且每个角色只能访问自己认证下的规则！
+
+### 15.2.4 权限控制和注销
+
+1. 开启自动配置的注销的功能，在登录权限下面写即可
+
+   ```java
+   //定制请求的授权规则
+   @Override
+   protected void configure(HttpSecurity http) throws Exception {
+      //....
+      http.formLogin();
+   
+       //开启自动配置的注销的功能
+       //  /logout 注销请求
+       http.logout();
+   }
+   ```
+
+2. 我们在前端相应位置增加一个注销的按钮，`index.html `导航栏中
+
+   ```html
+   <!--注销-->
+   <a class="item" th:href="@{/logout}">
+       <i class="sign-out icon"></i> 注销
+   </a>
+   ```
+
+3. 我们可以去测试一下，登录成功后点击注销，发现注销完毕会跳转到登录页面！
+
+   ![image-20220402162956586](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402162956586.png)
+
+4. 但是，我们想让他注销成功后，依旧可以跳转到首页，该怎么处理呢？
+
+   看源码：
+
+   ![image-20220402163401739](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402163401739.png)
+
+   在`http.logout()`后再添加方法：
+
+   ```java
+   // .logoutSuccessUrl("/"); 注销成功来到首页
+   http.logout().logoutSuccessUrl("/");
+   ```
+
+5. 测试，注销完毕后，发现跳转到首页
+
+6. 我们现在又来一个需求：用户没有登录的时候，导航栏上只显示登录按钮，用户登录之后，导航栏可以显示登录的用户信息及注销按钮！用户只有 vip2，vip3功能，那么登录则只显示这两个功能，而vip1的功能菜单不显示！这个就是真实的网站情况了！该如何做呢？
+
+   我们需要结合thymeleaf中的一些功能
+
+   `sec：authorize="isAuthenticated()"`:是否认证登录！来显示不同的页面
+
+   Maven导入整合包的依赖：
+
+   ```xml
+   	<dependency>
+               <groupId>org.thymeleaf.extras</groupId>
+               <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+           </dependency>
+   ```
+
+7. 修改我们的前端页面
+
+   导入命名空间
+
+   ```html
+   <html lang="en" xmlns:th="http://www.thymeleaf.org"
+         xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+   ```
+
+   修改导航栏，增加认证判断
+
+   ```html
+   <!--登录注销-->
+   <div class="right menu">
+   
+       <!--如果未登录-->
+       <div sec:authorize="!isAuthenticated()">
+           <a class="item" th:href="@{/login}">
+               <i class="address card icon"></i> 登录
+           </a>
+       </div>
+   
+       <!--如果已登录-->
+       <div sec:authorize="isAuthenticated()">
+           <a class="item">
+               <i class="address card icon"></i>
+               用户名：<span sec:authentication="principal.username"></span>
+               角色：<span sec:authentication="principal.authorities"></span>
+           </a>
+       </div>
+   
+       <div sec:authorize="isAuthenticated()">
+           <a class="item" th:href="@{/logout}">
+               <i class="sign-out  icon"></i> 注销
+           </a>
+       </div>
+   </div>
+   ```
+
+8. 重启测试，我们可以登录试试看，登录成功后确实，显示了我们想要的页面；
+
+   - 未登录
+
+     ![image-20220402165034257](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165034257.png)
+
+   - 登录
+
+     ![image-20220402165018635](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165018635.png)
+
+9. 我们继续将下面的角色功能块认证完成，在每个板块的位置添加`sec:authorize="hasRole(' ')"`
+
+   ```html
+   <!--菜单根据用户的角色动态的实现-->
+   <div class="column"  sec:authorize="hasRole('vip1')">
+       <div class="ui raised segment">
+           <div class="ui">
+               <div class="content">
+                   <h5 class="content">Level 1</h5>
+                   <hr>
+                   <div><a th:href="@{/level1/1}"><i class="bullhorn icon"></i> Level-1-1</a></div>
+                   <div><a th:href="@{/level1/2}"><i class="bullhorn icon"></i> Level-1-2</a></div>
+                   <div><a th:href="@{/level1/3}"><i class="bullhorn icon"></i> Level-1-3</a></div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <div class="column"  sec:authorize="hasRole('vip2')">
+       <div class="ui raised segment">
+           <div class="ui">
+               <div class="content">
+                   <h5 class="content">Level 2</h5>
+                   <hr>
+                   <div><a th:href="@{/level2/1}"><i class="bullhorn icon"></i> Level-2-1</a></div>
+                   <div><a th:href="@{/level2/2}"><i class="bullhorn icon"></i> Level-2-2</a></div>
+                   <div><a th:href="@{/level2/3}"><i class="bullhorn icon"></i> Level-2-3</a></div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <div class="column"  sec:authorize="hasRole('vip3')">
+       <div class="ui raised segment">
+           <div class="ui">
+               <div class="content">
+                   <h5 class="content">Level 3</h5>
+                   <hr>
+                   <div><a th:href="@{/level3/1}"><i class="bullhorn icon"></i> Level-3-1</a></div>
+                   <div><a th:href="@{/level3/2}"><i class="bullhorn icon"></i> Level-3-2</a></div>
+                   <div><a th:href="@{/level3/3}"><i class="bullhorn icon"></i> Level-3-3</a></div>
+               </div>
+           </div>
+       </div>
+   </div>
+   ```
+
+10. 测试一下！
+
+    - 用户首页未登录，发现什么页看不见：
+
+      ![image-20220402165550336](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165550336.png)
+
+
+    - 某个用户登录：
+
+      ![image-20220402165644511](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165644511.png)
+
+      
+
+
+权限控制和注销搞定
+
+### 15.2.5 记住我
+
+1. 开启记住我功能：
+
+   ```java
+   //定制请求的授权规则
+   @Override
+   protected void configure(HttpSecurity http) throws Exception {
+   //。。。。。。。。。。。
+      //开启记住我功能: cookie,默认保存两周
+      http.rememberMe();
+   }
+   ```
+
+2. 我们再次启动项目测试一下
+
+   - 发现登录页多了一个记住我功能
+
+     ![image-20220402165834723](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165834723.png)
+
+   - 我们登录之后关闭浏览器，然后重新打开浏览器访问，发现用户依旧存在！
+
+     ![image-20220402165913705](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165913705.png)思考：如何实现的呢？其实非常简单
+
+     我们可以查看浏览器的Cookies：
+
+     ![image-20220402170213104](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402170213104.png)
+
+3. 我们点击注销的时候，可以发现，Spring Security 帮我们自动删除了这个cookie(置为空)：
+
+   ![image-20220402170511522](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402170511522.png)
+
+4. cookie发送给浏览器保存，以后登录带上这个cookie，只要通过检查就可以免登录了。如果点击注销，则会删除这个cookie
+
+### 15.2.6 定制登录页
+
+现在这个登录页面都是Spring Security 默认的，怎么样可以使用我们自己写的Login界面呢？
+
+1. 在刚才的登录页配置后面指定 loginpage 即可：
+
+   ```java
+   protected void configure(HttpSecurity http) throws Exception {
+       //......
+   
+       // 没有权限默认会到登录页面,需要开启登录的页面
+       // /login页面
+       http.formLogin().loginPage("/toLogin");
+   
+       //......
+   }
+   ```
+
+2. 然后前端也需要指向我们自己定义的 login请求
+
+   ```html
+   <div sec:authorize="!isAuthenticated()">
+       <a class="item" th:href="@{/toLogin}">
+           <i class="address card icon"></i> 登录
+       </a>
+   </div>
+   ```
+
+3. - `login.html` 表单的提交请求及方式，**方式必须为post**
+   - 登录需要将这些信息发送到哪里
+   - 接收登录的用户名和密码的参数！
+
+   在 `loginPage()`源码中的注释上有写明：
+
+   ![image-20220402171827509](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402171827509.png)
+
+   进一步修改：
+
+   ```java
+   protected void configure(HttpSecurity http) throws Exception {
+       //......
+   
+       //开启自动配置的登录功能
+       //  /login 请求来到登录页
+       //  /login?error 重定向到这里表示登录失败
+       http.formLogin()
+       .usernameParameter("username")
+       .passwordParameter("password")
+       .loginPage("/toLogin")		//去登陆页面请求
+       .loginProcessingUrl("/login");      //登录页面，表单提交时请求的地址
+   
+       //......
+   }
+   ```
+
+4. 在登录页增加记住我的多选框
+
+   ```html
+   <div class="field">
+   	<input type="checkbox" name="remember"> 记住我
+   </div>
+   ```
+
+5. 后端验证处理！
+
+   ```java
+   protected void configure(HttpSecurity http) throws Exception {
+       //......
+       //开启记住我功能: cookie,默认保存两周，自定义接收前端的参数
+       http.rememberMe().rememberMeParameter("remember");
+   }
+   ```
+
+6. 测试，可能会发现注销功能失败了，这是因为我们使用了自己的登陆页面后，存在csrf攻击（跨站伪造攻击），只需要在configure方法中关闭csrf来防止即可：
+
+   ```java
+   //关闭csrf，防止网址攻击：get，post
+   http.csrf().disable();
+   ```
 
 
 
 
 
+> 完整配置代码
+
+```java
+//通过AOP实现拦截器
+@EnableWebSecurity      //开启WebSecurity模式
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    //授权
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //关闭csrf，防止网址攻击：get，post
+        http.csrf().disable();
+
+        //请求权限规则
+        http.authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/level1/**").hasRole("vip1")
+                .antMatchers("/level2/**").hasRole("vip2")
+                .antMatchers("/level3/**").hasRole("vip3");
+
+        //开启自动配置的登录功能
+        //  /login 请求来到登录页
+        //  /login?error 重定向到这里表示登录失败
+        http.formLogin()
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .loginPage("/toLogin")  //去登陆页面请求
+                .loginProcessingUrl("/login");      //登录页面，表单提交时请求的地址
 
 
-# 15. Swagger
+        //开启自动配置的注销的功能
+        //  /logout 注销请求
+        http.logout().logoutSuccessUrl("/");
+
+        //开启记住我功能: cookie,默认保存两周，自定义接收前端的参数
+        http.rememberMe().rememberMeParameter("remember");
+
+    }
+
+    //认证
+    //密码编码： PasswordEncoder
+    //在spring Secutiry 5.0+ 新增了很多加密方法
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //这些用户正常应该从数据库中读取，这里用内存模拟
+        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                .withUser("AruNi").password(new BCryptPasswordEncoder().encode("123456")).roles("vip2", "vip3")
+                .and()
+                .withUser("root").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1", "vip2", "vip3")
+                .and()
+                .withUser("guest").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1");
+    }
+}
+```
+
+# 16. Shiro
+
+## 16.1 什么是Shiro?
+
+● `Apache Shiro`是一个Java 的安全(权限)框架。
+● `Shiro`可以非常容易的开发出足够好的应用，其不仅可以用在JavaSE环境，也可以用在JavaEE环境。
+● `Shiro`可以完成，认证，授权，加密，会话管理，Web集成，缓存等.
+● 下载地址:`http://shiro.apache.org/`
+
+### 16.1.1 有哪些功能
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316211939796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+● `Authentication`: 身份认证、登录，验证用户是不是拥有相应的身份;
+● `Authorization`:授权,即权限验证，验证某个已认证的用户是否拥有某个权限，即判断用户能否进行什么操作，如:验证某个用户是否拥有某个角色，或者细粒度的验证某个用户对某个资源是否具有某个权限!
+● `Session Manager`: 会话管理，即用户登录后就是第一次会话，在没有退出之前，它的所有信息都在会话中;会话可以是普通的JavaSE环境，也可以是Web环境;
+● `Cryptography`: 加密,保护数据的安全性，如密码加密存储到数据库中，而不是明文存储;
+● `Web Support` Web支持，可以非常容易的集成到Web环境;
+● `Caching` 缓存，比如用户登录后，其用户信息，拥有的角色、权限不必每次去查,这样可以提高效率
+● `Concurrency`: Shiro支持多线程应用的并发验证，即，如在-个线程中开启另-一个线程,能把权限自动的传播过去
+● `Testing`:提供测试支持;
+● `RunAs`:允许一个用户假装为另-一个用户(如果他们允许)的身份进行访问;
+● `Remember Me`:记住我，这个是非常常见的功能，即一次登录后， 下次再来的话不用登录了
+
+### 16.1.2 Shiro架构(外部)
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316212212655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+● `subject`: 应用代码直接交互的对象是Subject, 也就是说Shiro的对外API核心就是Subject, Subject代表了当前的用户，这个用户不一定是一个具体的人，与当前应用交互的任何东西都是Subject,如网络爬虫，机器人等，与Subject的所有交互都会委托给SecurityManager; Subject其实是一个门面， SecurityManageer 才是实际的执行者
+● `SecurityManager`: 安全管理器，即所有与安全有关的操作都会与SercurityManager交互, 并且它管理着所有的Subject,可以看出它是Shiro的核心，它负责与Shiro的其他组件进行交互，它相当于SpringMVC的DispatcherServlet的角色
+● `Realm`: Shiro从Realm获取安全数据 (如用户,角色，权限)，就是说SecurityManager要验证用户身份，那么它需要从Realm获取相应的用户进行比较，来确定用户的身份是否合法;也需要从Realm得到用户相应的角色、权限，进行验证用户的操作是否能够进行，可以把Realm看DataSource;
+
+### 16.1.3 Shiro架构(内部)
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316212357831.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+● `Subject`: 任何可以与应用交互的用户;
+● `Security Manager`:相当于SpringMVC中的DispatcherSerlet; 是Shiro的心脏， 所有具体的交互都通过Security Manager进行控制，它管理者所有的Subject, 且负责进行认证,授权，会话，及缓存的管理。
+● `Authenticator`:负责Subject认证， 是-一个扩展点，可以自定义实现;可以使用认证策略(Authentication Strategy)，即什么情况下算用户认证通过了;
+● `Authorizer`:授权器，即访问控制器，用来决定主体是否有权限进行相应的操作;即控制着用户能访问应用中
+的那些功能;
+● `Realm`: 可以有一个或者多个的realm, 可以认为是安全实体数据源，即用于获取安全实体的，可以用JDBC实现，也可以是内存实现等等，由用户提供;所以- -般在应用中都需要实现自己的realm
+● `SessionManager`:管理Session生 命周期的组件,而Shiro并不仅仅可以用在Web环境，也可以用在普通的JavaSE环境中
+● `CacheManager`: 缓存控制器，来管理如用户，角色，权限等缓存的;因为这些数据基本上很少改变,放到缓存中后可以提高访问的性能;
+● `Cryptography`:密码模块，Shiro 提高了一些常见的加密组件用于密码加密， 解密等
+
+## 16.2 Shiro快速开始
+
+创建一个普通`maven`项目`springboot-06-shiro`,然后删除src目录,这样的话就可以在这个项目里新建很多model.
+
+在springboot-06-shiro里新建model `shiro-01-helloshiro`
+父依赖`pom.xml`
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <!-- configure logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.21</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+123456789101112131415161718192021222324252627
+log4j.properties
+log4j.rootLogger=INFO, stdout
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n
+
+# General Apache libraries
+log4j.logger.org.apache=WARN
+
+# Spring
+log4j.logger.org.springframework=WARN
+
+# Default Shiro logging
+log4j.logger.org.apache.shiro=INFO
+
+# Disable verbose logging
+log4j.logger.org.apache.shiro.util.ThreadContext=WARN
+log4j.logger.org.apache.shiro.cache.ehcache.EhCache=WARN
+123456789101112131415161718
+shiro.ini
+[users]
+# user 'root' with password 'secret' and the 'admin' role
+root = secret, admin
+# user 'guest' with the password 'guest' and the 'guest' role
+guest = guest, guest
+# user 'presidentskroob' with password '12345' ("That's the same combination on
+# my luggage!!!" ;)), and role 'president'
+presidentskroob = 12345, president
+# user 'darkhelmet' with password 'ludicrousspeed' and roles 'darklord' and 'schwartz'
+darkhelmet = ludicrousspeed, darklord, schwartz
+# user 'lonestarr' with password 'vespa' and roles 'goodguy' and 'schwartz'
+lonestarr = vespa, goodguy, schwartz
+
+# -----------------------------------------------------------------------------
+# Roles with assigned permissions
+# 
+# Each line conforms to the format defined in the
+# org.apache.shiro.realm.text.TextConfigurationRealm#setRoleDefinitions JavaDoc
+# -----------------------------------------------------------------------------
+[roles]
+# 'admin' role has all permissions, indicated by the wildcard '*'
+admin = *
+# The 'schwartz' role can do anything (*) with any lightsaber:
+schwartz = lightsaber:*
+# The 'goodguy' role is allowed to 'drive' (action) the winnebago (type) with
+# license plate 'eagle5' (instance specific id)
+goodguy = winnebago:drive:eagle5
+123456789101112131415161718192021222324252627
+Quickstart.java
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.realm.text.IniRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * Simple Quickstart application showing how to use Shiro's API.
+ *
+ * @since 0.9 RC2
+ */
+public class Quickstart {
+
+    private static final transient Logger log = LoggerFactory.getLogger(Quickstart.class);
+
+
+    public static void main(String[] args) {
+
+
+        DefaultSecurityManager defaultSecurityManager=new DefaultSecurityManager();
+        IniRealm iniRealm=new IniRealm("classpath:shiro.ini");
+        defaultSecurityManager.setRealm(iniRealm);
+        SecurityUtils.setSecurityManager(defaultSecurityManager);
+
+
+        // 获得当前用户对象 Subject
+        Subject currentUser = SecurityUtils.getSubject();
+
+        // 通过当前用户拿到session
+        Session session = currentUser.getSession();
+        session.setAttribute("someKey", "aValue");
+        String value = (String) session.getAttribute("someKey");
+        if (value.equals("aValue")) {
+            log.info("Retrieved the correct value! [" + value + "]");
+        }
+
+        // 判断当前用户是否被认证
+        if (!currentUser.isAuthenticated()) {
+            //Token:令牌
+            UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+            token.setRememberMe(true);
+            try {
+                currentUser.login(token); //执行登录操作
+            } catch (UnknownAccountException uae) {
+                log.info("There is no user with username of " + token.getPrincipal());
+            } catch (IncorrectCredentialsException ice) {
+                log.info("Password for account " + token.getPrincipal() + " was incorrect!");
+            } catch (LockedAccountException lae) {
+                log.info("The account for username " + token.getPrincipal() + " is locked.  " +
+                        "Please contact your administrator to unlock it.");
+            }
+            // ... catch more exceptions here (maybe custom ones specific to your application?
+            catch (AuthenticationException ae) {
+                //unexpected condition?  error?
+            }
+        }
+
+        //say who they are:
+        //print their identifying principal (in this case, a username):
+        log.info("User [" + currentUser.getPrincipal() + "] logged in successfully.");
+
+        //test a role:
+        if (currentUser.hasRole("schwartz")) {
+            log.info("May the Schwartz be with you!");
+        } else {
+            log.info("Hello, mere mortal.");
+        }
+
+        //粗粒度
+        if (currentUser.isPermitted("lightsaber:wield")) {
+            log.info("You may use a lightsaber ring.  Use it wisely.");
+        } else {
+            log.info("Sorry, lightsaber rings are for schwartz masters only.");
+        }
+
+        //细粒度
+        if (currentUser.isPermitted("winnebago:drive:eagle5")) {
+            log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  " +
+                    "Here are the keys - have fun!");
+        } else {
+            log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
+        }
+
+        //注销
+        currentUser.logout();
+
+        //结束
+        System.exit(0);
+    }
+}
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394
+```
+
+执行
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2021031622083670.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+
+## 16.3 SpringBoot整合Shiro
+
+### 16.3.1 项目结构图
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210317223239457.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+
+### 16.3.2 数据库
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210317223311431.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+
+### 16.3程序代码
+
+新建一个springboot项目，勾选web，thymeleaf模块
+pom.xml
+
+```xml
+<dependencies>
+
+    <!--
+    subject 用户
+    securityManager 管理所有用户
+    realm  连接数据
+    -->
+
+    <!--连接数据库的依赖-->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.15</version>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>1.1.13</version>
+    </dependency>
+
+    <!--引入mybatis,这是mybatis官方提供的适配springboot的，而不是springboot自己的-->
+    <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>2.1.2</version>
+    </dependency>
+
+    <!--不想书写setter、getter方法，导入此依赖-->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.16.22</version>
+    </dependency>
+
+    <!--shiro整合spring的包-->
+    <dependency>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-spring</artifactId>
+        <version>1.4.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <!--shiro-thymeleaf整合-->
+    <dependency>
+        <groupId>com.github.theborakompanioni</groupId>
+        <artifactId>thymeleaf-extras-shiro</artifactId>
+        <version>2.0.0</version>
+    </dependency>
+</dependencies>
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364
+```
+
+application.yml
+
+```yaml
+spring:
+  datasource:
+    username: root
+    password: 123456
+    #?serverTimezone=UTC解决时区的报错
+    url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource # 切换数据源
+
+    #Spring Boot 默认是不注入这些属性值的，需要自己绑定
+    #druid 数据源专有配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+
+    #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
+    #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
+    #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+mybatis:
+  type-aliases-package: com.kuang.pojo
+  mapper-locations: classpath:mapper/*.xml
+12345678910111213141516171819202122232425262728293031323334
+```
+
+UserRealm.java
+
+```java
+package com.kuang.config;
+
+import com.kuang.pojo.User;
+import com.kuang.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class UserRealm extends AuthorizingRealm {
+
+    @Autowired
+    UserService userService;
+
+    //授权
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        System.out.println("执行了授权");
+
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo ();
+
+        //拿到当前登录的对象
+        Subject subject = SecurityUtils.getSubject();
+        //拿到user对象
+        User currentUser = (User) subject.getPrincipal();
+        //添加权限（数据库中拿的）
+        info.addStringPermission(currentUser.getPerms());
+        return info;
+    }
+
+    //认证
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        System.out.println("执行了认证");
+
+        UsernamePasswordToken userToken=(UsernamePasswordToken)token;
+
+//        //用户名、密码  模拟从数据库中获取
+//        String name = "root";
+//        String password = "1111";
+//
+//        //用户名认证
+//        if (!userToken.getUsername().equals(name)){
+//            return null;//抛出异常 UnknownAccountException
+//        }
+//
+//        //密码认证，shiro做
+//        return new SimpleAuthenticationInfo("",password,"");
+
+        //连接真实数据库
+        User user = userService.queryUserByName(userToken.getUsername());
+        if (user==null){//没有这个人
+            return null;//抛出异常 UnknownAccountException
+        }
+
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        session.setAttribute("loginUser",user);
+
+        return new SimpleAuthenticationInfo(user,user.getPwd(),"");
+    }
+}
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667
+```
+
+ShiroConfig.java
+
+```java
+package com.kuang.config;
+
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@Configuration
+public class ShiroConfig{
+
+    //ShiroFilterFactoryBean 第三步
+    @Bean
+    public ShiroFilterFactoryBean  getShiroFilterBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager){
+        ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+        //设置安全管理器
+        bean.setSecurityManager(defaultWebSecurityManager);
+
+        Map<String, String> filterMap =new LinkedHashMap<>();
+        
+        // 添加Shiro内置过滤器
+        /**
+         * Shiro内置过滤器，可以实现权限相关的拦截器
+         *  常用的过滤器：
+         *      anon：无需认证（登陆）可以访问
+         *      authc：必须认证才可以访问
+         *      user：如果使用rememberMe的功能，可以直接访问
+         *      perms：该资源必须得到资源权限才可以访问
+         *      role：该资源必须得到角色权限才可以访问
+         */
+        //拦截，必须有什么权限才能访问
+        filterMap.put("/user/add","perms[user:add]");
+        filterMap.put("/user/update","perms[user:update]");
+        
+        //拦截，必须认证才能访问
+        //filterMap.put("/user/*","authc");
+
+        bean.setFilterChainDefinitionMap(filterMap);
+
+        //访问时用户未认证，跳转到登录界面
+        bean.setLoginUrl("/toLogin");
+        //若访问时用户未被授权，则跳转至未授权页面
+        bean.setUnauthorizedUrl("/noauth");
+
+        return bean;
+    }
+
+    //DefaultWebSecurityManager 第二步
+    @Bean(name = "securityManager")
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") Realm realm){
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        //关联userRealm
+        securityManager.setRealm(realm);
+        return securityManager;
+    }
+
+    //realm 第一步
+    @Bean
+    public Realm userRealm(){
+        return new UserRealm();
+    }
+
+    //整合ShiroDialect:用来整合shiro thymeleaf
+    @Bean
+    public ShiroDialect getShiroDialect(){
+        return new ShiroDialect();
+    }
+}
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273
+```
+
+MyController.java
+
+```java
+package com.kuang.controller;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class MyController {
+
+    @RequestMapping({"/","/index"})
+    public String toIndex(Model model){
+        model.addAttribute("msg","hello,shiro");
+        return "index";
+    }
+
+    @RequestMapping("/user/add")
+    public String add(){
+        return "user/add";
+    }
+
+    @RequestMapping("/user/update")
+    public String update(){
+        return "user/update";
+    }
+
+    @RequestMapping("/toLogin")
+    public String toLogin(){
+        return "login";
+    }
+
+    @RequestMapping("/noauth")
+    @ResponseBody
+    public String unauthorized(){
+        return "未授权无法访问此页面";
+    }
+
+    @RequestMapping("/login")
+    public String login(String username,String password,Model model) {
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        //封装用户的登录数据
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+
+        try {
+            subject.login(token);//执行登录的方法，如果没有异常就说明ok了
+            return "index";//登录成功跳到首页
+        } catch (UnknownAccountException e) { //用户名不存在
+            model.addAttribute("msg", "用户名不存在！");
+            return "login";
+        } catch (IncorrectCredentialsException e) {
+            model.addAttribute("msg", "密码错误！");
+            return "login";
+        }
+
+    }
+
+    @RequestMapping("/logout")
+    public String logout(){
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
+        System.out.println("执行了退出");
+        return "redirect:index";
+    }
+
+}
+123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172
+```
+
+User.java
+
+```java
+package com.kuang.pojo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+
+    private int id;
+    private String name;
+    private String pwd;
+    private String perms;
+}
+12345678910111213141516
+```
+
+UserMapper.java
+
+```java
+package com.kuang.mapper;
+
+import com.kuang.pojo.User;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@Mapper
+public interface UserMapper {
+
+    public User queryUserByName(String name);
+
+}
+12345678910111213
+```
+
+UserMapper.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuang.mapper.UserMapper">
+    <select id="queryUserByName" parameterType="String" resultType="User">
+        select * from user where name=#{name}
+    </select>
+</mapper>
+123456789
+```
+
+UserService.java
+
+```java
+package com.kuang.service;
+
+import com.kuang.pojo.User;
+
+public interface UserService {
+    public User queryUserByName(String name);
+}
+1234567
+```
+
+UserServiceImpl.java
+
+```java
+package com.kuang.service;
+
+import com.kuang.mapper.UserMapper;
+import com.kuang.pojo.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl implements UserService{
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Override
+    public User queryUserByName(String name) {
+        return userMapper.queryUserByName(name);
+    }
+}
+123456789101112131415161718
+```
+
+index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>首页</h1>
+
+<p th:text="${msg}"></p>
+
+<hr>
+
+    <div th:if="${session.loginUser==null}">
+        <a th:href="@{/toLogin}">登录</a>
+    </div>
+    <div th:if="${session.loginUser!=null}">
+        <a th:href="@{/logout}">注销</a>
+    </div>
+
+    <div shiro:hasPermission="user:add">
+        <a th:href="@{/user/add}">add</a>
+    </div>
+    <div shiro:hasPermission="user:update">
+        <a th:href="@{/user/update}">update</a>
+    </div>
+
+</body>
+</html>
+1234567891011121314151617181920212223242526272829303132
+```
+
+login.html
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml?">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>登录</h1>
+<hr>
+<p th:text="${msg}" style="color:red;"></p>
+<form th:action="@{/login}">
+    用户名：<input type="text" name="username"><br>
+    密码：<input type="password" name="password">
+    <br>
+    <input type="submit" name="提交">
+</form>
+</body>
+</html>
+123456789101112131415161718
+```
+
+add.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>添加</h1>
+</body>
+</html>
+12345678910
+```
+
+update.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>修改</h1>
+</body>
+</html>
+12345678910
+```
+
+## 16.4 总结
+
+**Shiro 三大要素**
+
+```
+subject` -> `ShiroFilterFactoryBean`
+`securityManager` -> `DefaultWebSecurityManager`
+`realm`
+实际操作中对象创建的顺序 ： `realm -> securityManager -> subject
+```
+
+**流程梳理：**
+1.用户进入首页点击跳转，Shiro内置过滤器进行拦截，看过滤器的设置，未认证跳转到登录页面，未授权跳转到未授权界面；
+2.认证
+
+- 用户进入登录页面，输入用户名密码准备进行认证，点击登录按钮后，会请求/login，
+- 首先调用Subject.login(token) 进行登录，其会自动委托给SecurityManager，
+- SecurityManager负责真正的身份验证逻辑；它会委托给Authenticator 进行身份验证；
+- Authenticator 才是真正的身份验证者，Authenticator 会把相应的token 传入Realm，从Realm 获取身份验证信息，如果没有返回/抛出异常表示身份验证失败了，如果有就返回AuthenticationInfo验证信息，此信息中包含了身份（pricipals）及凭证，也就是账号密码。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210318092122708.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+
+3.授权
+
+- 对subject进行授权，调用方法isPermitted（“permission串”），递交给SecurityManager
+- SecurityManager将权限检测操作委托给Authorizer授权管理器对象
+- Authorizer执行Realm（自定义的Realm）从数据库查询权限数据并封装
+- Authorizer对用户授权信息进行判定(判断用户访问资源时需要什么权限，假如用户所具有的权限包含这个资源访问时所需要的权限，那么用户就可以访问这个资源了)。
+
+# 17. Swagger
 
 - 了解Swagger的概念及作用
 - 了解前后端分离
 - 在springboot中集成swagger
 
-## 15.1 Swagger简介
+## 17.1 Swagger简介
 
 - 号称世界上最流行的API框架
 - Restful Api 文档在线自动生成器 => **API 文档 与API 定义同步更新**
@@ -1608,7 +2949,7 @@ Vue+SpringBoot
   - 前端测试后端接口：postman
   - 后端提供接口，需要实时更新最新的消息及改动
 
-## 15.2 SpringBoot集成Swagger
+## 17.2 SpringBoot集成Swagger
 
 **SpringBoot集成Swagger** => **springfox**，两个jar包
 
@@ -1654,7 +2995,7 @@ Vue+SpringBoot
 
    ![image-20200731132229265](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731132229265.png)
 
-## 15.3 配置Swagger
+## 17.3 配置Swagger
 
 1. Swagger实例Bean是Docket，所以通过配置Docket实例来配置Swaggger。
 
@@ -1697,7 +3038,7 @@ Vue+SpringBoot
 
    ![image-20200731161851136](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731161851136.png)
 
-## 15.4 配置扫描接口
+## 17.4 配置扫描接口
 
 1. 构建Docket时通过select()方法配置怎么扫描接口。
 
@@ -1752,7 +3093,7 @@ Vue+SpringBoot
    ant(final String antPattern) // 通过ant()控制
    ```
 
-## 15.5 配置Swagger开关
+## 17.5 配置Swagger开关
 
 1. 通过enable()方法配置是否启用swagger，如果是false，swagger将不能在浏览器中访问了
 
@@ -1818,7 +3159,7 @@ Vue+SpringBoot
 
      ![image-20200731194559290](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731194559290.png)
 
-## 15.6 配置API分组
+## 17.6 配置API分组
 
 1. 如果没有配置分组，默认是default。通过groupName()方法即可配置分组：
 
@@ -1856,7 +3197,7 @@ Vue+SpringBoot
 
    ![image-20200731195543102](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731195543102.png)
 
-## 15.7 实体配置
+## 17.7 实体配置
 
 1. 新建一个实体类
 
@@ -1929,7 +3270,7 @@ Swagger是一个优秀的工具，几乎所有大公司都有使用它
 - 出于安全考虑
 - 而且节省内存
 
-## 15.8 常用注解
+## 17.8 常用注解
 
 Swagger的所有注解定义在io.swagger.annotations包下
 
@@ -1981,7 +3322,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 2. 相较于传统的Postman或Curl方式测试接口，使用swagger简直就是傻瓜式操作，不需要额外说明文档(写得好本身就是文档)而且更不容易出错，只需要录入数据然后点击Execute，如果再配合自动化框架，可以说基本就不需要人为操作了。
 3. Swagger是个优秀的工具，现在国内已经有很多的中小型互联网公司都在使用它，相较于传统的要先出Word接口文档再测试的方式，显然这样也更符合现在的快速迭代开发行情。当然了，提醒下大家在正式环境要记得关闭Swagger，一来出于安全考虑二来也可以节省运行时内存。
 
-## 15.9 拓展：其他皮肤
+## 17.9 拓展：其他皮肤
 
 我们可以导入不同的包实现不同的皮肤定义：
 
@@ -2040,9 +3381,9 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 
 
-# 16. 异步、定时、邮件任务
+# 18. 异步、定时、邮件任务
 
-## 16.1 异步任务
+## 18.1 异步任务
 
 1. 创建一个service包
 
@@ -2124,7 +3465,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 7、重启测试，网页瞬间响应，后台代码依旧执行！
 
-## 16.2 邮件任务
+## 18.2 邮件任务
 
 邮件发送，在我们的日常开发中，也非常的多，Springboot也帮我们做了支持
 
@@ -2240,7 +3581,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 我们只需要使用Thymeleaf进行前后端结合即可开发自己网站邮件收发功能了！
 
-## 16.3 定时任务
+## 18.3 定时任务
 
 项目开发中经常需要执行一些定时任务，比如需要在每天凌晨的时候，分析一次前一天的日志信息，Spring为我们提供了异步执行任务调度的方式，提供了两个接口。
 
@@ -2354,11 +3695,11 @@ public class SpringbootTaskApplication {
 
 
 
-# 17. Dubbo和Zookeeper集成
+# 19. Dubbo和Zookeeper集成
 
-## 17.1 分布式理论
+## 19.1 分布式理论
 
-### 17.1.1 什么是分布式系统？
+### 19.1.1 什么是分布式系统？
 
 在《分布式系统原理与范型》一书中有如下定义：“分布式系统是若干独立计算机的集合，这些计算机对于用户来说就像单个相关系统”；
 
@@ -2368,7 +3709,7 @@ public class SpringbootTaskApplication {
 
 首先需要明确的是，只有当单个节点的处理能力无法满足日益增长的计算、存储任务的时候，且硬件的提升（加内存、加磁盘、使用更好的CPU）高昂到得不偿失的时候，应用程序也不能进一步优化的时候，我们才需要考虑分布式系统。因为，分布式系统要解决的问题本身就是和单机系统一样的，而由于分布式系统多节点、通过网络通信的拓扑结构，会引入很多单机系统没有的问题，为了解决这些问题又会引入更多的机制、协议，带来更多的问题。。。
 
-### 17.1.2 Dubbo文档
+### 19.1.2 Dubbo文档
 
 随着互联网的发展，网站应用的规模不断扩大，常规的垂直应用架构已无法应对，分布式服务架构以及流动计算架构势在必行，急需**一个治理系统**确保架构有条不紊的演进。
 
@@ -2376,7 +3717,7 @@ public class SpringbootTaskApplication {
 
 ![img](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/dubbo-architecture-roadmap.jpg)
 
-### 17.1.3 单一应用架构
+### 19.1.3 单一应用架构
 
 当网站流量很小时，只需一个应用，将所有功能都部署在一起，以减少部署节点和成本。此时，用于简化增删改查工作量的数据访问框架(ORM)是关键。
 
@@ -2392,7 +3733,7 @@ public class SpringbootTaskApplication {
 
 3、不利于升级维护
 
-### 17.1.4 垂直应用架构
+### 19.1.4 垂直应用架构
 
 当访问量逐渐增大，单一应用增加机器带来的加速度越来越小，将应用拆成互不相干的几个应用，以提升效率。此时，用于加速前端页面开发的Web框架(MVC)是关键。
 
@@ -2402,19 +3743,19 @@ public class SpringbootTaskApplication {
 
 缺点：公用模块无法重复利用，开发性的浪费
 
-### 17.1.5 分布式服务架构
+### 19.1.5 分布式服务架构
 
 当垂直应用越来越多，应用之间交互不可避免，将核心业务抽取出来，作为独立的服务，逐渐形成稳定的服务中心，使前端应用能更快速的响应多变的市场需求。此时，用于提高业务复用及整合的**分布式服务框架(RPC)**是关键。
 
 ![image-20200801133710784](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133710784.png)
 
-### 17.1.6 流动计算架构
+### 19.1.6 流动计算架构
 
 当服务越来越多，容量的评估，小服务资源的浪费等问题逐渐显现，此时需增加一个调度中心基于访问压力实时管理集群容量，提高集群利用率。此时，用于**提高机器利用率的资源调度和治理中心**(SOA)[ Service Oriented Architecture]是关键。
 
 ![image-20200801133801873](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133801873.png)
 
-## 17.2 什么是RPC
+## 19.2 什么是RPC
 
 RPC【Remote Procedure  Call】是指远程过程调用，是一种进程间通信方式，他是一种技术的思想，而不是规范。它允许程序调用另一个地址空间（通常是共享网络的另一台机器上）的过程或函数，而不用程序员显式编码这个远程调用的细节。即程序员无论是调用本地的还是远程的函数，本质上编写的调用代码基本相同。
 
@@ -2432,7 +3773,7 @@ RPC两个核心模块：通讯，序列化。
 
 
 
-## 17.3 Dubbo
+## 19.3 Dubbo
 
 Apache Dubbo |ˈdʌbəʊ| 是一款高性能、轻量级的开源Java RPC框架，它提供了三大核心能力：面向接口的远程方法调用，智能容错和负载均衡，以及服务自动注册和发现。
 
@@ -2465,7 +3806,7 @@ dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?ta
 - 服务消费者，从提供者地址列表中，基于软负载均衡算法，选一台提供者进行调用，如果调用失败，再选另一台调用。
 - 服务消费者和提供者，在内存中累计调用次数和调用时间，定时每分钟发送一次统计数据到监控中心。
 
-## 17.4 Dubbo环境搭建
+## 19.4 Dubbo环境搭建
 
 点进dubbo官方文档，推荐我们使用Zookeeper 注册中心
 
@@ -2473,7 +3814,7 @@ dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?ta
 
 什么是zookeeper呢？可以查看[官方文档](https://gitee.com/link?target=https%3A%2F%2Fzookeeper.apache.org%2F)
 
-## 17.5 安装Zookeeper
+## 19.5 安装Zookeeper
 
 1. 下载zookeeper ：[地址](https://gitee.com/link?target=https%3A%2F%2Fmirror.bit.edu.cn%2Fapache%2Fzookeeper%2F)， 我们下载3.6.1， 最新版！解压zookeeper
 
@@ -2527,7 +3868,7 @@ dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?ta
 
      ![image-20200801180302890](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801180302890.png)
 
-## 17.6 安装Dubbo-admin
+## 19.6 安装Dubbo-admin
 
 - dubbo本身并不是一个服务软件。它其实就是一个jar包，能够帮你的java程序连接到zookeeper，并利用zookeeper消费、提供服务。
 - 但是为了让用户更好的管理监控众多的dubbo服务，官方提供了一个可视化的监控程序dubbo-admin，不过这个监控即使不装也不影响使用。
@@ -2589,9 +3930,9 @@ java -jar dubbo-admin-0.0.1-SNAPSHOT.jar
 - dubbo-admin:是一 个监控管理后台-查看我们注册了哪些服务，哪些服务被消费了（可以不用）
 - Dubbo: jar包
 
-## 17.7 SpringBoot + Dubbo + zookeeper
+## 19.7 SpringBoot + Dubbo + zookeeper
 
-### 17.7.1 框架搭建
+### 19.7.1 框架搭建
 
 **1. 启动zookeeper ！**
 
@@ -2640,7 +3981,7 @@ public interface UserService {
 
 **需求：现在我们的用户想使用买票的服务，这要怎么弄呢 ？**
 
-### 17.7.2 服务提供者
+### 19.7.2 服务提供者
 
 **1、将服务提供者注册到注册中心，我们需要整合Dubbo和zookeeper，所以需要导包**
 
@@ -2735,7 +4076,7 @@ public class TicketServiceImpl implements TicketService {
 
 ![image-20200801205708690](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801205708690.png)
 
-### 17.7.3 服务消费者
+### 19.7.3 服务消费者
 
 **1、导入依赖，和之前的依赖一样；**
 
@@ -2836,7 +4177,7 @@ public class ConsumerServerApplicationTests {
 }
 ```
 
-### 17.7.4 启动测试
+### 19.7.4 启动测试
 
 **1. 开启zookeeper**
 
@@ -2853,666 +4194,3 @@ public class ConsumerServerApplicationTests {
 ![image-20200801222026747](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801222026747.png)
 
 **ok , 这就是SpingBoot + dubbo + zookeeper实现分布式开发的应用，其实就是一个服务拆分的思想；**
-
-
-
-
-
-# 18. SpringSecurity
-
-## 18.1 安全简介
-
-1、在 Web  开发中，安全一直是非常重要的一个方面。安全虽然属于应用的非功能性需求，但是应该在应用开发的初期就考虑进来。如果在应用开发的后期才考虑安全的问题，就可能陷入一个两难的境地：一方面，应用存在严重的安全漏洞，无法满足用户的要求，并可能造成用户的隐私数据被攻击者窃取；另一方面，应用的基本架构已经确定，要修复安全漏洞，可能需要对系统的架构做出比较重大的调整，因而需要更多的开发时间，影响应用的发布进程。因此，从应用开发的第一天就应该把安全相关的因素考虑进来，并在整个应用的开发过程中。
-
-2、市面上存在比较有名的：Shiro，Spring Security ！
-
-3、这里需要阐述一下的是，每一个框架的出现都是为了解决某一问题而产生了，那么Spring Security框架的出现是为了解决什么问题呢？
-
-4、首先我们看下它的官网介绍：Spring Security官网地址
-
-```
-Spring Security is a powerful and highly customizable  authentication and access-control framework. It is the de-facto standard for securing Spring-based applications.
-Spring Security is a framework that focuses on providing both  authentication and authorization to Java applications. Like all Spring  projects, the real power of Spring Security is found in how easily it  can be extended to meet custom requirements
-```
-
-5、Spring Security是一个功能强大且高度可定制的身份验证和访问控制框架。它实际上是保护基于spring的应用程序的标准。
-
-6、Spring Security是一个框架，侧重于为Java应用程序提供身份验证和授权。与所有Spring项目一样，Spring安全性的真正强大之处在于它可以轻松地扩展以满足定制需求
-
-7、从官网的介绍中可以知道这是一个权限框架。想我们之前做项目是没有使用框架是怎么控制权限的？对于权限 一般会细分为功能权限，访问权限，和菜单权限。代码会写的非常的繁琐，冗余。
-
-8、怎么解决之前写权限代码繁琐，冗余的问题，一些主流框架就应运而生而Spring Scecurity就是其中的一种。
-
-9、Spring 是一个非常流行和成功的 Java 应用开发框架。Spring Security 基于 Spring 框架，提供了一套  Web 应用安全性的完整解决方案。一般来说，Web  应用的安全性包括用户认证（Authentication）和用户授权（Authorization）两个部分。
-
-- 用户认证指的是验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码。系统通过校验用户名和密码来完成认证过程。
-- 用户授权指的是验证某个用户是否有权限执行某个操作。在一个系统中，不同用户所具有的权限是不同的。比如对一个文件来说，有的用户只能进行读取，而有的用户可以进行修改。一般来说，系统会为不同的用户分配不同的角色，而每个角色则对应一系列的权限。
-
-10、对于上面提到的两种应用情景，Spring Security 框架都有很好的支持。
-
-- 在用户认证方面，Spring Security 框架支持主流的认证方式，包括 HTTP 基本认证、HTTP 表单验证、HTTP 摘要认证、OpenID 和 LDAP 等。
-- 在用户授权方面，Spring Security 提供了基于角色的访问控制和访问控制列表（Access Control List，ACL），可以对应用中的领域对象进行细粒度的控制。
-
-## 18.2 实战测试
-
-### 18.2.1 实验环境搭建
-
-1. 新建一个初始的springboot项目web模块，thymeleaf模块
-
-2. 导入静态资源
-
-   ![image-20200728130501139](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728130501139.png)
-
-3. controller跳转！
-
-   ```
-   package nuc.ss.controller;
-   
-   import org.springframework.stereotype.Controller;
-   import org.springframework.web.bind.annotation.PathVariable;
-   import org.springframework.web.bind.annotation.RequestMapping;
-   
-   @Controller
-   public class RouterController {
-   
-       @RequestMapping({"/","/index"})
-       public String index() {
-           return "index";
-       }
-   
-       @RequestMapping("/toLogin")
-       public String toLogin() {
-           return "views/login";
-       }
-   
-       @RequestMapping("/level1/{id}")
-       public String level1(@PathVariable("id") int id) {
-           return "views/level1/" + id;
-       }
-   
-       @RequestMapping("/level2/{id}")
-       public String level2(@PathVariable("id") int id) {
-           return "views/level2/" + id;
-       }
-   
-       @RequestMapping("/level3/{id}")
-       public String level3(@PathVariable("id") int id) {
-           return "views/level3/" + id;
-       }
-   }
-   ```
-
-4. 测试实验环境是否OK！
-
-   首页
-
-   ![image-20200728130703899](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728130703899.png)
-
-   登录
-
-   ![image-20200728130726820](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728130726820.png)
-
-   详情
-
-   ![image-20200728130751338](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728130751338.png)
-
-### 18.2.2 认识SpringSecurity
-
-Spring Security 是针对Spring项目的安全框架，也是Spring  Boot底层安全模块默认的技术选型，他可以实现强大的Web安全控制，对于安全控制，我们仅需要引入  spring-boot-starter-security 模块，进行少量的配置，即可实现强大的安全管理！
-
-记住几个类：
-
-- `WebSecurityConfigurerAdapter`：自定义Security策略
-- `AuthenticationManagerBuilder`：自定义认证策略
-- `@EnableWebSecurity`：开启WebSecurity模式
-
-Spring Security的两个主要目标是 “认证” 和 “授权”（访问控制）。
-
-**“认证”（Authentication）**
-
-身份验证是关于验证您的凭据，如用户名/用户ID和密码，以验证您的身份。
-
-身份验证通常通过用户名和密码完成，有时与身份验证因素结合使用。
-
-**“授权” （Authorization）**
-
-授权发生在系统成功验证您的身份后，最终会授予您访问资源（如信息，文件，数据库，资金，位置，几乎任何内容）的完全权限。
-
-这个概念是通用的，而不是只在Spring Security 中存在。
-
-### 18.2.3 认证和授权
-
-目前，我们的测试环境，是谁都可以访问的，我们使用 Spring Security 增加上认证和授权的功能
-
-1. 引入 Spring Security 模块
-
-   ```
-   <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-   </dependency>
-   ```
-
-   ![image-20200728175946604](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728175946604.png)
-
-2. 编写 Spring Security 配置类
-
-   - 参考官网：[https://spring.io/projects/spring-security](https://gitee.com/link?target=https%3A%2F%2Fspring.io%2Fprojects%2Fspring-security)
-
-   - 查看我们自己项目中的版本，找到对应的帮助文档：[https://docs.spring.io/spring-security/site/docs/5.3.0.RELEASE/reference/html5](https://gitee.com/link?target=https%3A%2F%2Fdocs.spring.io%2Fspring-security%2Fsite%2Fdocs%2F5.3.0.RELEASE%2Freference%2Fhtml5)
-
-   - servlet-applications 8.16.4
-
-     ```
-     @EnableWebSecurity
-     public class Config extends WebSecurityConfigurerAdapter {
-         @Override
-         protected void configure(HttpSecurity http) throws Exception {
-             http
-                 .apply(customDsl())
-                     .flag(true)
-                     .and()
-                 ...;
-         }
-     }
-     ```
-
-     ![image-20200728175824524](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728175824524.png)
-
-3. 编写基础配置类
-
-   ![image-20200728180624787](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728180624787.png)
-
-   ```
-   package nuc.ss.config;
-   
-   import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-   import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-   import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-   
-   @EnableWebSecurity// 开启WebSecurity模式
-   public class SecurityConfig extends WebSecurityConfigurerAdapter {
-   
-       @Override
-       protected void configure(HttpSecurity http) throws Exception {
-           super.configure(http);
-       }
-   }
-   ```
-
-4. 定制请求的授权规则
-
-   看源码
-
-   ![image-20200728190605894](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728190605894.png)
-
-   仿写
-
-   ```
-   //链式编程
-   @Override
-   protected void configure(HttpSecurity http) throws Exception {
-       // 首页所有人都可以访问，功能也只有对应有权限的人才能访问到
-       // 请求授权的规则
-   
-       http.authorizeRequests()
-           .antMatchers("/").permitAll()
-           .antMatchers("/level1/**").hasRole("vip1")
-           .antMatchers("/level2/**").hasRole("vip2")
-           .antMatchers("/level3/**").hasRole("vip3");
-   
-   }
-   ```
-
-5. 测试一下：发现除了首页都进不去了！因为我们目前没有登录的角色，因为请求需要登录的角色拥有对应的权限才可以！
-
-   ![image-20200728185841148](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728185841148.png)
-
-6. 在configure()方法中加入以下配置，开启自动配置的登录功能！
-
-   ```
-   // 开启自动配置的登录功能
-   // /login 请求来到登录页
-   // /login?error 重定向到这里表示登录失败
-   http.formLogin();
-   ```
-
-7. 测试一下：发现，没有权限的时候，会跳转到登录的页面！
-
-   ![image-20200728190113670](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728190113670.png)
-
-8. 查看刚才登录页的注释信息；
-
-   我们可以定义认证规则，重写configure的另一个方法
-
-   ![image-20200728190303746](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728190303746.png)
-
-   源码：
-
-   ![image-20200728190840458](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728190840458.png)
-
-   仿写
-
-   ```
-   // 认证，springboot 2.1.x 可以直接使用
-   // 密码编码： PasswordEncoder
-   @Override
-   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-   
-       //这些数据正常应该中数据库中读
-   
-       auth.inMemoryAuthentication()
-           .withUser("kuangshen").password("123456").roles("vip2","vip3")
-           .and()
-           .withUser("root").password("123456").roles("vip1","vip2","vip3")
-           .and()
-           .withUser("guest").password("123456").roles("vip1");
-   }
-   ```
-
-9. 测试，我们可以使用这些账号登录进行测试！发现会报错！
-
-   `There is no PasswordEncoder mapped for the id “null”`
-
-   ![image-20200728204515545](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728204515545.png)
-
-   ![image-20200728204424570](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728204424570.png)
-
-10. 原因，我们要将前端传过来的密码进行某种方式加密，否则就无法登录，修改代码
-
-    ```
-    // 认证，springboot 2.1.x 可以直接使用
-    // 密码编码： PasswordEncoder
-    // 在spring Secutiry 5.0+ 新增了很多加密方法
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    
-        //这些数据正常应该中数据库中读
-        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
-            .withUser("kuangshen").password(new BCryptPasswordEncoder().encode("123456")).roles("vip2","vip3")
-            .and()
-            .withUser("root").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1","vip2","vip3")
-            .and()
-            .withUser("guest").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1");
-    }
-    ```
-
-11. 测试，发现，登录成功，并且每个角色只能访问自己认证下的规则！搞定
-
-### 18.2.4 权限控制和注销
-
-1. 开启自动配置的注销的功能
-
-   ```
-   //定制请求的授权规则
-   @Override
-   protected void configure(HttpSecurity http) throws Exception {
-      //....
-      //开启自动配置的注销的功能
-      // /logout 注销请求
-      http.logout();
-   }
-   ```
-
-2. 我们在前端，增加一个注销的按钮，`index.html `导航栏中
-
-   ```
-   <!--注销-->
-   <a class="item" th:href="@{/logout}">
-       <i class="sign-out icon"></i> 注销
-   </a>
-   ```
-
-3. 我们可以去测试一下，登录成功后点击注销，发现注销完毕会跳转到登录页面！
-
-   ![image-20200728210246562](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728210246562.png)
-
-   ![image-20200728210323067](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728210323067.png)
-
-4. 但是，我们想让他注销成功后，依旧可以跳转到首页，该怎么处理呢？
-
-   源码：
-
-   ![image-20200728211500366](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728211500366.png)
-
-   ```
-   // .logoutSuccessUrl("/"); 注销成功来到首页
-   http.logout().logoutSuccessUrl("/");
-   ```
-
-5. 测试，注销完毕后，发现跳转到首页OK
-
-6. 我们现在又来一个需求：用户没有登录的时候，导航栏上只显示登录按钮，用户登录之后，导航栏可以显示登录的用户信息及注销按钮！还有就是，比如kuangshen这个用户，它只有 vip2，vip3功能，那么登录则只显示这两个功能，而vip1的功能菜单不显示！这个就是真实的网站情况了！该如何做呢？
-
-   我们需要结合thymeleaf中的一些功能
-
-   `sec：authorize="isAuthenticated()"`:是否认证登录！来显示不同的页面
-
-   Maven依赖：
-
-   ```
-   <!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity4 -->
-   <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
-      <version>3.0.4.RELEASE</version>
-   </dependency>
-   ```
-
-   - 整合包4（springsecurity4）——springboot版本2.0.9
-   - 整合包5（springsecurity5）——springboot版本之后
-
-7. 修改我们的前端页面
-
-   导入命名空间
-
-   ```
-   <html lang="en" xmlns:th="http://www.thymeleaf.org"
-         xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-   ```
-
-   修改导航栏，增加认证判断
-
-   ```
-   <!--登录注销-->
-   <div class="right menu">
-   
-       <!--如果未登录-->
-       <div sec:authorize="!isAuthenticated()">
-           <a class="item" th:href="@{/login}">
-               <i class="address card icon"></i> 登录
-           </a>
-       </div>
-   
-       <!--如果已登录-->
-       <div sec:authorize="isAuthenticated()">
-           <a class="item">
-               <i class="address card icon"></i>
-               用户名：<span sec:authentication="principal.username"></span>
-               角色：<span sec:authentication="principal.authorities"></span>
-           </a>
-       </div>
-   
-       <div sec:authorize="isAuthenticated()">
-           <a class="item" th:href="@{/logout}">
-               <i class="sign-out  icon"></i> 注销
-           </a>
-       </div>
-   </div>
-   ```
-
-8. 重启测试，我们可以登录试试看，登录成功后确实，显示了我们想要的页面；
-
-   - 未登录
-
-     ![image-20200728213100804](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728213100804.png)
-
-   - 登录
-
-     ![image-20200728213235625](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728213235625.png)
-
-9. 点击注销产生的问题
-
-   - 整合包4（springsecurity4）
-
-     ![image-20200728220414292](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728220414292.png)
-
-   - 整合包5（springsecurity5）（不算问题，需要点击确定，才能回到首页）
-
-     ![image-20200728220517534](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728220517534.png)
-
-     ![image-20200728220531678](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728220531678.png)
-
-   解决问题：
-
-   - 它默认防止csrf跨站请求伪造，因为会产生安全问题
-   - 将请求改为post表单提交
-   - 在spring security中关闭csrf功能`http.csrf().disable();`
-
-   再次点击注销按钮之后（直接退出到首页）
-
-   ![image-20200728220835347](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728220835347.png)
-
-10. 我们继续将下面的角色功能块认证完成！
-
-    ```
-    <!--菜单根据用户的角色动态的实现-->
-    <div class="column"  sec:authorize="hasRole('vip1')">
-        <div class="ui raised segment">
-            <div class="ui">
-                <div class="content">
-                    <h5 class="content">Level 1</h5>
-                    <hr>
-                    <div><a th:href="@{/level1/1}"><i class="bullhorn icon"></i> Level-1-1</a></div>
-                    <div><a th:href="@{/level1/2}"><i class="bullhorn icon"></i> Level-1-2</a></div>
-                    <div><a th:href="@{/level1/3}"><i class="bullhorn icon"></i> Level-1-3</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="column"  sec:authorize="hasRole('vip2')">
-        <div class="ui raised segment">
-            <div class="ui">
-                <div class="content">
-                    <h5 class="content">Level 2</h5>
-                    <hr>
-                    <div><a th:href="@{/level2/1}"><i class="bullhorn icon"></i> Level-2-1</a></div>
-                    <div><a th:href="@{/level2/2}"><i class="bullhorn icon"></i> Level-2-2</a></div>
-                    <div><a th:href="@{/level2/3}"><i class="bullhorn icon"></i> Level-2-3</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="column"  sec:authorize="hasRole('vip3')">
-        <div class="ui raised segment">
-            <div class="ui">
-                <div class="content">
-                    <h5 class="content">Level 3</h5>
-                    <hr>
-                    <div><a th:href="@{/level3/1}"><i class="bullhorn icon"></i> Level-3-1</a></div>
-                    <div><a th:href="@{/level3/2}"><i class="bullhorn icon"></i> Level-3-2</a></div>
-                    <div><a th:href="@{/level3/3}"><i class="bullhorn icon"></i> Level-3-3</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    ```
-
-11. 测试一下！
-
-- 用户首页未登录
-
-  ![image-20200728221453455](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728221453455.png)
-
-- 某个用户登录
-
-  ![image-20200728221536116](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728221536116.png)
-
-- 权限控制和注销搞定！
-
-### 18.2.5 记住我
-
-现在的情况，我们只要登录之后，关闭浏览器，再登录，就会让我们重新登录，但是很多网站的情况，就是有一个记住密码的功能，这个该如何实现呢？很简单
-
-1. 开启记住我功能
-
-   ```
-   //定制请求的授权规则
-   @Override
-   protected void configure(HttpSecurity http) throws Exception {
-   //。。。。。。。。。。。
-      //开启记住我功能: cookie,默认保存两周
-      http.rememberMe();
-   }
-   ```
-
-2. 我们再次启动项目测试一下
-
-   - 发现登录页多了一个记住我功能
-
-     ![image-20200728222312694](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728222312694.png)
-
-   - 我们登录之后关闭 浏览器，然后重新打开浏览器访问，发现用户依旧存在！
-
-     ![image-20200728222406216](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728222406216.png)
-
-     思考：如何实现的呢？其实非常简单
-
-     我们可以查看浏览器的cookie
-
-     ![image-20200728222706154](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728222706154.png)
-
-3. 我们点击注销的时候，可以发现，spring security 帮我们自动删除了这个 cookie
-
-   ![image-20200728223559077](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728223559077.png)
-
-4. cookie发送给浏览器保存，以后登录带上这个cookie，只要通过检查就可以免登录了。如果点击注销，则会删除这个cookie，具体的原理我们在JavaWeb阶段都讲过了，这里就不在多说了！
-
-### 18.2.6 定制登录页
-
-现在这个登录页面都是spring security 默认的，怎么样可以使用我们自己写的Login界面呢？
-
-1. 在刚才的登录页配置后面指定 loginpage
-
-   ```
-   protected void configure(HttpSecurity http) throws Exception {
-       //......
-   
-       // 没有权限默认会到登录页面,需要开启登录的页面
-       // /login页面
-       http.formLogin().loginPage("/toLogin");
-   
-       //......
-   }
-   ```
-
-2. 然后前端也需要指向我们自己定义的 login请求
-
-   ```
-   <div sec:authorize="!isAuthenticated()">
-       <a class="item" th:href="@{/toLogin}">
-           <i class="address card icon"></i> 登录
-       </a>
-   </div>
-   ```
-
-3. 我们登录，需要将这些信息发送到哪里，我们也需要配置，login.html 配置提交请求及方式，方式必须为post:
-
-   在 loginPage()源码中的注释上有写明：
-
-   ![image-20200728224246393](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728224246393.png)
-
-4. 这个请求提交上来，我们还需要验证处理，怎么做呢？我们可以查看formLogin()方法的源码！我们配置接收登录的用户名和密码的参数！
-
-   ![image-20200728224831116](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200728224831116.png)
-
-   ```
-   protected void configure(HttpSecurity http) throws Exception {
-       //......
-   
-       // 没有权限默认会到登录页面,需要开启登录的页面
-       // /login页面
-       http.formLogin()
-         .usernameParameter("username")
-         .passwordParameter("password")
-         .loginPage("/toLogin")
-         .loginProcessingUrl("/login"); // 登陆表单提交请求
-   
-       //......
-   }
-   ```
-
-5. 在登录页增加记住我的多选框
-
-   ```
-   <input type="checkbox" name="remember"> 记住我
-   ```
-
-6. 后端验证处理！
-
-   ```
-   protected void configure(HttpSecurity http) throws Exception {
-       //......
-       //开启记住我功能: cookie,默认保存两周,自定义接收前端的参数
-       http.rememberMe().rememberMeParameter("remember");
-   }
-   ```
-
-7. 测试，OK
-
-
-
-
-
-> 完整配置代码
-
-```
-package nuc.ss.config;
-
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-// AOP:拦截器
-@EnableWebSecurity  // 开启WebSecurity模式
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    //链式编程
-    //授权
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // 首页所有人都可以访问，功能也只有对应有权限的人才能访问到
-        // 请求授权的规则
-        http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/level1/**").hasRole("vip1")
-                .antMatchers("/level2/**").hasRole("vip2")
-                .antMatchers("/level3/**").hasRole("vip3");
-
-        // 没有权限默认会到登录页面,需要开启登录的页面
-        // /login页面
-        http.formLogin()
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .loginPage("/toLogin")
-                .loginProcessingUrl("/login");
-
-        //注销,开启了注销功能,跳到首页
-        http.logout().logoutSuccessUrl("/");
-
-        // 防止网站工具：get，post
-        http.csrf().disable();//关闭csrf功能，登录失败肯定存在的原因
-
-        //开启记住我功能: cookie,默认保存两周,自定义接收前端的参数
-        http.rememberMe().rememberMeParameter("remember");
-
-
-    }
-
-    // 认证，springboot 2.1.x 可以直接使用
-    // 密码编码： PasswordEncoder
-    // 在spring Secutiry 5.0+ 新增了很多加密方法
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-        //这些数据正常应该中数据库中读
-        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
-                .withUser("kuangshen").password(new BCryptPasswordEncoder().encode("123456")).roles("vip2","vip3")
-                .and()
-                .withUser("root").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1","vip2","vip3")
-                .and()
-                .withUser("guest").password(new BCryptPasswordEncoder().encode("123456")).roles("vip1");
-    }
-
-
-}
-```
-
-
-
-
-
