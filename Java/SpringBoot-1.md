@@ -2506,3 +2506,950 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 
 
+# 11. 员工管理系统
+
+## 11.1 准备工作
+
+1. 导入相关静态资源
+
+   ![image-20220331215243683](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331215243683.png)
+
+2. pojo层：部门类、员工类
+
+   ```java
+   //部门类
+   @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
+   public class Department {
+       private Integer id;
+       private String departmentName;
+   }
+   
+   //员工类
+   @Data
+   @NoArgsConstructor
+   public class Employee {
+       private Integer id;
+       private String lastName;
+       private String email;
+       private Integer gender;     //0女 1男
+       private Date birth;
+       private  Department department;
+   
+       //自定义有参，birth缺省，下面自动创建
+       public Employee(Integer id, String lastName, String email, Integer gender, Department department) {
+           this.id = id;
+           this.lastName = lastName;
+           this.email = email;
+           this.gender = gender;
+           this.birth = new Date();
+           this.department = department;
+       }
+   }
+   ```
+
+3. dao层：
+
+   DepartmentDao: 
+
+   ```java
+   @Repository     //交给Spring托管
+   public class DepartmentDao {
+   
+       //模拟数据库中的数据
+       @Autowired      //自动装配
+       private static Map<Integer, Department> departments = null;
+       static {
+           departments = new HashMap<Integer, Department>();   //创建一个部门
+           departments.put(101, new Department(101, "教学部"));
+           departments.put(102, new Department(102, "市场部"));
+           departments.put(103, new Department(103, "教研部"));
+           departments.put(104, new Department(104, "运营部"));
+           departments.put(105, new Department(105, "后勤部"));
+       }
+   
+       //获得所有部门信息
+       public Collection<Department> getDepartments() {
+           return departments.values();
+       }
+   
+       //通过id获得部门
+       public Department getDepartmentById(Integer id) {
+           return departments.get(id);
+       }
+   
+   }
+   ```
+
+   EmployeeDao: 
+
+   ```java
+   @Repository
+   public class EmployeeDao {
+   
+       //模拟数据库中的数据
+       private static Map<Integer, Employee> employees = null;
+   
+       @Autowired
+       private DepartmentDao departmentDao;    //员工所属部门
+   
+       static {
+           employees = new HashMap<Integer, Employee>();   //创建一个部门
+           employees.put(1001, new Employee(1001, "小AA", "444444@qq.com", 1, new Department(101, "教学部")));
+           employees.put(1002, new Employee(1002, "小BB", "555555@qq.com", 0, new Department(102, "市场部")));
+           employees.put(1003, new Employee(1003, "小CC", "666666@qq.com", 1, new Department(103, "教研部")));
+           employees.put(1004, new Employee(1004, "小DD", "777777@qq.com", 0, new Department(104, "运营部")));
+           employees.put(1005, new Employee(1005, "小EE", "888888@qq.com", 1, new Department(105, "后勤部")));
+       }
+   
+       //增加一个员工
+       //主键自增
+       private static Integer initId = 1006;
+       public void save(Employee employee) {
+           if (employee.getId() == null) {
+               employee.setId(initId++);
+           }
+   
+           employee.setDepartment(departmentDao.getDepartmentById(employee.getDepartment().getId()));
+   
+           employees.put(employee.getId(), employee);
+       }
+   
+   
+       //获得所有员工信息
+       public Collection<Employee> getAll() {
+           return employees.values();
+       }
+   
+       //通过id获得员工
+       public Employee getEmployeeById(Integer id) {
+           return employees.get(id);
+       }
+   
+       //通过id删除员工
+       public void delete(Integer id) {
+           employees.remove(id);
+       }
+   }
+   ```
+
+
+
+
+
+## 11.2 首页展示
+
+1. 可以在controller里面配置，也可以实现WebMvcConfiguration接口配置，这里采用第二种，方便回顾。在config包下新建MyMvcConfig：
+
+   ```java
+   @Configuration
+   public class MyMvcConfig implements WebMvcConfigurer {
+       @Override
+       public void addViewControllers(ViewControllerRegistry registry) {
+           //可以配置多个
+           registry.addViewController("/").setViewName("index");
+           registry.addViewController("/index.html").setViewName("index");
+       }
+   }
+   ```
+
+2. 将静态文件中相关标签全部改成Thymeleaf的模板，示例如下：
+
+   ![image-20220401123042971](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401123042971.png)
+
+3. 启动项目，查看首页：
+
+   ![image-20220331225852489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331225852489.png)
+
+## 11.3 页面国际化
+
+有的时候，我们的网站会去涉及中英文甚至多语言的切换，这时候我们就需要学习国际化了！
+
+### 11.3.1 准备工作
+
+先在IDEA中统一设置properties的编码问题！
+
+![image-20220331213516288](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331213516288.png)
+
+编写国际化配置文件，抽取页面需要显示的国际化页面消息。
+
+### 11.3.2 配置文件编写
+
+1. 我们在resources资源文件下新建一个`i18n`（internationalization缩写）目录，存放国际化配置文件
+
+2. 建立一个`login.properties`文件，还有一个`login_zh_CN.properties`；发现IDEA自动识别了我们要做国际化操作；文件夹变了！
+
+   ![image-20220401102524302](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102524302.png)
+
+3. 我们可以在这上面去新建一个文件；
+
+   ![image-20220401102553866](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102553866.png)
+
+   弹出如下页面：我们再添加一个英文的；
+
+   ![image-20220401102620870](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102620870.png)
+
+   这样就快捷多了！
+
+   ![image-20220401102643052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102643052.png)
+
+4. **接下来，我们就来编写配置，我们可以看到idea下面有另外一个视图**
+
+   ![image-20220401105424073](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105424073.png)
+
+   这个视图我们点击 + 号就可以直接添加属性了；我们新建一个`login.tip`，可以看到边上有三个文件框可以输入
+
+   ![image-20220401105512451](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105512451.png)
+
+   然后依次添加其他页面内容即可！
+
+   
+
+   去查看我们的配置文件`login.properties` ：
+
+   默认：
+
+   ```properties
+   login.btn=登录
+   login.password=密码
+   login.remember=记住我
+   login.tip=请登录
+   login.username=用户名
+   ```
+
+   英文：
+
+   ```properties
+   login.btn=Login in
+   login.password=Password
+   login.remember=Remember me
+   login.tip=Please Login in
+   login.username=Username
+   ```
+
+   中文：
+
+   ```properties
+   login.btn=登录
+   login.password=密码
+   login.remember=记住我
+   login.tip=请登录
+   login.username=用户名
+   ```
+
+   配置文件步骤搞定！
+
+### 11.3.3 配置文件生效探究
+
+我们去看一下SpringBoot对国际化的自动配置！这里又涉及到一个类：`MessageSourceAutoConfiguration`
+
+里面有一个方法，这里发现SpringBoot已经自动配置好了管理我们国际化资源文件的组件 `ResourceBundleMessageSource`；
+
+```java
+// 获取 properties 传递过来的值进行判断
+@Bean
+public MessageSource messageSource(MessageSourceProperties properties) {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    if (StringUtils.hasText(properties.getBasename())) {
+        // 设置国际化文件的基础名（去掉语言国家代码的）
+        messageSource.setBasenames(
+            StringUtils.commaDelimitedListToStringArray(
+                                       StringUtils.trimAllWhitespace(properties.getBasename())));
+    }
+    if (properties.getEncoding() != null) {
+        messageSource.setDefaultEncoding(properties.getEncoding().name());
+    }
+    messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+    Duration cacheDuration = properties.getCacheDuration();
+    if (cacheDuration != null) {
+        messageSource.setCacheMillis(cacheDuration.toMillis());
+    }
+    messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+    messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
+    return messageSource;
+}
+```
+
+我们真实的情况是放在了i18n目录下，所以我们要去`application.properties`配置这个messages的路径：
+
+```properties
+#配置文件的真实位置
+spring.messages.basename=i18n.login
+```
+
+### 11.3.4 配置页面国际化值
+
+去页面获取国际化的值，查看Thymeleaf的文档，找到message取值操作为：`#{...}`。我们去index首页进行修改：
+
+![image-20220401111528571](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111528571.png)
+
+我们可以去启动项目，访问一下，发现已经自动识别为中文的了！
+
+![image-20220401111547450](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111547450.png)
+
+**接下来取配置根据按钮自动切换中文英文**
+
+### 11.3.5 配置国际化解析
+
+在Spring中有一个国际化的Locale （区域信息对象）；里面有一个叫做`LocaleResolver `（获取区域信息对象）的解析器！
+
+我们去我们webmvc自动配置文件，寻找一下！看到SpringBoot默认配置：
+
+```java
+@Bean
+@ConditionalOnMissingBean
+@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
+public LocaleResolver localeResolver() {
+    // 用户配置了就用用户的，没有就用下面默认的
+    if (this.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
+        return new FixedLocaleResolver(this.mvcProperties.getLocale());
+    }
+    // 接收头国际化分解
+    AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+    localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
+    return localeResolver;
+}
+```
+
+`AcceptHeaderLocaleResolver` 这个类中有一个方法，判断返回什么语言
+
+```java
+public Locale resolveLocale(HttpServletRequest request) {
+    Locale defaultLocale = this.getDefaultLocale();
+    // 默认的就是根据请求头带来的区域信息获取Locale进行国际化
+    if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
+        return defaultLocale;
+    } else {
+        Locale requestLocale = request.getLocale();
+        List<Locale> supportedLocales = this.getSupportedLocales();
+        if (!supportedLocales.isEmpty() && !supportedLocales.contains(requestLocale)) {
+            Locale supportedLocale = this.findSupportedLocale(request, supportedLocales);
+            if (supportedLocale != null) {
+                return supportedLocale;
+            } else {
+                return defaultLocale != null ? defaultLocale : requestLocale;
+            }
+        } else {
+            return requestLocale;
+        }
+    }
+}
+```
+
+那假如我们现在想点击链接让我们自己的国际化资源生效，就需要让我们自己的Locale生效！
+
+我们去自己写一个自己的`LocaleResolver`，可以在链接上携带区域信息！
+
+修改一下前端页面的跳转连接：
+
+```html
+<!-- 这里传入参数不需要使用 ？使用 （key=value）-->
+<a class="btn btn-sm" th:href="@{/index.html(language='zh_CN')}">中文</a>
+			<a class="btn btn-sm" th:href="@{/index.html(language='en_US')}">English</a>
+```
+
+去config包下新建MyLocaleResolver类，实现LocaleResolver接口，仿照源码写一个处理的组件类：
+
+```java
+package nuc.ss.component;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.LocaleResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+
+//可以在链接上携带区域信息
+public class MyLocaleResolver implements LocaleResolver {
+
+ //解析请求
+ @Override
+ public Locale resolveLocale(HttpServletRequest request) {
+
+     String language = request.getParameter("l");
+     Locale locale = Locale.getDefault(); // 如果没有获取到就使用系统默认的
+     //如果请求链接不为空
+     if (!StringUtils.isEmpty(language)){
+         //分割请求参数
+         String[] split = language.split("_");
+         //国家，地区
+         locale = new Locale(split[0],split[1]);
+     }
+     return locale;
+ }
+
+ @Override
+ public void setLocale(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Locale locale) {
+
+ }
+}
+```
+
+为了让我们的区域化信息能够生效，我们需要在配置类中注入一下这个组件！在我们自己的`MyMvcConofig`下添加`bean`；
+
+```java
+@Bean
+public LocaleResolver localeResolver(){
+    return new MyLocaleResolver();
+}
+```
+
+**我们重启项目，来访问一下，发现点击按钮可以实现成功切换**
+
+![image-20220401114001820](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401114001820.png)
+
+### 11.3.6 小结
+
+1. 首页配置：
+   - 注意点，所有页面的静态资源都需要使用Thymeleaf接管
+   - url： `@{}`
+2. 页面国际化
+   - 我们需要配置`i18n`文件
+   - 我们如果需要在项目中进行按钮自动切换，我们需要定义一个组件`LocalResolver`
+   - 记得将自己写的组件配置到spring容器`@Bean`
+   - 值：`#{}`
+
+
+
+## 11.4 登录功能
+
+### 11.4.1 登录
+
+1. 在`index.html`首页中的form表单上添加一个事件，让用户点击登录的时候把信息传入对应的后台。
+
+   ```html
+   <form class="form-signin" th:action="@{/user/login}">
+   ......
+   </form>
+   ```
+
+2. 编写对应的controller层：`LoginController`
+
+   ```java
+   @Controller
+   public class LoginController {
+   
+       @RequestMapping("/user/login")
+       public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
+           //具体的业务
+           if (!StringUtils.isEmpty(username) && "123456".equals(password)) {
+               //重定向到main.html（dashboard页面）
+               return "redirect:/main.html";
+           } else {
+               //登录失败将信息传递回去
+               model.addAttribute("error", "用户名或密码错误");
+               return "index";
+           }
+       }
+   }
+   ```
+
+3. 因为登录成功之后重定向到`main.html`页面，所有去`MyMvcConfig`中配置它的路径：
+
+   ```java
+   //登录成功页面
+   registry.addViewController("/main.html").setViewName("dashboard");
+   ```
+
+4. 登录失败页面提示：
+
+   ```html
+   <!--如果error为空，则不显示提示-->
+   <p style="color: red" th:text="${error}" th:if="${! #strings.isEmpty(error)}"></p>
+   ```
+
+5. 测试，可以发现登录成功后url是`main.html`，实际还是dashboard页面：
+
+   ![image-20220401124241604](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401124241604.png)
+
+
+
+### 11.4.2 登录拦截器
+
+登录写好后，发现在地址栏输入`mian.html`时，无论已经登录与否，都能跳转到主页面，所以需要做登录拦截。
+
+1. 要写登录拦截器，首先需要登录成功后用户的Session，所以先去`LoginController`类中将用户信息存入Session：
+
+   ```java
+   @RequestMapping("/user/login")
+       public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model, HttpSession session) {
+           //具体的业务
+           if (!StringUtils.isEmpty(username) && "123456".equals(password)) {
+               //存入Session
+               session.setAttribute("loginUser", username);
+               //重定向到main.html（dashboard页面）
+               return "redirect:/main.html";
+           } else {
+               //登录失败将信息传递回去
+               model.addAttribute("error", "用户名或密码错误");
+               return "index";
+           }
+       }
+   ```
+
+2. 在config包下新建`LoginHandlerInterception`类，实现HandlerInterception接口：
+
+   ```java
+   public class LoginHandlerInterception implements HandlerInterceptor {
+       @Override
+       public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+           //获取用户Session
+           Object loginUser = request.getSession().getAttribute("loginUser");
+   
+           if (loginUser == null) {
+               request.setAttribute("error", "请先登录才能进主页哦！");
+               request.getRequestDispatcher("/index.html").forward(request, response);
+               return false;
+           } else {
+               return true;     //放行
+           }
+       }
+   }
+   ```
+
+3. 去`MyMvcConfig`类中配置拦截器，重写`addInterceptors`方法
+
+   ```java
+       @Override
+       public void addInterceptors(InterceptorRegistry registry) {
+           //拦截全部请求路径，除了excludePathPatterns中的登录页面和静态资源
+           registry.addInterceptor(new LoginHandlerInterception())
+                   .addPathPatterns("/**")
+                   .excludePathPatterns("/index.html", "/", "/user/login", "/static/*", "/img/*");
+       }
+   ```
+
+4. 测试：
+
+   ![image-20220401135154331](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135154331.png)
+
+5. 登录成功后，可以通过session拿到用户的名字，在主页中显示，在`dashboard.html`中对应位置获取即可：
+
+   ```html
+   <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">[[${session.loginUser}]]</a>
+   ```
+
+6. 测试：
+
+   ![image-20220401135736113](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135736113.png)
+
+
+
+## 11.5 查询功能
+
+在写查询功能之前，先思考以下，当我们点击管理员工时，页面的左边栏和上边栏应该是保持不变的，只需要将员工列表对应的页面插入到中间位置即可。所以我们要先处理公共部分。
+
+### 11.5.1 提取公共部分
+
+1. 在templates文件夹下新建commons文件夹，创建一个`commons.html`，存放公共的页面。：
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en" xmlns:th="http://www.thymeleaf.org">
+   
+   <!--头部导航栏-->
+   <!--th:fragment是将多个地方出现的元素块用fragment包起来使用，方便在其他地方直接调用此元素块-->
+   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0" th:fragment="topbar">
+       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">[[${session.loginUser}]]</a>
+       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+       <ul class="navbar-nav px-3">
+           <li class="nav-item text-nowrap">
+               <a class="nav-link" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">注销</a>
+           </li>
+       </ul>
+   </nav>
+   
+   <!--侧边栏-->
+   <nav class="col-md-2 d-none d-md-block bg-light sidebar" th:fragment="sidebar">
+       <div class="sidebar-sticky">
+           <ul class="nav flex-column">
+               <li class="nav-item">
+                   <a class="nav-link" th:href="@{/index.html}">
+                       首页 <span class="sr-only">(current)</span>
+                   </a>
+               </li>
+               
+               <!--中间还有很多li标签-->
+               
+               <li class="nav-item">
+                   <a class="nav-link" th:href="@{/emps}">
+                       员工管理
+                   </a>
+               </li>
+           </ul>
+       </div>
+   </nav>
+   
+   </html>
+   ```
+
+2. 在`dashboard.html`主页面和`list.html`员工列表页面中的对应位置将topbar和sidebar抽取过来，下面给出主页面的示例：
+
+   ```html
+   <body>
+   
+   		<!--将commons文件下的commons.html中的topbar调用过来-->
+   		<div th:replace="~{commons/commons::topbar}"></div>
+   
+   		<div class="container-fluid">
+   			<div class="row">
+   
+   				<!--将公共部分的sidebar调用过来-->
+   				<div th:replace="~{commons/commons::sidebar}"></div>
+   
+   				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+   
+   <!-- .......... -->
+   ```
+
+3. 提取公共部分已完成。
+
+
+
+### 11.5.2 员工列表查询
+
+1. 在templates目录下新建employee目录，将`list.html`放入，方便管理
+
+2. 编写`EmployeeController`类，因为现在用的是伪数据库数据，所以暂时忽略Service层，让Controller层之间调Dao层：
+
+   ```java
+   @Controller
+   public class EmployeeController {
+   
+       @Autowired
+       EmployeeDao employeeDao;
+   
+       @RequestMapping("/emps")
+       public String list(Model model) {
+           Collection<Employee> employees = employeeDao.getAll();
+           model.addAttribute("emps", employees);
+           return "employee/list";
+       }
+   
+   }
+   ```
+
+3. 在公共部分`commons.html`页面中对应位置编写此请求：
+
+   ```html
+   	   <li class="nav-item">
+                   <a class="nav-link" th:href="@{/emps}">
+                       员工管理
+                   </a>
+               </li>
+   ```
+
+4. 先测试一下：
+
+   ![image-20220401145922383](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401145922383.png)
+
+5. 在点击员工管理后，确实跳转到了`list.html`页面，但是员工管理的位置没有高亮，先解决一下这个问题。
+
+6. 在其他页面调用公共页面的时候，可以在其他页面携带一个参数再调用公共页面，这样就可以在公共页面中直到是哪个页面调用了它。修改`dashboard.html`和`list.html`中调用公共页面的代码：
+
+   ```html
+   <!--将公共部分的sidebar调用过来，并且携带一个active参数过去，方便公共部分页面直到是谁调用了它-->
+   <div th:replace="~{commons/commons::sidebar(active='main.html')}"></div>
+   ```
+
+   
+
+   ```html
+   <!--将公共部分的sidebar调用过来-->
+   <div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
+   ```
+
+7. 在公共页面的对应位置处接收其他页面传过来的参数，然后做判断，看是哪个页面调用了它，就给哪个页面的高亮激活：
+
+   ```html
+   <!--首页位置-->
+   <!--取其他页面传过来的active，如果与之对应，则激活高亮，否则显示默认-->
+   <a th:class="${active=='main.html'? 'nav-link active':'nav-link'}" th:href="@{/index.html}">
+       首页 <span class="sr-only">(current)</span>
+   </a>
+   
+   <!--员工管理位置-->
+   <a th:class="${active=='list.html'?'nav-link active':'nav-link'}" th:href="@{/emps}">
+        员工管理
+   </a>
+   ```
+
+8. 测试，可以发现，刚进入登录页面，是首页高亮，当点击员工管理时，员工管理高亮：
+
+   ![image-20220401152205641](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152205641.png)
+
+   ![image-20220401152224972](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152224972.png)
+
+   
+
+> 表格修改，数据展示
+
+好了，现在开始修改`list.html`页面中的表格，并且把后端传过来的员工展示出来。
+
+```html
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>lastName</th>
+            <th>email</th>
+            <th>gender</th>
+            <th>birth</th>
+            <th>department</th>
+            <th>operate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--将后端传过来的emps遍历出来-->
+        <tr th:each="emp:${emps}">
+            <td th:text="${emp.getId()}"></td>
+            <td th:text="${emp.getLastName()}"></td>
+            <td th:text="${emp.getEmail()}"></td>
+            <td th:text="${emp.getGender()==0?'女':'男'}"></td>
+            <td th:text="${#dates.format(emp.getBirth(),'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${emp.getDepartment().getDepartmentName()}"></td>
+            <td>
+               <a class="btn btn-sm btn-primary">update</a>
+           	  <a class="btn btn-sm btn-danger">delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+```
+
+测试：
+
+![image-20220401154227488](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401154227488.png)
+
+
+
+## 11.6 添加员工
+
+1. 在`list.html`页面适当位置处写一个添加员工的链接：
+
+   ```html
+   <!--这里的请求方式为get-->
+   <a class="btn btn-sm btn-success" th:href="@{/emp}">addEmployee</a>
+   ```
+
+2. 编写对应的controller：
+
+   ```java
+       //添加员工
+       @GetMapping("/emp")       //使用Restful风格，这里用get请求
+       public String toAddPage(Model model) {
+           //查询出所有的部门信息，方便添加的时候选择
+           Collection<Department> departments = departmentDao.getDepartments();
+           model.addAttribute("departments", departments);
+           return "employee/add";
+       }
+       @PostMapping("/emp")    //这里也使用emp路径，但是请求方式不同，这就是Restful
+       public String addEmp(Employee employee) {
+           employeeDao.save(employee);
+           //重定向到emps，查询所有员工信息
+           return "redirect:/emps";
+       }
+   ```
+
+3. 添加员工页面`add.html`中的关键部分代码：
+
+   ```html
+   <!--将commons文件下的commons.html中的topbar调用过来-->
+   <div th:replace="~{commons/commons::topbar}"></div>
+   
+   <div class="container-fluid">
+       <div class="row">
+           <!--将公共部分的sidebar调用过来-->
+           <div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
+           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+               
+               <!--这里的请求方式为post-->
+               <form th:action="@{/emp}" method="post">
+                   <div class="form-group">
+                       <label>LastName</label>
+                       <input type="text" name="lastName" class="form-control" placeholder="lastName">
+                   </div>
+                   <div class="form-group">
+                       <label>Email</label>
+                       <input type="email" name="email" class="form-control" placeholder="email">
+                   </div>
+                   <div class="form-group">
+                       <label>Gender</label><br>
+                       <div class="form-check form-check-inline">
+                           <input class="form-check-input" type="radio" name="gender" value="1">
+                           <label class="form-check-label">男</label>
+                       </div>
+                       <div class="form-check form-check-inline">
+                           <input class="form-check-input" type="radio" name="gender" value="0">
+                           <label class="form-check-label">女</label>
+                       </div>
+                   </div>
+                   <div class="form-group">
+                       <label>Birth</label>
+                       <input type="text" name="birth" class="form-control" placeholder="birth">
+                   </div>
+                   <div class="form-group">
+                       <label>department</label>
+                       <!--这里要传该部门的id给后端-->
+                       <select class="form-control" name="department.id">
+                           <option th:each="dept:${departments}" th:text="${dept.getDepartmentName()}" th:value="${dept.getId()}"></option>
+                       </select>
+                   </div>
+                   <button type="submit" class="btn btn-primary">添加</button>
+               </form>
+               
+           </main>
+       </div>
+   </div>
+   ```
+
+4. birth格式优化：Spring默认的Date格式为`yyyy/MM/dd`，如果想要自己自定义一个，可以去`application.properties`里配置，配置完后Spring默认的格式就失效了
+
+   ```properties
+   #时间格式化
+   spring.mvc.format.date=yyyy-MM-dd
+   ```
+
+5. 测试：
+
+   ![image-20220401164646710](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164646710.png)
+
+   ![image-20220401164714897](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164714897.png)
+
+
+
+## 11.7 修改员工
+
+1. 在`list.html`页面的修改链接中添加请求：
+
+   ```html
+   <!--将这个员工的id传给后端-->
+   <a class="btn btn-sm btn-primary" th:href="@{/emp/}+${emp.getId()}">update</a>
+   ```
+
+2. 编写controller层：
+
+   ```java
+        //修改员工
+       @GetMapping("/emp/{id}")    //虽然还是emp路径，但参数不同，Restful
+       public String toUpdatePage(@PathVariable("id")Integer id, Model model) {
+           //查询员工的信息传给修改页面
+           Employee employee = employeeDao.getEmployeeById(id);
+           model.addAttribute("emp", employee);
+           Collection<Department> departments = departmentDao.getDepartments();
+           model.addAttribute("departments", departments);
+           return "employee/update";
+       }
+   
+       @PostMapping("/updateEmp")
+       public String updateEmp(Employee employee) {
+           employeeDao.save(employee);
+           return "redirect:/emps";
+       }
+   ```
+
+3. `update.html`页面关键部分代码：
+
+   ```html
+   <form th:action="@{/updateEmp}" method="post">
+       <!--隐藏域-->
+       <input type="hidden" name="id" th:value="${emp.getId()}">
+       <div class="form-group">
+           <label>LastName</label>
+           <input type="text" name="lastName" th:value="${emp.getLastName()}" class="form-control">
+       </div>
+       <div class="form-group">
+           <label>Email</label>
+           <input type="email" name="email" th:value="${emp.getEmail()}" class="form-control">
+       </div>
+       <div class="form-group">
+           <label>Gender</label><br>
+           <div class="form-check form-check-inline">
+               <input class="form-check-input" type="radio" name="gender" th:checked="${emp.getGender()==1}" value="1">
+               <label class="form-check-label">男</label>
+           </div>
+           <div class="form-check form-check-inline">
+               <input class="form-check-input" type="radio" name="gender" th:checked="${emp.getGender()==0}" value="0">
+               <label class="form-check-label">女</label>
+           </div>
+       </div>
+       <div class="form-group">
+           <label>Birth</label>
+           <input type="text" name="birth" th:value="${#dates.format(emp.getBirth(), 'yyyy-MM-dd')}" class="form-control">
+       </div>
+       <div class="form-group">
+           <label>department</label>
+           <!--这里要传该部门的id给后端-->
+           <select class="form-control" name="department.id">
+               <option th:each="dept:${departments}" th:text="${dept.getDepartmentName()}"
+               th:selected="${dept.getId()==emp.getDepartment().getId()}" th:value="${dept.getId()}">
+               </option>
+           </select>
+       </div>
+       <button type="submit" class="btn btn-primary">修改</button>
+   </form>
+   ```
+
+4. 测试，修改功能完成！
+
+
+
+## 11.8 删除功能
+
+1. 在`list.html`页面的删除链接中添加请求：
+
+   ```html
+   <a class="btn btn-sm btn-danger" th:href="@{/deleteEmp/}+${emp.getId()}">delete</a>
+   ```
+
+2. 编写controller层：
+
+   ```java
+       //删除员工
+       @GetMapping("/deleteEmp/{id}")
+       public String deleteEmp(@PathVariable("id") Integer id) {
+           employeeDao.delete(id);
+           return "redirect:/emps";
+       }
+   ```
+
+3. 测试，删除功能完成！
+
+
+
+## 11.9 404和注销
+
+### 11.9.1 404页面处理
+
+1. 在templates目录下新建error目录，将`404.html`添加进去
+
+2. Spring会帮我们自动扫描到404页面，直接去测试
+
+   ![image-20220401181044013](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401181044013.png)
+
+
+
+
+
+### 11.9.2 注销功能
+
+1. 在`commons.html`的头部导航栏中编写注销链接的请求：
+
+   ```html
+   <a class="nav-link" th:href="@{/user/logout}">注销</a>
+   ```
+
+2. 在`LoginController`类中编写注销功能：
+
+   ```java
+   @RequestMapping("/user/logout")
+   public String logout(HttpSession session) {
+       session.removeAttribute("loginUser");
+       return "redirect:/index.html";
+   }
+   ```
+
+3. 测试，登录成功后点击注销，跳转回首页，不能直接进主页面了。
+

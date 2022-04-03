@@ -1,954 +1,3 @@
-# 11. 员工管理系统
-
-## 11.1 准备工作
-
-1. 导入相关静态资源
-
-   ![image-20220331215243683](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331215243683.png)
-
-2. pojo层：部门类、员工类
-
-   ```java
-   //部门类
-   @Data
-   @AllArgsConstructor
-   @NoArgsConstructor
-   public class Department {
-       private Integer id;
-       private String departmentName;
-   }
-   
-   //员工类
-   @Data
-   @NoArgsConstructor
-   public class Employee {
-       private Integer id;
-       private String lastName;
-       private String email;
-       private Integer gender;     //0女 1男
-       private Date birth;
-       private  Department department;
-   
-       //自定义有参，birth缺省，下面自动创建
-       public Employee(Integer id, String lastName, String email, Integer gender, Department department) {
-           this.id = id;
-           this.lastName = lastName;
-           this.email = email;
-           this.gender = gender;
-           this.birth = new Date();
-           this.department = department;
-       }
-   }
-   ```
-
-3. dao层：
-
-   DepartmentDao: 
-
-   ```java
-   @Repository     //交给Spring托管
-   public class DepartmentDao {
-   
-       //模拟数据库中的数据
-       @Autowired      //自动装配
-       private static Map<Integer, Department> departments = null;
-       static {
-           departments = new HashMap<Integer, Department>();   //创建一个部门
-           departments.put(101, new Department(101, "教学部"));
-           departments.put(102, new Department(102, "市场部"));
-           departments.put(103, new Department(103, "教研部"));
-           departments.put(104, new Department(104, "运营部"));
-           departments.put(105, new Department(105, "后勤部"));
-       }
-   
-       //获得所有部门信息
-       public Collection<Department> getDepartments() {
-           return departments.values();
-       }
-   
-       //通过id获得部门
-       public Department getDepartmentById(Integer id) {
-           return departments.get(id);
-       }
-   
-   }
-   ```
-
-   EmployeeDao: 
-
-   ```java
-   @Repository
-   public class EmployeeDao {
-   
-       //模拟数据库中的数据
-       private static Map<Integer, Employee> employees = null;
-   
-       @Autowired
-       private DepartmentDao departmentDao;    //员工所属部门
-   
-       static {
-           employees = new HashMap<Integer, Employee>();   //创建一个部门
-           employees.put(1001, new Employee(1001, "小AA", "444444@qq.com", 1, new Department(101, "教学部")));
-           employees.put(1002, new Employee(1002, "小BB", "555555@qq.com", 0, new Department(102, "市场部")));
-           employees.put(1003, new Employee(1003, "小CC", "666666@qq.com", 1, new Department(103, "教研部")));
-           employees.put(1004, new Employee(1004, "小DD", "777777@qq.com", 0, new Department(104, "运营部")));
-           employees.put(1005, new Employee(1005, "小EE", "888888@qq.com", 1, new Department(105, "后勤部")));
-       }
-   
-       //增加一个员工
-       //主键自增
-       private static Integer initId = 1006;
-       public void save(Employee employee) {
-           if (employee.getId() == null) {
-               employee.setId(initId++);
-           }
-   
-           employee.setDepartment(departmentDao.getDepartmentById(employee.getDepartment().getId()));
-   
-           employees.put(employee.getId(), employee);
-       }
-   
-   
-       //获得所有员工信息
-       public Collection<Employee> getAll() {
-           return employees.values();
-       }
-   
-       //通过id获得员工
-       public Employee getEmployeeById(Integer id) {
-           return employees.get(id);
-       }
-   
-       //通过id删除员工
-       public void delete(Integer id) {
-           employees.remove(id);
-       }
-   }
-   ```
-
-
-
-
-
-## 11.2 首页展示
-
-1. 可以在controller里面配置，也可以实现WebMvcConfiguration接口配置，这里采用第二种，方便回顾。在config包下新建MyMvcConfig：
-
-   ```java
-   @Configuration
-   public class MyMvcConfig implements WebMvcConfigurer {
-       @Override
-       public void addViewControllers(ViewControllerRegistry registry) {
-           //可以配置多个
-           registry.addViewController("/").setViewName("index");
-           registry.addViewController("/index.html").setViewName("index");
-       }
-   }
-   ```
-
-2. 将静态文件中相关标签全部改成Thymeleaf的模板，示例如下：
-
-   ![image-20220401123042971](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401123042971.png)
-
-3. 启动项目，查看首页：
-
-   ![image-20220331225852489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331225852489.png)
-
-## 11.3 页面国际化
-
-有的时候，我们的网站会去涉及中英文甚至多语言的切换，这时候我们就需要学习国际化了！
-
-### 11.3.1 准备工作
-
-先在IDEA中统一设置properties的编码问题！
-
-![image-20220331213516288](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331213516288.png)
-
-编写国际化配置文件，抽取页面需要显示的国际化页面消息。
-
-### 11.3.2 配置文件编写
-
-1. 我们在resources资源文件下新建一个`i18n`（internationalization缩写）目录，存放国际化配置文件
-
-2. 建立一个`login.properties`文件，还有一个`login_zh_CN.properties`；发现IDEA自动识别了我们要做国际化操作；文件夹变了！
-
-   ![image-20220401102524302](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102524302.png)
-
-3. 我们可以在这上面去新建一个文件；
-
-   ![image-20220401102553866](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102553866.png)
-
-   弹出如下页面：我们再添加一个英文的；
-
-   ![image-20220401102620870](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102620870.png)
-
-   这样就快捷多了！
-
-   ![image-20220401102643052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102643052.png)
-
-4. **接下来，我们就来编写配置，我们可以看到idea下面有另外一个视图**
-
-   ![image-20220401105424073](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105424073.png)
-
-   这个视图我们点击 + 号就可以直接添加属性了；我们新建一个`login.tip`，可以看到边上有三个文件框可以输入
-
-   ![image-20220401105512451](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105512451.png)
-
-   然后依次添加其他页面内容即可！
-
-   
-
-   去查看我们的配置文件`login.properties` ：
-
-   默认：
-
-   ```properties
-   login.btn=登录
-   login.password=密码
-   login.remember=记住我
-   login.tip=请登录
-   login.username=用户名
-   ```
-   
-   英文：
-
-   ```properties
-   login.btn=Login in
-   login.password=Password
-   login.remember=Remember me
-   login.tip=Please Login in
-   login.username=Username
-   ```
-   
-   中文：
-
-   ```properties
-   login.btn=登录
-   login.password=密码
-   login.remember=记住我
-   login.tip=请登录
-   login.username=用户名
-   ```
-   
-   配置文件步骤搞定！
-
-### 11.3.3 配置文件生效探究
-
-我们去看一下SpringBoot对国际化的自动配置！这里又涉及到一个类：`MessageSourceAutoConfiguration`
-
-里面有一个方法，这里发现SpringBoot已经自动配置好了管理我们国际化资源文件的组件 `ResourceBundleMessageSource`；
-
-```java
-// 获取 properties 传递过来的值进行判断
-@Bean
-public MessageSource messageSource(MessageSourceProperties properties) {
-    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    if (StringUtils.hasText(properties.getBasename())) {
-        // 设置国际化文件的基础名（去掉语言国家代码的）
-        messageSource.setBasenames(
-            StringUtils.commaDelimitedListToStringArray(
-                                       StringUtils.trimAllWhitespace(properties.getBasename())));
-    }
-    if (properties.getEncoding() != null) {
-        messageSource.setDefaultEncoding(properties.getEncoding().name());
-    }
-    messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
-    Duration cacheDuration = properties.getCacheDuration();
-    if (cacheDuration != null) {
-        messageSource.setCacheMillis(cacheDuration.toMillis());
-    }
-    messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
-    messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
-    return messageSource;
-}
-```
-
-我们真实的情况是放在了i18n目录下，所以我们要去`application.properties`配置这个messages的路径：
-
-```properties
-#配置文件的真实位置
-spring.messages.basename=i18n.login
-```
-
-### 11.3.4 配置页面国际化值
-
-去页面获取国际化的值，查看Thymeleaf的文档，找到message取值操作为：`#{...}`。我们去index首页进行修改：
-
-![image-20220401111528571](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111528571.png)
-
-我们可以去启动项目，访问一下，发现已经自动识别为中文的了！
-
-![image-20220401111547450](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111547450.png)
-
-**接下来取配置根据按钮自动切换中文英文**
-
-### 11.3.5 配置国际化解析
-
-在Spring中有一个国际化的Locale （区域信息对象）；里面有一个叫做`LocaleResolver `（获取区域信息对象）的解析器！
-
-我们去我们webmvc自动配置文件，寻找一下！看到SpringBoot默认配置：
-
-```java
-@Bean
-@ConditionalOnMissingBean
-@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
-public LocaleResolver localeResolver() {
-    // 用户配置了就用用户的，没有就用下面默认的
-    if (this.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
-        return new FixedLocaleResolver(this.mvcProperties.getLocale());
-    }
-    // 接收头国际化分解
-    AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-    localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
-    return localeResolver;
-}
-```
-
-`AcceptHeaderLocaleResolver` 这个类中有一个方法，判断返回什么语言
-
-```java
-public Locale resolveLocale(HttpServletRequest request) {
-    Locale defaultLocale = this.getDefaultLocale();
-    // 默认的就是根据请求头带来的区域信息获取Locale进行国际化
-    if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
-        return defaultLocale;
-    } else {
-        Locale requestLocale = request.getLocale();
-        List<Locale> supportedLocales = this.getSupportedLocales();
-        if (!supportedLocales.isEmpty() && !supportedLocales.contains(requestLocale)) {
-            Locale supportedLocale = this.findSupportedLocale(request, supportedLocales);
-            if (supportedLocale != null) {
-                return supportedLocale;
-            } else {
-                return defaultLocale != null ? defaultLocale : requestLocale;
-            }
-        } else {
-            return requestLocale;
-        }
-    }
-}
-```
-
-那假如我们现在想点击链接让我们自己的国际化资源生效，就需要让我们自己的Locale生效！
-
-我们去自己写一个自己的`LocaleResolver`，可以在链接上携带区域信息！
-
-修改一下前端页面的跳转连接：
-
-```html
-<!-- 这里传入参数不需要使用 ？使用 （key=value）-->
-<a class="btn btn-sm" th:href="@{/index.html(language='zh_CN')}">中文</a>
-			<a class="btn btn-sm" th:href="@{/index.html(language='en_US')}">English</a>
-```
-
-去config包下新建MyLocaleResolver类，实现LocaleResolver接口，仿照源码写一个处理的组件类：
-
-```java
-package nuc.ss.component;
-
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.LocaleResolver;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Locale;
-
-//可以在链接上携带区域信息
-public class MyLocaleResolver implements LocaleResolver {
-
- //解析请求
- @Override
- public Locale resolveLocale(HttpServletRequest request) {
-
-     String language = request.getParameter("l");
-     Locale locale = Locale.getDefault(); // 如果没有获取到就使用系统默认的
-     //如果请求链接不为空
-     if (!StringUtils.isEmpty(language)){
-         //分割请求参数
-         String[] split = language.split("_");
-         //国家，地区
-         locale = new Locale(split[0],split[1]);
-     }
-     return locale;
- }
-
- @Override
- public void setLocale(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Locale locale) {
-
- }
-}
-```
-
-为了让我们的区域化信息能够生效，我们需要在配置类中注入一下这个组件！在我们自己的`MyMvcConofig`下添加`bean`；
-
-```java
-@Bean
-public LocaleResolver localeResolver(){
-    return new MyLocaleResolver();
-}
-```
-
-**我们重启项目，来访问一下，发现点击按钮可以实现成功切换**
-
-![image-20220401114001820](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401114001820.png)
-
-### 11.3.6 小结
-
-1. 首页配置：
-   - 注意点，所有页面的静态资源都需要使用Thymeleaf接管
-   - url： `@{}`
-2. 页面国际化
-   - 我们需要配置`i18n`文件
-   - 我们如果需要在项目中进行按钮自动切换，我们需要定义一个组件`LocalResolver`
-   - 记得将自己写的组件配置到spring容器`@Bean`
-   - 值：`#{}`
-
-
-
-## 11.4 登录功能
-
-### 11.4.1 登录
-
-1. 在`index.html`首页中的form表单上添加一个事件，让用户点击登录的时候把信息传入对应的后台。
-
-   ```html
-   <form class="form-signin" th:action="@{/user/login}">
-   ......
-   </form>
-   ```
-
-2. 编写对应的controller层：`LoginController`
-
-   ```java
-   @Controller
-   public class LoginController {
-   
-       @RequestMapping("/user/login")
-       public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
-           //具体的业务
-           if (!StringUtils.isEmpty(username) && "123456".equals(password)) {
-               //重定向到main.html（dashboard页面）
-               return "redirect:/main.html";
-           } else {
-               //登录失败将信息传递回去
-               model.addAttribute("error", "用户名或密码错误");
-               return "index";
-           }
-       }
-   }
-   ```
-
-3. 因为登录成功之后重定向到`main.html`页面，所有去`MyMvcConfig`中配置它的路径：
-
-   ```java
-   //登录成功页面
-   registry.addViewController("/main.html").setViewName("dashboard");
-   ```
-
-4. 登录失败页面提示：
-
-   ```html
-   <!--如果error为空，则不显示提示-->
-   <p style="color: red" th:text="${error}" th:if="${! #strings.isEmpty(error)}"></p>
-   ```
-
-5. 测试，可以发现登录成功后url是`main.html`，实际还是dashboard页面：
-
-   ![image-20220401124241604](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401124241604.png)
-
-
-
-### 11.4.2 登录拦截器
-
-登录写好后，发现在地址栏输入`mian.html`时，无论已经登录与否，都能跳转到主页面，所以需要做登录拦截。
-
-1. 要写登录拦截器，首先需要登录成功后用户的Session，所以先去`LoginController`类中将用户信息存入Session：
-
-   ```java
-   @RequestMapping("/user/login")
-       public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model, HttpSession session) {
-           //具体的业务
-           if (!StringUtils.isEmpty(username) && "123456".equals(password)) {
-               //存入Session
-               session.setAttribute("loginUser", username);
-               //重定向到main.html（dashboard页面）
-               return "redirect:/main.html";
-           } else {
-               //登录失败将信息传递回去
-               model.addAttribute("error", "用户名或密码错误");
-               return "index";
-           }
-       }
-   ```
-
-2. 在config包下新建`LoginHandlerInterception`类，实现HandlerInterception接口：
-
-   ```java
-   public class LoginHandlerInterception implements HandlerInterceptor {
-       @Override
-       public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-           //获取用户Session
-           Object loginUser = request.getSession().getAttribute("loginUser");
-   
-           if (loginUser == null) {
-               request.setAttribute("error", "请先登录才能进主页哦！");
-               request.getRequestDispatcher("/index.html").forward(request, response);
-               return false;
-           } else {
-               return true;     //放行
-           }
-       }
-   }
-   ```
-
-3. 去`MyMvcConfig`类中配置拦截器，重写`addInterceptors`方法
-
-   ```java
-       @Override
-       public void addInterceptors(InterceptorRegistry registry) {
-           //拦截全部请求路径，除了excludePathPatterns中的登录页面和静态资源
-           registry.addInterceptor(new LoginHandlerInterception())
-                   .addPathPatterns("/**")
-                   .excludePathPatterns("/index.html", "/", "/user/login", "/static/*", "/img/*");
-       }
-   ```
-
-4. 测试：
-
-   ![image-20220401135154331](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135154331.png)
-
-5. 登录成功后，可以通过session拿到用户的名字，在主页中显示，在`dashboard.html`中对应位置获取即可：
-
-   ```html
-   <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">[[${session.loginUser}]]</a>
-   ```
-
-6. 测试：
-
-   ![image-20220401135736113](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135736113.png)
-
-
-
-## 11.5 查询功能
-
-在写查询功能之前，先思考以下，当我们点击管理员工时，页面的左边栏和上边栏应该是保持不变的，只需要将员工列表对应的页面插入到中间位置即可。所以我们要先处理公共部分。
-
-### 11.5.1 提取公共部分
-
-1. 在templates文件夹下新建commons文件夹，创建一个`commons.html`，存放公共的页面。：
-
-   ```html
-   <!DOCTYPE html>
-   <html lang="en" xmlns:th="http://www.thymeleaf.org">
-   
-   <!--头部导航栏-->
-   <!--th:fragment是将多个地方出现的元素块用fragment包起来使用，方便在其他地方直接调用此元素块-->
-   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0" th:fragment="topbar">
-       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">[[${session.loginUser}]]</a>
-       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-       <ul class="navbar-nav px-3">
-           <li class="nav-item text-nowrap">
-               <a class="nav-link" href="http://getbootstrap.com/docs/4.0/examples/dashboard/#">注销</a>
-           </li>
-       </ul>
-   </nav>
-   
-   <!--侧边栏-->
-   <nav class="col-md-2 d-none d-md-block bg-light sidebar" th:fragment="sidebar">
-       <div class="sidebar-sticky">
-           <ul class="nav flex-column">
-               <li class="nav-item">
-                   <a class="nav-link" th:href="@{/index.html}">
-                       首页 <span class="sr-only">(current)</span>
-                   </a>
-               </li>
-               
-               <!--中间还有很多li标签-->
-               
-               <li class="nav-item">
-                   <a class="nav-link" th:href="@{/emps}">
-                       员工管理
-                   </a>
-               </li>
-           </ul>
-       </div>
-   </nav>
-   
-   </html>
-   ```
-
-2. 在`dashboard.html`主页面和`list.html`员工列表页面中的对应位置将topbar和sidebar抽取过来，下面给出主页面的示例：
-
-   ```html
-   <body>
-   
-   		<!--将commons文件下的commons.html中的topbar调用过来-->
-   		<div th:replace="~{commons/commons::topbar}"></div>
-   
-   		<div class="container-fluid">
-   			<div class="row">
-   
-   				<!--将公共部分的sidebar调用过来-->
-   				<div th:replace="~{commons/commons::sidebar}"></div>
-   
-   				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-   
-   <!-- .......... -->
-   ```
-
-3. 提取公共部分已完成。
-
-
-
-### 11.5.2 员工列表查询
-
-1. 在templates目录下新建employee目录，将`list.html`放入，方便管理
-
-2. 编写`EmployeeController`类，因为现在用的是伪数据库数据，所以暂时忽略Service层，让Controller层之间调Dao层：
-
-   ```java
-   @Controller
-   public class EmployeeController {
-   
-       @Autowired
-       EmployeeDao employeeDao;
-   
-       @RequestMapping("/emps")
-       public String list(Model model) {
-           Collection<Employee> employees = employeeDao.getAll();
-           model.addAttribute("emps", employees);
-           return "employee/list";
-       }
-   
-   }
-   ```
-
-3. 在公共部分`commons.html`页面中对应位置编写此请求：
-
-   ```html
-   	   <li class="nav-item">
-                   <a class="nav-link" th:href="@{/emps}">
-                       员工管理
-                   </a>
-               </li>
-   ```
-
-4. 先测试一下：
-
-   ![image-20220401145922383](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401145922383.png)
-
-5. 在点击员工管理后，确实跳转到了`list.html`页面，但是员工管理的位置没有高亮，先解决一下这个问题。
-
-6. 在其他页面调用公共页面的时候，可以在其他页面携带一个参数再调用公共页面，这样就可以在公共页面中直到是哪个页面调用了它。修改`dashboard.html`和`list.html`中调用公共页面的代码：
-
-   ```html
-   <!--将公共部分的sidebar调用过来，并且携带一个active参数过去，方便公共部分页面直到是谁调用了它-->
-   <div th:replace="~{commons/commons::sidebar(active='main.html')}"></div>
-   ```
-
-   
-
-   ```html
-   <!--将公共部分的sidebar调用过来-->
-   <div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
-   ```
-
-7. 在公共页面的对应位置处接收其他页面传过来的参数，然后做判断，看是哪个页面调用了它，就给哪个页面的高亮激活：
-
-   ```html
-   <!--首页位置-->
-   <!--取其他页面传过来的active，如果与之对应，则激活高亮，否则显示默认-->
-   <a th:class="${active=='main.html'? 'nav-link active':'nav-link'}" th:href="@{/index.html}">
-       首页 <span class="sr-only">(current)</span>
-   </a>
-   
-   <!--员工管理位置-->
-   <a th:class="${active=='list.html'?'nav-link active':'nav-link'}" th:href="@{/emps}">
-        员工管理
-   </a>
-   ```
-
-8. 测试，可以发现，刚进入登录页面，是首页高亮，当点击员工管理时，员工管理高亮：
-
-   ![image-20220401152205641](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152205641.png)
-
-   ![image-20220401152224972](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152224972.png)
-
-   
-
-> 表格修改，数据展示
-
-好了，现在开始修改`list.html`页面中的表格，并且把后端传过来的员工展示出来。
-
-```html
-<table class="table table-striped table-sm">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>lastName</th>
-            <th>email</th>
-            <th>gender</th>
-            <th>birth</th>
-            <th>department</th>
-            <th>operate</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!--将后端传过来的emps遍历出来-->
-        <tr th:each="emp:${emps}">
-            <td th:text="${emp.getId()}"></td>
-            <td th:text="${emp.getLastName()}"></td>
-            <td th:text="${emp.getEmail()}"></td>
-            <td th:text="${emp.getGender()==0?'女':'男'}"></td>
-            <td th:text="${#dates.format(emp.getBirth(),'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td th:text="${emp.getDepartment().getDepartmentName()}"></td>
-            <td>
-               <a class="btn btn-sm btn-primary">update</a>
-           	  <a class="btn btn-sm btn-danger">delete</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
-```
-
-测试：
-
-![image-20220401154227488](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401154227488.png)
-
-
-
-## 11.6 添加员工
-
-1. 在`list.html`页面适当位置处写一个添加员工的链接：
-
-   ```html
-   <!--这里的请求方式为get-->
-   <a class="btn btn-sm btn-success" th:href="@{/emp}">addEmployee</a>
-   ```
-
-2. 编写对应的controller：
-
-   ```java
-       //添加员工
-       @GetMapping("/emp")       //使用Restful风格，这里用get请求
-       public String toAddPage(Model model) {
-           //查询出所有的部门信息，方便添加的时候选择
-           Collection<Department> departments = departmentDao.getDepartments();
-           model.addAttribute("departments", departments);
-           return "employee/add";
-       }
-       @PostMapping("/emp")    //这里也使用emp路径，但是请求方式不同，这就是Restful
-       public String addEmp(Employee employee) {
-           employeeDao.save(employee);
-           //重定向到emps，查询所有员工信息
-           return "redirect:/emps";
-       }
-   ```
-
-3. 添加员工页面`add.html`中的关键部分代码：
-
-   ```html
-   <!--将commons文件下的commons.html中的topbar调用过来-->
-   <div th:replace="~{commons/commons::topbar}"></div>
-   
-   <div class="container-fluid">
-       <div class="row">
-           <!--将公共部分的sidebar调用过来-->
-           <div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
-           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-               
-               <!--这里的请求方式为post-->
-               <form th:action="@{/emp}" method="post">
-                   <div class="form-group">
-                       <label>LastName</label>
-                       <input type="text" name="lastName" class="form-control" placeholder="lastName">
-                   </div>
-                   <div class="form-group">
-                       <label>Email</label>
-                       <input type="email" name="email" class="form-control" placeholder="email">
-                   </div>
-                   <div class="form-group">
-                       <label>Gender</label><br>
-                       <div class="form-check form-check-inline">
-                           <input class="form-check-input" type="radio" name="gender" value="1">
-                           <label class="form-check-label">男</label>
-                       </div>
-                       <div class="form-check form-check-inline">
-                           <input class="form-check-input" type="radio" name="gender" value="0">
-                           <label class="form-check-label">女</label>
-                       </div>
-                   </div>
-                   <div class="form-group">
-                       <label>Birth</label>
-                       <input type="text" name="birth" class="form-control" placeholder="birth">
-                   </div>
-                   <div class="form-group">
-                       <label>department</label>
-                       <!--这里要传该部门的id给后端-->
-                       <select class="form-control" name="department.id">
-                           <option th:each="dept:${departments}" th:text="${dept.getDepartmentName()}" th:value="${dept.getId()}"></option>
-                       </select>
-                   </div>
-                   <button type="submit" class="btn btn-primary">添加</button>
-               </form>
-               
-           </main>
-       </div>
-   </div>
-   ```
-
-4. birth格式优化：Spring默认的Date格式为`yyyy/MM/dd`，如果想要自己自定义一个，可以去`application.properties`里配置，配置完后Spring默认的格式就失效了
-
-   ```properties
-   #时间格式化
-   spring.mvc.format.date=yyyy-MM-dd
-   ```
-
-5. 测试：
-
-   ![image-20220401164646710](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164646710.png)
-
-   ![image-20220401164714897](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164714897.png)
-
-
-
-## 11.7 修改员工
-
-1. 在`list.html`页面的修改链接中添加请求：
-
-   ```html
-   <!--将这个员工的id传给后端-->
-   <a class="btn btn-sm btn-primary" th:href="@{/emp/}+${emp.getId()}">update</a>
-   ```
-
-2. 编写controller层：
-
-   ```java
-        //修改员工
-       @GetMapping("/emp/{id}")    //虽然还是emp路径，但参数不同，Restful
-       public String toUpdatePage(@PathVariable("id")Integer id, Model model) {
-           //查询员工的信息传给修改页面
-           Employee employee = employeeDao.getEmployeeById(id);
-           model.addAttribute("emp", employee);
-           Collection<Department> departments = departmentDao.getDepartments();
-           model.addAttribute("departments", departments);
-           return "employee/update";
-       }
-   
-       @PostMapping("/updateEmp")
-       public String updateEmp(Employee employee) {
-           employeeDao.save(employee);
-           return "redirect:/emps";
-       }
-   ```
-
-3. `update.html`页面关键部分代码：
-
-   ```html
-   <form th:action="@{/updateEmp}" method="post">
-       <!--隐藏域-->
-       <input type="hidden" name="id" th:value="${emp.getId()}">
-       <div class="form-group">
-           <label>LastName</label>
-           <input type="text" name="lastName" th:value="${emp.getLastName()}" class="form-control">
-       </div>
-       <div class="form-group">
-           <label>Email</label>
-           <input type="email" name="email" th:value="${emp.getEmail()}" class="form-control">
-       </div>
-       <div class="form-group">
-           <label>Gender</label><br>
-           <div class="form-check form-check-inline">
-               <input class="form-check-input" type="radio" name="gender" th:checked="${emp.getGender()==1}" value="1">
-               <label class="form-check-label">男</label>
-           </div>
-           <div class="form-check form-check-inline">
-               <input class="form-check-input" type="radio" name="gender" th:checked="${emp.getGender()==0}" value="0">
-               <label class="form-check-label">女</label>
-           </div>
-       </div>
-       <div class="form-group">
-           <label>Birth</label>
-           <input type="text" name="birth" th:value="${#dates.format(emp.getBirth(), 'yyyy-MM-dd')}" class="form-control">
-       </div>
-       <div class="form-group">
-           <label>department</label>
-           <!--这里要传该部门的id给后端-->
-           <select class="form-control" name="department.id">
-               <option th:each="dept:${departments}" th:text="${dept.getDepartmentName()}"
-               th:selected="${dept.getId()==emp.getDepartment().getId()}" th:value="${dept.getId()}">
-               </option>
-           </select>
-       </div>
-       <button type="submit" class="btn btn-primary">修改</button>
-   </form>
-   ```
-
-4. 测试，修改功能完成！
-
-
-
-## 11.8 删除功能
-
-1. 在`list.html`页面的删除链接中添加请求：
-
-   ```html
-   <a class="btn btn-sm btn-danger" th:href="@{/deleteEmp/}+${emp.getId()}">delete</a>
-   ```
-
-2. 编写controller层：
-
-   ```java
-       //删除员工
-       @GetMapping("/deleteEmp/{id}")
-       public String deleteEmp(@PathVariable("id") Integer id) {
-           employeeDao.delete(id);
-           return "redirect:/emps";
-       }
-   ```
-
-3. 测试，删除功能完成！
-
-
-
-## 11.9 404和注销
-
-### 11.9.1 404页面处理
-
-1. 在templates目录下新建error目录，将`404.html`添加进去
-
-2. Spring会帮我们自动扫描到404页面，直接去测试
-
-   ![image-20220401181044013](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401181044013.png)
-
-
-
-
-
-### 11.9.2 注销功能
-
-1. 在`commons.html`的头部导航栏中编写注销链接的请求：
-   
-   ```html
-   <a class="nav-link" th:href="@{/user/logout}">注销</a>
-   ```
-   
-2. 在`LoginController`类中编写注销功能：
-
-   ```java
-   @RequestMapping("/user/logout")
-   public String logout(HttpSession session) {
-       session.removeAttribute("loginUser");
-       return "redirect:/index.html";
-   }
-   ```
-
-3. 测试，登录成功后点击注销，跳转回首页，不能直接进主页面了。
-
-
-
-
-
 # 12. 整合JDBC
 
 ## 12.1 创建测试项目测试数据源
@@ -1197,14 +246,12 @@ public class JDBCController {
        poolPreparedStatements: true
    
        #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
-       #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
-       #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
        filters: stat,wall,log4j
        maxPoolPreparedStatementPerConnectionSize: 20
        useGlobalDataSourceStat: true
        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
    ```
-
+   
 5. 导入Log4j 的依赖
 
    ```xml
@@ -1929,10 +976,11 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 
     - 某个用户登录：
-
+    
       ![image-20220402165644511](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165644511.png)
 
-      
+
+​      
 
 
 权限控制和注销搞定
@@ -2120,28 +1168,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 ### 16.1.1 有哪些功能
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316211939796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+![image-20220403132629590](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132629590.png)
 ● `Authentication`: 身份认证、登录，验证用户是不是拥有相应的身份;
-● `Authorization`:授权,即权限验证，验证某个已认证的用户是否拥有某个权限，即判断用户能否进行什么操作，如:验证某个用户是否拥有某个角色，或者细粒度的验证某个用户对某个资源是否具有某个权限!
+● `Authorization`: 授权,即权限验证，验证某个已认证的用户是否拥有某个权限，即判断用户能否进行什么操作，如:验证某个用户是否拥有某个角色，或者细粒度的验证某个用户对某个资源是否具有某个权限!
 ● `Session Manager`: 会话管理，即用户登录后就是第一次会话，在没有退出之前，它的所有信息都在会话中;会话可以是普通的JavaSE环境，也可以是Web环境;
 ● `Cryptography`: 加密,保护数据的安全性，如密码加密存储到数据库中，而不是明文存储;
-● `Web Support` Web支持，可以非常容易的集成到Web环境;
-● `Caching` 缓存，比如用户登录后，其用户信息，拥有的角色、权限不必每次去查,这样可以提高效率
+● `Web Support`: Web支持，可以非常容易的集成到Web环境;
+● `Caching`: 缓存，比如用户登录后，其用户信息，拥有的角色、权限不必每次去查,这样可以提高效率
 ● `Concurrency`: Shiro支持多线程应用的并发验证，即，如在-个线程中开启另-一个线程,能把权限自动的传播过去
-● `Testing`:提供测试支持;
-● `RunAs`:允许一个用户假装为另-一个用户(如果他们允许)的身份进行访问;
-● `Remember Me`:记住我，这个是非常常见的功能，即一次登录后， 下次再来的话不用登录了
+● `Testing`: 提供测试支持;
+● `RunAs`: 允许一个用户假装为另-一个用户(如果他们允许)的身份进行访问;
+● `Remember Me`: 记住我，这个是非常常见的功能，即一次登录后， 下次再来的话不用登录了
 
 ### 16.1.2 Shiro架构(外部)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316212212655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+![image-20220403132736544](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132736544.png)
 ● `subject`: 应用代码直接交互的对象是Subject, 也就是说Shiro的对外API核心就是Subject, Subject代表了当前的用户，这个用户不一定是一个具体的人，与当前应用交互的任何东西都是Subject,如网络爬虫，机器人等，与Subject的所有交互都会委托给SecurityManager; Subject其实是一个门面， SecurityManageer 才是实际的执行者
 ● `SecurityManager`: 安全管理器，即所有与安全有关的操作都会与SercurityManager交互, 并且它管理着所有的Subject,可以看出它是Shiro的核心，它负责与Shiro的其他组件进行交互，它相当于SpringMVC的DispatcherServlet的角色
 ● `Realm`: Shiro从Realm获取安全数据 (如用户,角色，权限)，就是说SecurityManager要验证用户身份，那么它需要从Realm获取相应的用户进行比较，来确定用户的身份是否合法;也需要从Realm得到用户相应的角色、权限，进行验证用户的操作是否能够进行，可以把Realm看DataSource;
 
 ### 16.1.3 Shiro架构(内部)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210316212357831.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+![image-20220403132756268](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132756268.png)
 ● `Subject`: 任何可以与应用交互的用户;
 ● `Security Manager`:相当于SpringMVC中的DispatcherSerlet; 是Shiro的心脏， 所有具体的交互都通过Security Manager进行控制，它管理者所有的Subject, 且负责进行认证,授权，会话，及缓存的管理。
 ● `Authenticator`:负责Subject认证， 是-一个扩展点，可以自定义实现;可以使用认证策略(Authentication Strategy)，即什么情况下算用户认证通过了;
@@ -2154,758 +1202,846 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 ## 16.2 Shiro快速开始
 
-创建一个普通`maven`项目`springboot-06-shiro`,然后删除src目录,这样的话就可以在这个项目里新建很多model.
+创建一个普通`maven`项目`springboot-shiro`, 然后删除src目录, 这样的话就可以在这个项目里新建很多model
 
-在springboot-06-shiro里新建model `shiro-01-helloshiro`
-父依赖`pom.xml`
+1. 在`springboot-shiro`里新建model `shiro-01-helloshiro`，父依赖`pom.xml`
 
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>1.4.1</version>
-        </dependency>
+   ```xml
+       <dependencies>
+           <dependency>
+               <groupId>org.apache.shiro</groupId>
+               <artifactId>shiro-core</artifactId>
+               <version>1.9.0</version>
+           </dependency>
+           <!-- Shiro uses SLF4J for logging.  We'll use the 'simple' binding
+                in this example app.  See http://www.slf4j.org for more info. -->
+           <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-simple</artifactId>
+               <version>1.7.21</version>
+           </dependency>
+           <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>jcl-over-slf4j</artifactId>
+               <version>1.7.21</version>
+           </dependency>
+           <dependency>
+               <groupId>log4j</groupId>
+               <artifactId>log4j</artifactId>
+               <version>1.2.17</version>
+               <scope>runtime</scope>
+           </dependency>
+       </dependencies>
+   ```
 
-        <!-- configure logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.21</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.21</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
-123456789101112131415161718192021222324252627
-log4j.properties
-log4j.rootLogger=INFO, stdout
+2. 在`resources`目录下新建`log4j.properties`和`shiro.ini`，在IDEA安装ini插件：
 
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n
+   log4j：
 
-# General Apache libraries
-log4j.logger.org.apache=WARN
+   ```properties
+   log4j.rootLogger=INFO, stdout
+   
+   log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+   log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+   log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m %n
+   
+   # General Apache libraries
+   log4j.logger.org.apache=WARN
+   
+   # Spring
+   log4j.logger.org.springframework=WARN
+   
+   # Default Shiro logging
+   log4j.logger.org.apache.shiro=INFO
+   
+   # Disable verbose logging
+   log4j.logger.org.apache.shiro.util.ThreadContext=WARN
+   log4j.logger.org.apache.shiro.cache.ehcache.EhCache=WARN
+   ```
 
-# Spring
-log4j.logger.org.springframework=WARN
+   shiro：
 
-# Default Shiro logging
-log4j.logger.org.apache.shiro=INFO
+   ```ini
+   # -----------------------------------------------------------------------------
+   # Users and their (optional) assigned roles
+   # username = password, role1, role2, ..., roleN
+   # -----------------------------------------------------------------------------
+   [users]
+   root = secret, admin
+   guest = guest, guest
+   presidentskroob = 12345, president
+   darkhelmet = ludicrousspeed, darklord, schwartz
+   lonestarr = vespa, goodguy, schwartz
+   
+   # -----------------------------------------------------------------------------
+   # Roles with assigned permissions
+   # roleName = perm1, perm2, ..., permN
+   # -----------------------------------------------------------------------------
+   [roles]
+   admin = *
+   schwartz = lightsaber:*
+   goodguy = winnebago:drive:eagle5
+   ```
 
-# Disable verbose logging
-log4j.logger.org.apache.shiro.util.ThreadContext=WARN
-log4j.logger.org.apache.shiro.cache.ehcache.EhCache=WARN
-123456789101112131415161718
-shiro.ini
-[users]
-# user 'root' with password 'secret' and the 'admin' role
-root = secret, admin
-# user 'guest' with the password 'guest' and the 'guest' role
-guest = guest, guest
-# user 'presidentskroob' with password '12345' ("That's the same combination on
-# my luggage!!!" ;)), and role 'president'
-presidentskroob = 12345, president
-# user 'darkhelmet' with password 'ludicrousspeed' and roles 'darklord' and 'schwartz'
-darkhelmet = ludicrousspeed, darklord, schwartz
-# user 'lonestarr' with password 'vespa' and roles 'goodguy' and 'schwartz'
-lonestarr = vespa, goodguy, schwartz
+3. 在java包下新建`QuickStar`类：
 
-# -----------------------------------------------------------------------------
-# Roles with assigned permissions
-# 
-# Each line conforms to the format defined in the
-# org.apache.shiro.realm.text.TextConfigurationRealm#setRoleDefinitions JavaDoc
-# -----------------------------------------------------------------------------
-[roles]
-# 'admin' role has all permissions, indicated by the wildcard '*'
-admin = *
-# The 'schwartz' role can do anything (*) with any lightsaber:
-schwartz = lightsaber:*
-# The 'goodguy' role is allowed to 'drive' (action) the winnebago (type) with
-# license plate 'eagle5' (instance specific id)
-goodguy = winnebago:drive:eagle5
-123456789101112131415161718192021222324252627
-Quickstart.java
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.text.IniRealm;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+   ```java
+   public class QuickStar {
+       private static final transient Logger log = LoggerFactory.getLogger(QuickStar.class);
+   
+       public static void main(String[] args) {
+           log.info("My First Apache Shiro Application");
+   
+           Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+           SecurityManager securityManager = factory.getInstance();
+           SecurityUtils.setSecurityManager((SecurityManager) securityManager);
+   
+           // get the currently executing user:
+           //获取当前用户对象 Subject
+           Subject currentUser = SecurityUtils.getSubject();
+   
+           // Do some stuff with a Session (no need for a web or EJB container!!!)
+           //通过当前用户拿到session
+           Session session = currentUser.getSession();
+           session.setAttribute("someKey", "aValue");
+           String value = (String) session.getAttribute("someKey");
+           if (value.equals("aValue")) {
+               log.info("Retrieved the correct value! [" + value + "]");
+           }
+   
+           // let's login the current user so we can check against roles and permissions:
+           //判断当前用户是否被认证
+           if (!currentUser.isAuthenticated()) {
+               //token：令牌
+               UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+               token.setRememberMe(true);
+               try {
+                   currentUser.login(token);		//执行登录操作
+               } catch (UnknownAccountException uae) {
+                   log.info("There is no user with username of " + token.getPrincipal());
+               } catch (IncorrectCredentialsException ice) {
+                   log.info("Password for account " + token.getPrincipal() + " was incorrect!");
+               } catch (LockedAccountException lae) {
+                   log.info("The account for username " + token.getPrincipal() + " is locked.  " +
+                           "Please contact your administrator to unlock it.");
+               }
+               // ... catch more exceptions here (maybe custom ones specific to your application?
+               catch (AuthenticationException ae) {
+                   //unexpected condition?  error?
+               }
+           }
+   
+           //say who they are:
+           //print their identifying principal (in this case, a username):
+           log.info("User [" + currentUser.getPrincipal() + "] logged in successfully.");
+   
+           //test a role:
+           //当前用户的角色
+           if (currentUser.hasRole("schwartz")) {
+               log.info("May the Schwartz be with you!");
+           } else {
+               log.info("Hello, mere mortal.");
+           }
+   
+           //test a typed permission (not instance-level)
+           //当前用户的权限，粗粒度
+           if (currentUser.isPermitted("lightsaber:wield")) {
+               log.info("You may use a lightsaber ring.  Use it wisely.");
+           } else {
+               log.info("Sorry, lightsaber rings are for schwartz masters only.");
+           }
+   
+           //a (very powerful) Instance Level permission:
+           //当前用户的权限，细粒度
+           if (currentUser.isPermitted("winnebago:drive:eagle5")) {
+               log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  " +
+                       "Here are the keys - have fun!");
+           } else {
+               log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
+           }
+   
+           //all done - log out!
+           //注销
+           currentUser.logout();
+   
+           System.exit(0);
+       }
+   }
+   ```
+
+4. 运行：
+
+   ![image-20220403135721889](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403135721889.png)
+
+**总结主要方法**：
+
+- 获取当前用户对象：`Subject currentUser = SecurityUtils.getSubject();`
+- 通过当前用户拿到session：`Session session = currentUser.getSession();`
+- 判断当前用户是否被认证：`currentUser.isAuthenticated()`
+- 获取当前用户token中的principal(uuid/主键/唯一信息)：`token.getPrincipal()`
+- 当前用户拥有的角色：`currentUser.hasRole("XXXX")`
+- 当前用户拥有的权限：`currentUser.isPermitted("XXX:XX")`
+- 注销：`currentUser.logout();`
 
 
-/**
- * Simple Quickstart application showing how to use Shiro's API.
- *
- * @since 0.9 RC2
- */
-public class Quickstart {
-
-    private static final transient Logger log = LoggerFactory.getLogger(Quickstart.class);
 
 
-    public static void main(String[] args) {
-
-
-        DefaultSecurityManager defaultSecurityManager=new DefaultSecurityManager();
-        IniRealm iniRealm=new IniRealm("classpath:shiro.ini");
-        defaultSecurityManager.setRealm(iniRealm);
-        SecurityUtils.setSecurityManager(defaultSecurityManager);
-
-
-        // 获得当前用户对象 Subject
-        Subject currentUser = SecurityUtils.getSubject();
-
-        // 通过当前用户拿到session
-        Session session = currentUser.getSession();
-        session.setAttribute("someKey", "aValue");
-        String value = (String) session.getAttribute("someKey");
-        if (value.equals("aValue")) {
-            log.info("Retrieved the correct value! [" + value + "]");
-        }
-
-        // 判断当前用户是否被认证
-        if (!currentUser.isAuthenticated()) {
-            //Token:令牌
-            UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
-            token.setRememberMe(true);
-            try {
-                currentUser.login(token); //执行登录操作
-            } catch (UnknownAccountException uae) {
-                log.info("There is no user with username of " + token.getPrincipal());
-            } catch (IncorrectCredentialsException ice) {
-                log.info("Password for account " + token.getPrincipal() + " was incorrect!");
-            } catch (LockedAccountException lae) {
-                log.info("The account for username " + token.getPrincipal() + " is locked.  " +
-                        "Please contact your administrator to unlock it.");
-            }
-            // ... catch more exceptions here (maybe custom ones specific to your application?
-            catch (AuthenticationException ae) {
-                //unexpected condition?  error?
-            }
-        }
-
-        //say who they are:
-        //print their identifying principal (in this case, a username):
-        log.info("User [" + currentUser.getPrincipal() + "] logged in successfully.");
-
-        //test a role:
-        if (currentUser.hasRole("schwartz")) {
-            log.info("May the Schwartz be with you!");
-        } else {
-            log.info("Hello, mere mortal.");
-        }
-
-        //粗粒度
-        if (currentUser.isPermitted("lightsaber:wield")) {
-            log.info("You may use a lightsaber ring.  Use it wisely.");
-        } else {
-            log.info("Sorry, lightsaber rings are for schwartz masters only.");
-        }
-
-        //细粒度
-        if (currentUser.isPermitted("winnebago:drive:eagle5")) {
-            log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  " +
-                    "Here are the keys - have fun!");
-        } else {
-            log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
-        }
-
-        //注销
-        currentUser.logout();
-
-        //结束
-        System.exit(0);
-    }
-}
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394
-```
-
-执行
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2021031622083670.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
 
 ## 16.3 SpringBoot整合Shiro
 
-### 16.3.1 项目结构图
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210317223239457.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
-
-### 16.3.2 数据库
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210317223311431.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
-
-### 16.3程序代码
-
-新建一个springboot项目，勾选web，thymeleaf模块
-pom.xml
-
-```xml
-<dependencies>
-
-    <!--
-    subject 用户
-    securityManager 管理所有用户
-    realm  连接数据
-    -->
-
-    <!--连接数据库的依赖-->
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.15</version>
-    </dependency>
-    <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.17</version>
-    </dependency>
-    <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>druid</artifactId>
-        <version>1.1.13</version>
-    </dependency>
-
-    <!--引入mybatis,这是mybatis官方提供的适配springboot的，而不是springboot自己的-->
-    <dependency>
-        <groupId>org.mybatis.spring.boot</groupId>
-        <artifactId>mybatis-spring-boot-starter</artifactId>
-        <version>2.1.2</version>
-    </dependency>
-
-    <!--不想书写setter、getter方法，导入此依赖-->
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.16.22</version>
-    </dependency>
-
-    <!--shiro整合spring的包-->
-    <dependency>
-        <groupId>org.apache.shiro</groupId>
-        <artifactId>shiro-spring</artifactId>
-        <version>1.4.2</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-
-    <!--shiro-thymeleaf整合-->
-    <dependency>
-        <groupId>com.github.theborakompanioni</groupId>
-        <artifactId>thymeleaf-extras-shiro</artifactId>
-        <version>2.0.0</version>
-    </dependency>
-</dependencies>
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364
-```
-
-application.yml
-
-```yaml
-spring:
-  datasource:
-    username: root
-    password: 123456
-    #?serverTimezone=UTC解决时区的报错
-    url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource # 切换数据源
-
-    #Spring Boot 默认是不注入这些属性值的，需要自己绑定
-    #druid 数据源专有配置
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-
-    #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
-    #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
-    #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
-    filters: stat,wall,log4j
-    maxPoolPreparedStatementPerConnectionSize: 20
-    useGlobalDataSourceStat: true
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
-mybatis:
-  type-aliases-package: com.kuang.pojo
-  mapper-locations: classpath:mapper/*.xml
-12345678910111213141516171819202122232425262728293031323334
-```
-
-UserRealm.java
-
-```java
-package com.kuang.config;
-
-import com.kuang.pojo.User;
-import com.kuang.service.UserService;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-
-public class UserRealm extends AuthorizingRealm {
-
-    @Autowired
-    UserService userService;
-
-    //授权
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        System.out.println("执行了授权");
-
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo ();
-
-        //拿到当前登录的对象
-        Subject subject = SecurityUtils.getSubject();
-        //拿到user对象
-        User currentUser = (User) subject.getPrincipal();
-        //添加权限（数据库中拿的）
-        info.addStringPermission(currentUser.getPerms());
-        return info;
-    }
-
-    //认证
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        System.out.println("执行了认证");
-
-        UsernamePasswordToken userToken=(UsernamePasswordToken)token;
-
-//        //用户名、密码  模拟从数据库中获取
-//        String name = "root";
-//        String password = "1111";
-//
-//        //用户名认证
-//        if (!userToken.getUsername().equals(name)){
-//            return null;//抛出异常 UnknownAccountException
-//        }
-//
-//        //密码认证，shiro做
-//        return new SimpleAuthenticationInfo("",password,"");
-
-        //连接真实数据库
-        User user = userService.queryUserByName(userToken.getUsername());
-        if (user==null){//没有这个人
-            return null;//抛出异常 UnknownAccountException
-        }
-
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        session.setAttribute("loginUser",user);
-
-        return new SimpleAuthenticationInfo(user,user.getPwd(),"");
-    }
-}
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667
-```
-
-ShiroConfig.java
-
-```java
-package com.kuang.config;
-
-import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-@Configuration
-public class ShiroConfig{
-
-    //ShiroFilterFactoryBean 第三步
-    @Bean
-    public ShiroFilterFactoryBean  getShiroFilterBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager){
-        ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
-        //设置安全管理器
-        bean.setSecurityManager(defaultWebSecurityManager);
-
-        Map<String, String> filterMap =new LinkedHashMap<>();
-        
-        // 添加Shiro内置过滤器
-        /**
-         * Shiro内置过滤器，可以实现权限相关的拦截器
-         *  常用的过滤器：
-         *      anon：无需认证（登陆）可以访问
-         *      authc：必须认证才可以访问
-         *      user：如果使用rememberMe的功能，可以直接访问
-         *      perms：该资源必须得到资源权限才可以访问
-         *      role：该资源必须得到角色权限才可以访问
-         */
-        //拦截，必须有什么权限才能访问
-        filterMap.put("/user/add","perms[user:add]");
-        filterMap.put("/user/update","perms[user:update]");
-        
-        //拦截，必须认证才能访问
-        //filterMap.put("/user/*","authc");
-
-        bean.setFilterChainDefinitionMap(filterMap);
-
-        //访问时用户未认证，跳转到登录界面
-        bean.setLoginUrl("/toLogin");
-        //若访问时用户未被授权，则跳转至未授权页面
-        bean.setUnauthorizedUrl("/noauth");
-
-        return bean;
-    }
-
-    //DefaultWebSecurityManager 第二步
-    @Bean(name = "securityManager")
-    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") Realm realm){
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        //关联userRealm
-        securityManager.setRealm(realm);
-        return securityManager;
-    }
-
-    //realm 第一步
-    @Bean
-    public Realm userRealm(){
-        return new UserRealm();
-    }
-
-    //整合ShiroDialect:用来整合shiro thymeleaf
-    @Bean
-    public ShiroDialect getShiroDialect(){
-        return new ShiroDialect();
-    }
-}
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273
-```
-
-MyController.java
-
-```java
-package com.kuang.controller;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
-public class MyController {
-
-    @RequestMapping({"/","/index"})
-    public String toIndex(Model model){
-        model.addAttribute("msg","hello,shiro");
-        return "index";
-    }
-
-    @RequestMapping("/user/add")
-    public String add(){
-        return "user/add";
-    }
-
-    @RequestMapping("/user/update")
-    public String update(){
-        return "user/update";
-    }
-
-    @RequestMapping("/toLogin")
-    public String toLogin(){
-        return "login";
-    }
-
-    @RequestMapping("/noauth")
-    @ResponseBody
-    public String unauthorized(){
-        return "未授权无法访问此页面";
-    }
-
-    @RequestMapping("/login")
-    public String login(String username,String password,Model model) {
-        //获取当前用户
-        Subject subject = SecurityUtils.getSubject();
-        //封装用户的登录数据
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-
-        try {
-            subject.login(token);//执行登录的方法，如果没有异常就说明ok了
-            return "index";//登录成功跳到首页
-        } catch (UnknownAccountException e) { //用户名不存在
-            model.addAttribute("msg", "用户名不存在！");
-            return "login";
-        } catch (IncorrectCredentialsException e) {
-            model.addAttribute("msg", "密码错误！");
-            return "login";
-        }
-
-    }
-
-    @RequestMapping("/logout")
-    public String logout(){
-        //获取当前用户
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
-        System.out.println("执行了退出");
-        return "redirect:index";
-    }
-
-}
-123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172
-```
-
-User.java
-
-```java
-package com.kuang.pojo;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class User {
-
-    private int id;
-    private String name;
-    private String pwd;
-    private String perms;
-}
-12345678910111213141516
-```
-
-UserMapper.java
-
-```java
-package com.kuang.mapper;
-
-import com.kuang.pojo.User;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
-
-@Repository
-@Mapper
-public interface UserMapper {
-
-    public User queryUserByName(String name);
-
-}
-12345678910111213
-```
-
-UserMapper.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.kuang.mapper.UserMapper">
-    <select id="queryUserByName" parameterType="String" resultType="User">
-        select * from user where name=#{name}
-    </select>
-</mapper>
-123456789
-```
-
-UserService.java
-
-```java
-package com.kuang.service;
-
-import com.kuang.pojo.User;
-
-public interface UserService {
-    public User queryUserByName(String name);
-}
-1234567
-```
-
-UserServiceImpl.java
-
-```java
-package com.kuang.service;
-
-import com.kuang.mapper.UserMapper;
-import com.kuang.pojo.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class UserServiceImpl implements UserService{
-
-    @Autowired
-    UserMapper userMapper;
-
-    @Override
-    public User queryUserByName(String name) {
-        return userMapper.queryUserByName(name);
-    }
-}
-123456789101112131415161718
-```
-
-index.html
-
-```html
-<!DOCTYPE html>
-<html lang="en"
-      xmlns:th="https://www.thymeleaf.org"
-      xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-<h1>首页</h1>
-
-<p th:text="${msg}"></p>
-
-<hr>
-
-    <div th:if="${session.loginUser==null}">
-        <a th:href="@{/toLogin}">登录</a>
-    </div>
-    <div th:if="${session.loginUser!=null}">
-        <a th:href="@{/logout}">注销</a>
-    </div>
-
-    <div shiro:hasPermission="user:add">
-        <a th:href="@{/user/add}">add</a>
-    </div>
-    <div shiro:hasPermission="user:update">
-        <a th:href="@{/user/update}">update</a>
-    </div>
-
-</body>
-</html>
-1234567891011121314151617181920212223242526272829303132
-```
-
-login.html
-
-```html
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml?">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>登录</h1>
-<hr>
-<p th:text="${msg}" style="color:red;"></p>
-<form th:action="@{/login}">
-    用户名：<input type="text" name="username"><br>
-    密码：<input type="password" name="password">
-    <br>
-    <input type="submit" name="提交">
-</form>
-</body>
-</html>
-123456789101112131415161718
-```
-
-add.html
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>添加</h1>
-</body>
-</html>
-12345678910
-```
-
-update.html
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>修改</h1>
-</body>
-</html>
-12345678910
+### 16.3.1 环境搭建
+
+1. 新建一个springboot项目，勾选web，thymeleaf模块，在`pom.xml`中添加`shiro-spring`的依赖：
+
+   ```xml
+   <dependency>
+       <groupId>org.apache.shiro</groupId>
+       <artifactId>shiro-spring</artifactId>
+       <version>1.4.0</version>
+   </dependency>
+   ```
+
+2. 新建config包，创建`ShiroConfig`类和`UserRealm`类，因为创建realm对象时需要自定义类：
+
+   `UserRealm.java`继承`AuthorizingRealm`：
+
+   ```java
+   public class UserRealm extends AuthorizingRealm {
+       
+       //授权
+       @Override
+       protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+           System.out.println("执行了=》授权doGetAuthorizationInfo");
+           return null;
+       }
+   
+       //认证
+       @Override
+       protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+           System.out.println("执行了=》认证doGetAuthenticationInfo");
+           return null;
+       }
+       
+   }
+   ```
+
+   `ShiroConfig.java`里面的三个方法关联性很强，倒叙写会顺畅一些：
+
+   ```java
+   @Configuration
+   public class ShiroConfig {
+   
+       //3. ShiroFilterFactoryBean
+       @Bean
+       public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager securityManager) {
+           ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+           //设置安全管理器，关联DefaultWebSecurityManager
+           bean.setSecurityManager(securityManager);
+           return bean;
+       }
+   
+       //2. DefaultWebSecurityManager
+       @Bean(name = "securityManager")
+       public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm) {
+           DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+           //关联UserRealm
+           securityManager.setRealm(userRealm);
+           return securityManager;
+       }
+   
+       //1. 创建 realm对象， 需要自定义类
+       @Bean(name = "userRealm")
+       public UserRealm userRealm() {
+           return new UserRealm();
+       }
+       
+   }
+   ```
+
+3. 新建页面和controller，进行环境测试：
+
+   templates目录下进行`index.html`首页：
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="UTF-8">
+       <title>Title</title>
+   </head>
+   <body>
+   <h1>首页</h1>
+   <p th:text="${msg}"></p>
+   <hr>
+   
+   <a th:href="@{/user/add}">add</a> |
+   <a th:href="@{/user/update}">update</a>
+   </body>
+   </html>
+   ```
+
+   templates目录下新建user文件夹，创建`add.html`和`update.html`：
+
+   ```html
+   add.html
+   <body>
+   <h1>add</h1>
+   </body>
+   
+   update.html
+   <body>
+   <h1>update</h1>
+   </body>
+   ```
+
+   创建controller：
+
+   ```java
+   @Controller
+   public class MyController {
+   
+       @RequestMapping({"/index", "/"})
+       public String toIndex(Model model) {
+           model.addAttribute("msg", "Hello Shiro");
+           return "index";
+       }
+   
+       @RequestMapping("/user/add")
+       public String add() {
+           return "user/add";
+       }
+   
+       @RequestMapping("/user/update")
+       public String update() {
+           return "user/update";
+       }
+   }
+   ```
+
+4. 环境搭建完毕，接下来开始权限设定。
+
+
+
+### 16.3.2 登录拦截
+
+1. 在`ShiroConfig.java`的`ShiroFilterFactoryBean`方法中添加shiro的内置过滤器：
+
+   ```java
+       //3. ShiroFilterFactoryBean
+       @Bean
+       public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager securityManager) {
+           ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+           //设置安全管理器，关联DefaultWebSecurityManager
+           bean.setSecurityManager(securityManager);
+   
+           //添加Shiro内置过滤器
+           /*
+               anon：无需认证就可以访问
+               authc：必须认证了才能访问
+               user：必须拥有 记住我 功能才能访问
+               perms：拥有对某个资源的权限才能访问
+               role：拥有某个角色权限才能访问
+            */
+           //拦截
+           Map<String, String> filterMap = new LinkedHashMap<>();
+           filterMap.put("/user/*", "authc");
+           bean.setFilterChainDefinitionMap(filterMap);
+   
+           //设置登录请求
+           bean.setLoginUrl("/toLogin");
+   
+           return bean;
+       }
+   ```
+
+2. 编写登录页面`login.heml`
+
+3. 在controller里添加去登陆的请求处理：
+
+   ```java
+       @RequestMapping("/toLogin")
+       public String toLogin() {
+           return "login";
+       }
+   ```
+
+4. 进行测试，发现点击add或者update会跳转到登录页面
+
+
+
+### 16.3.3 实现用户认证
+
+1. 在controller里面编写登录请求处理：
+
+   ```java
+       @RequestMapping("/login")
+       public String login(String username, String password, Model model) {
+           //获取当前用户
+           Subject subject = SecurityUtils.getSubject();
+           //封装用户的登录数据
+           UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+   
+           //执行登录方法，如果没有异常就成功
+           try {
+               subject.login(token);
+               return "index";
+           } catch (UnknownAccountException e) {   //用户名不存在
+               model.addAttribute("error", "用户名错误");
+               return "login";
+           } catch (IncorrectCredentialsException e) {     //密码错误
+               model.addAttribute("error", "密码错误");
+               return "login";
+           }
+       }
+   ```
+
+2. 在`UserRealm.java`的认证方法中编写是否存在该用户：
+
+   ```java
+       //认证
+       @Override
+       protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+           System.out.println("执行了=》认证doGetAuthenticationInfo");
+   
+           //实际的用户名密码从数据库中取，这里模拟一下
+           String name = "root";
+           String password = "123456";
+   
+           //将AuthenticationToken转为controller中用的UsernamePasswordToken
+           UsernamePasswordToken userToken = (UsernamePasswordToken) authenticationToken;
+   
+           //用户名认证
+           if (!userToken.getUsername().equals(name)) {
+               return null;    //用户名不对会自动抛出UnknownAccountException异常
+           }
+   
+           //密码认证，shiro帮我们做，有这个方法有3个参数，暂时只用中间这个对比密码的参数
+           return new SimpleAuthenticationInfo("", password, "");
+           
+       }
+   ```
+
+3. 登录页面`login.html`：
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en" xmlns:th="http//www.thymeleaf.org">
+   <head>
+       <meta charset="UTF-8">
+       <title>Title</title>
+   </head>
+   <body>
+   <h1>登录</h1>
+   <hr>
+   <p th:text="${error}" style="color: red"></p>
+   <form th:action="@{/login}">
+       <p>用户名：<input type="text" name="username"></p>
+       <p>密码：<input type="text" name="password"></p>
+       <p><input type="submit"></p>
+   </form>
+   </body>
+   </html>
+   ```
+
+4. 测试，登录无论是用户名还是密码错误都会有相应的提示。登录成功后可以进add和update页面。
+
+
+
+### 16.3.4 整合MyBatis
+
+1. 在pom文件中添加数据库相关的依赖：
+
+   ```xml
+           <dependency>
+               <groupId>com.alibaba</groupId>
+               <artifactId>druid</artifactId>
+               <version>1.0.9</version>
+           </dependency>
+   
+           <dependency>
+               <groupId>log4j</groupId>
+               <artifactId>log4j</artifactId>
+               <version>1.2.17</version>
+           </dependency>
+   
+           <dependency>
+               <groupId>mysql</groupId>
+               <artifactId>mysql-connector-java</artifactId>
+           </dependency>
+   
+           <dependency>
+               <groupId>org.mybatis.spring.boot</groupId>
+               <artifactId>mybatis-spring-boot-starter</artifactId>
+               <version>2.1.4</version>
+           </dependency>
+   ```
+
+2. 配置`application.yaml`：
+
+   ```yaml
+   spring:
+     datasource:
+       username: root
+       password: 123456
+       #?serverTimezone=UTC解决时区的报错
+       url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+       driver-class-name: com.mysql.cj.jdbc.Driver
+       type: com.alibaba.druid.pool.DruidDataSource
+   
+       #Spring Boot 默认是不注入这些属性值的，需要自己绑定
+       #druid 数据源专有配置
+       initialSize: 5
+       minIdle: 5
+       maxActive: 20
+       maxWait: 60000
+       timeBetweenEvictionRunsMillis: 60000
+       minEvictableIdleTimeMillis: 300000
+       validationQuery: SELECT 1 FROM DUAL
+       testWhileIdle: true
+       testOnBorrow: false
+       testOnReturn: false
+       poolPreparedStatements: true
+   
+       #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
+       filters: stat,wall,log4j
+       maxPoolPreparedStatementPerConnectionSize: 20
+       useGlobalDataSourceStat: true
+       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+   ```
+
+3. 配置`application.properties`：
+
+   ```properties
+   mybatis.type-aliases-package=com.run.pojo
+   mybatis.mapper-locations=classpath:mapper/*xml
+   ```
+
+4. pojo包下的User实体类：
+
+   ```java
+   @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
+   public class User {
+       private int id;
+       private String name;
+       private String pwd;
+   }
+   ```
+
+5. 编写dao层，mapper包下的`UserMapper.java`接口：
+
+   ```java
+   @Mapper
+   public interface UserMapper {
+       User queryUserByName(String name);
+   }
+   ```
+
+   resources目录下新建mapper文件夹，添加`UserMapper.xml`：
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE mapper
+           PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <!--namespace=绑定一个对应的Dao/Mapper接口-->
+   <mapper namespace="com.run.mapper.UserMapper">
+   
+       <select id="queryUserByName" parameterType="String" resultType="com.run.pojo.User">
+           select * from mybatis.user where name = #{name}
+       </select>
+   
+   </mapper>
+   ```
+
+6. 编写service层，新建`UserService.java`接口
+
+   ```java
+   public interface UserService {
+       User queryUserByName(String name);
+   }
+   ```
+
+   `UserServiceImpl.java`：
+
+   ```java
+   @Service
+   public class UserServiceImpl implements UserService {
+   
+       @Autowired
+       UserMapper userMapper;
+   
+       @Override
+       public User queryUserByName(String name) {
+           return userMapper.queryUserByName(name);
+       }
+   }
+   ```
+
+7. 在`UserRealm.java`中修改：
+
+   ```java
+   public class UserRealm extends AuthorizingRealm {
+   
+       @Autowired
+       UserServiceImpl userService;
+   
+       //授权
+       @Override
+       protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+           System.out.println("执行了=》授权doGetAuthorizationInfo");
+           return null;
+       }
+   
+       //认证
+       @Override
+       protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+           System.out.println("执行了=》认证doGetAuthenticationInfo");
+   
+           //将AuthenticationToken转为controller中用的UsernamePasswordToken
+           UsernamePasswordToken userToken = (UsernamePasswordToken) authenticationToken;
+   
+           //从真实数据库中查询
+           User user = userService.queryUserByName(userToken.getUsername());
+   
+           //用户名认证
+           if (user == null) {
+               return null;    //用户名不对会自动抛出UnknownAccountException异常
+           }
+   
+           //密码认证，shiro帮我们做，有这个方法有3个参数，暂时只用中间这个对比密码的参数
+           return new SimpleAuthenticationInfo("", user.getPwd(), "");
+   
+       }
+   
+   }
+   ```
+
+8. 测试，发现数据库中存在的用户才能登录。
+
+9. Shiro也可以像Spring Security一样实现密码加密，例如md5加密，md5盐值加密(会绑定用户的用户名信息等，更加安全)等。
+
+   
+
+### 16.3.5 实现请求授权
+
+1. 在`shiroConfig.java`类中的`ShiroFilterFactoryBean`方法中编写权限控制：
+
+   ```java
+       //3. ShiroFilterFactoryBean
+       @Bean
+       public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager securityManager) {
+           ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+           //设置安全管理器，关联DefaultWebSecurityManager
+           bean.setSecurityManager(securityManager);
+   
+           //添加Shiro内置过滤器
+           /*
+               anon：无需认证就可以访问
+               authc：必须认证了才能访问
+               user：必须拥有 记住我 功能才能访问
+               perms：拥有对某个资源的权限才能访问
+               role：拥有某个角色权限才能访问
+            */
+   
+           Map<String, String> filterMap = new LinkedHashMap<>();
+           //授权，未授权的用户会跳转到未授权页面。注意：写在拦截前面
+           //有user:add权限才能进/user/add
+           filterMap.put("/user/add", "perms[user:add]");
+           filterMap.put("/user/update", "perms[user:update]");
+   
+           //拦截
+           filterMap.put("/user/*", "authc");
+   
+           bean.setFilterChainDefinitionMap(filterMap);
+   
+           //设置登录请求
+           bean.setLoginUrl("/toLogin");
+           //设置未授权页面
+           bean.setUnauthorizedUrl("/noauth");
+   
+           return bean;
+       }
+   ```
+
+2. controller层处理未授权页面：
+
+   ```java
+       @RequestMapping("/noauth")
+       @ResponseBody
+       public String noauth() {
+           return "未经授权不得访问此页面";
+       }
+   ```
+
+3. 此时在数据库的user表中添加一个perms字段，用于存放用户的权限，例如给狂神update权限，给xiaoluadd权限，如下图：
+
+   ![image-20220403171551122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403171551122.png)
+
+   
+
+4. 在`UserRealm.java`类中的授权方法中赋予权限
+
+   ```java
+   public class UserRealm extends AuthorizingRealm {
+   
+       @Autowired
+       UserServiceImpl userService;
+   
+       //授权
+       @Override
+       protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+           System.out.println("执行了=》授权doGetAuthorizationInfo");
+   
+           SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+   
+           //拿到当前登录的这个对象
+           Subject subject = SecurityUtils.getSubject();
+           //拿到User对象，下面认证方法中的SimpleAuthenticationInfo(第一个参数principal把user传递过来了)
+           User currentUser = (User) subject.getPrincipal();
+           //从数据库中获取该用户的权限，赋予相应的权限
+           info.addStringPermission(currentUser.getPerms());
+   
+           return info;
+       }
+   
+       //认证
+       @Override
+       protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+           System.out.println("执行了=》认证doGetAuthenticationInfo");
+   
+           //将AuthenticationToken转为controller中用的UsernamePasswordToken
+           UsernamePasswordToken userToken = (UsernamePasswordToken) authenticationToken;
+   
+           //从真实数据库中查询
+           User user = userService.queryUserByName(userToken.getUsername());
+   
+           //用户名认证
+           if (user == null) {
+               return null;    //用户名不对会自动抛出UnknownAccountException异常
+           }
+   
+           //密码认证，shiro帮我们做，第一个参数传递当前登录的用户，第二个参数传递他的密码
+           return new SimpleAuthenticationInfo(user, user.getPwd(), "");
+   
+       }
+   
+   }
+   ```
+
+5. 通过测试可以发现，当登录狂神用户时，只能进update不能进add，当登录xiaolu用户时，只能进add不能进update。
+
+
+
+### 16.3.6 整合Thymeleaf
+
+权限控制应该和前端相结合，有什么权限的用户在他的主页就显示什么权限，没有该权限就不显示出来。
+
+1. pom文件中添加相关依赖：
+
+   ```xml
+   	<dependency>
+               <groupId>com.GitHub.theborakompanioni</groupId>
+               <artifactId>thymeleaf-extras-shiro</artifactId>
+               <version>2.1.0</version>
+           </dependency>
+   ```
+
+2. 在`ShiroConfig.java`中添加`ShiroDialect`方法，用来整合shiro thymeleaf：
+
+   ```java
+       //ShiroDialect：用来整合shiro thymeleaf
+       @Bean
+       public ShiroDialect getShiroDialect() {
+           return new ShiroDialect();
+       }
+   ```
+
+3. 在`index.html`首页中修改，注意导入`xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro"`：
+
+   ```html
+   <!DOCTYPE html>
+   <html lang="en" xmlns:th="http://www.thymeleaf.org"
+         xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro">
+   <head>
+       <meta charset="UTF-8">
+       <title>Title</title>
+   </head>
+   <body>
+   <h1>首页</h1>
+   <p th:text="${msg}"></p>
+   <hr>
+   
+   <!--若没有被认证，就显示登录-->
+   <div shiro:notAuthenticated>
+       <a th:href="@{/toLogin}">登录</a>
+   </div>
+   
+   <div shiro:hasPermission="user:add">
+       <a th:href="@{/user/add}">add</a>
+   </div>
+   
+   <div shiro:hasPermission="user:update">
+       <a th:href="@{/user/update}">update</a>
+   </div>
+   
+   </body>
+   </html>
+   ```
+
+4. 测试，发现未登录的时候只显示登录链接，用户登录后，有什么权限就只显示什么权限。
+
+
+
+> shiro相关JSP标签
+
+```jsp
+<shiro:authenticated>        登录之后
+<shiro:notAuthenticated>        不在登录状态时
+<shiro:guest>            用户在没有RememberMe时
+<shiro:user>            用户在RememberMe时
+<shiro:hasAnyRoles name="abc,123" >    在有abc或者123角色时
+<shiro:hasRole name="abc">        拥有角色abc
+<shiro:lacksRole name="abc">        没有角色abc
+<shiro:hasPermission name="abc">    拥有权限资源abc
+<shiro:lacksPermission name="abc">    没有abc权限资源
+<shiro:principal>        显示用户身份名称
+<shiro:principal property="username"/>         显示用户身份中的属性值
 ```
 
 ## 16.4 总结
 
 **Shiro 三大要素**
 
-```
-subject` -> `ShiroFilterFactoryBean`
+`subject` -> `ShiroFilterFactoryBean`
 `securityManager` -> `DefaultWebSecurityManager`
 `realm`
-实际操作中对象创建的顺序 ： `realm -> securityManager -> subject
-```
+实际操作中对象创建的顺序 ： `realm -> securityManager -> subject`
 
-**流程梳理：**
-1.用户进入首页点击跳转，Shiro内置过滤器进行拦截，看过滤器的设置，未认证跳转到登录页面，未授权跳转到未授权界面；
-2.认证
+
+
+> 流程梳理
+
+1、用户进入首页点击跳转，Shiro内置过滤器进行拦截，看过滤器的设置，未认证跳转到登录页面，未授权跳转到未授权界面
+
+2、认证
 
 - 用户进入登录页面，输入用户名密码准备进行认证，点击登录按钮后，会请求/login，
-- 首先调用Subject.login(token) 进行登录，其会自动委托给SecurityManager，
-- SecurityManager负责真正的身份验证逻辑；它会委托给Authenticator 进行身份验证；
-- Authenticator 才是真正的身份验证者，Authenticator 会把相应的token 传入Realm，从Realm 获取身份验证信息，如果没有返回/抛出异常表示身份验证失败了，如果有就返回AuthenticationInfo验证信息，此信息中包含了身份（pricipals）及凭证，也就是账号密码。
+- 首先调用`Subject.login(token)` 进行登录，其会自动委托给`SecurityManager`，
+- `SecurityManager`负责真正的身份验证逻辑；它会委托给`Authenticator` 进行身份验证；
+- `Authenticator` 才是真正的身份验证者，`Authenticator` 会把相应的token 传入`Realm`，从`Realm` 获取身份验证信息，如果没有返回/抛出异常表示身份验证失败了，如果有就返回`AuthenticationInfo`验证信息，此信息中包含了身份（pricipals）及凭证，也就是账号密码。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210318092122708.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjY1NzQ1,size_16,color_FFFFFF,t_70)
+![image-20220403181857060](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403181857060.png)
 
-3.授权
+3、授权
 
-- 对subject进行授权，调用方法isPermitted（“permission串”），递交给SecurityManager
-- SecurityManager将权限检测操作委托给Authorizer授权管理器对象
-- Authorizer执行Realm（自定义的Realm）从数据库查询权限数据并封装
-- Authorizer对用户授权信息进行判定(判断用户访问资源时需要什么权限，假如用户所具有的权限包含这个资源访问时所需要的权限，那么用户就可以访问这个资源了)。
+- 对`subject`进行授权，调用方法`isPermitted(“permission串”)`，递交给`SecurityManager`
+- `SecurityManager`将权限检测操作委托给`Authorizer`授权管理器对象
+- `Authorizer`执行`Realm`（自定义的Realm）从数据库查询权限数据并封装
+- `Authorizer`对用户授权信息进行判定(判断用户访问资源时需要什么权限，假如用户所具有的权限包含这个资源访问时所需要的权限，那么用户就可以访问这个资源了)
+
+![image-20220403181951827](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403181951827.png)
 
 # 17. Swagger
 
