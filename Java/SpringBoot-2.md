@@ -4,7 +4,7 @@
 
 1. 我去新建一个项目测试：springboot-data-jdbc ; 引入相应的模块！基础模块
 
-   ![image-20220402124510910](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402124510910.png)
+   ![image-20220402124510910](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d506a30bf512d56633d3022bb56785de.png)
 
 2. 项目建好之后，发现自动帮我们导入了如下的启动器：
 
@@ -217,7 +217,7 @@ public class JDBCController {
 
 3. 数据源切换之后，在测试类中注入DataSource，然后获取到它，输出一看便知是否成功切换；
 
-   ![image-20220402130148743](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402130148743.png)
+   ![image-20220402130148743](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6d69750c2d72881e194affcb96f47e9e.png)
 
 4. 切换成功！既然切换成功，就可以设置数据源连接初始化大小、最大连接数、等待时间、最小连接数 等设置项；可以查看源码
 
@@ -313,7 +313,7 @@ public class JDBCController {
 
 8. 输出结果 ：可见配置参数已经生效！
 
-   ![image-20220402131634755](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402131634755.png)
+   ![image-20220402131634755](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/649bc5db3d6dddaedf3127a2247a611c.png)
 
 ## 13.3 配置Druid数据源监控
 
@@ -350,11 +350,11 @@ Druid 数据源具有监控的功能，并提供了一个web界面方便用户�
 
 配置完毕后，我们可以选择访问 ：[http://localhost:8080/druid/login.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdruid%2Flogin.html)
 
-![image-20200727233409312](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233409312.png)
+![image-20200727233409312](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/969d6375a26d92f41a216311f65e1c84.png)
 
 进入之后
 
-![image-20200727233436583](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200727233436583.png)
+![image-20200727233436583](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/167e541339bfda23f6f021d9645ac1aa.png)
 
 **`DruidConfig`类中配置Druid web监控filter过滤器**
 
@@ -613,7 +613,7 @@ Spring Security is a framework that focuses on providing both  authentication an
 
 2. 导入静态资源
 
-   ![image-20220402151410667](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402151410667.png)
+   ![image-20220402151410667](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c8ae3a5f3a16250a07e2ae1a02dd71b4.png)
 
 3. controller层跳转页面：
 
@@ -650,7 +650,7 @@ Spring Security is a framework that focuses on providing both  authentication an
 
 4. 测试实验环境是否OK！
 
-   ![image-20220402154524753](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402154524753.png)
+   ![image-20220402154524753](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/be3fdd901d0c603955fe2618e7dc2e3d.png)
 
 
 ### 15.2.2 认识SpringSecurity
@@ -727,7 +727,7 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 4. 定制请求的授权规则。先点击`super.configure(http)`看源码：
 
-   ![image-20220402155719261](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402155719261.png)
+   ![image-20220402155719261](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a276d043a6b764d44229050f10d3ff45.png)
 
    自己仿写，首页所有人都可以访问，功能页只有对应有权限的人才能访问到：
 
@@ -747,7 +747,7 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 5. 测试一下：发现除了首页都进不去了！因为我们目前没有登录的角色，因为请求需要登录的角色拥有对应的权限才可以！
 
-   ![image-20220402160154398](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402160154398.png)
+   ![image-20220402160154398](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4138ffea9416154ffb12813e13ce30ae.png)
 
 6. 在`configure()`方法中加入以下配置，开启自动配置的登录功能！
 
@@ -760,13 +760,13 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 7. 随便点击一个需要权限的level，发现没有权限的时候，会跳转到登录的页面：
 
-   ![image-20220402160536691](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402160536691.png)
+   ![image-20220402160536691](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9de0304274beb73232b2be213d393868.png)
 
 8. 我们可以自定义认证规则，重写configure的另一个方法，参数为`AuthenticationManagerBuilder`：
 
    先查看源码：
 
-   ![image-20220402161204046](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161204046.png)
+   ![image-20220402161204046](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c0fa36fc90420288347fce54ac5971af.png)
 
    自己仿写：
 
@@ -785,9 +785,9 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 9. 测试，我们可以使用这些账号登录进行测试，发现会报错！
 
-   ![image-20220402161700260](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161700260.png)
+   ![image-20220402161700260](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/27ae252e7544c25f08a137c37aba4661.png)
 
-   ![image-20220402161636119](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402161636119.png)
+   ![image-20220402161636119](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dfb90d8deaf4911f56004469927ffe96.png)
 
    
 
@@ -840,13 +840,13 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
 3. 我们可以去测试一下，登录成功后点击注销，发现注销完毕会跳转到登录页面！
 
-   ![image-20220402162956586](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402162956586.png)
+   ![image-20220402162956586](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3e2f71ffee114a42b1f868048f3b6519.png)
 
 4. 但是，我们想让他注销成功后，依旧可以跳转到首页，该怎么处理呢？
 
    看源码：
 
-   ![image-20220402163401739](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402163401739.png)
+   ![image-20220402163401739](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/412babe2019ad8d58081345ab978dda3.png)
 
    在`http.logout()`后再添加方法：
 
@@ -915,11 +915,11 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
    - 未登录
 
-     ![image-20220402165034257](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165034257.png)
+     ![image-20220402165034257](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8d8c03bfad5bc3d38540e2a5ff3aed2c.png)
 
    - 登录
 
-     ![image-20220402165018635](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165018635.png)
+     ![image-20220402165018635](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/55de4e96710af5d239710087873779a2.png)
 
 9. 我们继续将下面的角色功能块认证完成，在每个板块的位置添加`sec:authorize="hasRole(' ')"`
 
@@ -972,7 +972,7 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
     - 用户首页未登录，发现什么页看不见：
 
-      ![image-20220402165550336](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165550336.png)
+      ![image-20220402165550336](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/34a89ef6ad10d9d5caf23b2413687985.png)
 
 
     - 某个用户登录：
@@ -1003,19 +1003,19 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
    - 发现登录页多了一个记住我功能
 
-     ![image-20220402165834723](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165834723.png)
+     ![image-20220402165834723](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/84f69d91720a8aceeb7ff3c0e55337c7.png)
 
    - 我们登录之后关闭浏览器，然后重新打开浏览器访问，发现用户依旧存在！
 
-     ![image-20220402165913705](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165913705.png)思考：如何实现的呢？其实非常简单
+     ![image-20220402165913705](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/af08ed4aebcbb38b77f31f7ea79252ee.png)思考：如何实现的呢？其实非常简单
 
      我们可以查看浏览器的Cookies：
 
-     ![image-20220402170213104](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402170213104.png)
+     ![image-20220402170213104](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ae27652a50b9608a485a12e06979d79e.png)
 
 3. 我们点击注销的时候，可以发现，Spring Security 帮我们自动删除了这个cookie(置为空)：
 
-   ![image-20220402170511522](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402170511522.png)
+   ![image-20220402170511522](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4bce8e7ea2d45fcbe6461517ceec1ea7.png)
 
 4. cookie发送给浏览器保存，以后登录带上这个cookie，只要通过检查就可以免登录了。如果点击注销，则会删除这个cookie
 
@@ -1053,7 +1053,7 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
    在 `loginPage()`源码中的注释上有写明：
 
-   ![image-20220402171827509](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402171827509.png)
+   ![image-20220402171827509](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/00ba31f03b769379ec261385ac0a65cd.png)
 
    进一步修改：
 
@@ -1168,7 +1168,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 ### 16.1.1 有哪些功能
 
-![image-20220403132629590](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132629590.png)
+![image-20220403132629590](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/42318faf7b43111fc2f62f55ee8f7d3b.png)
 ● `Authentication`: 身份认证、登录，验证用户是不是拥有相应的身份;
 ● `Authorization`: 授权,即权限验证，验证某个已认证的用户是否拥有某个权限，即判断用户能否进行什么操作，如:验证某个用户是否拥有某个角色，或者细粒度的验证某个用户对某个资源是否具有某个权限!
 ● `Session Manager`: 会话管理，即用户登录后就是第一次会话，在没有退出之前，它的所有信息都在会话中;会话可以是普通的JavaSE环境，也可以是Web环境;
@@ -1182,14 +1182,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 ### 16.1.2 Shiro架构(外部)
 
-![image-20220403132736544](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132736544.png)
+![image-20220403132736544](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6d3aa7d8079c3e3bb557ef3d93ca6d5c.png)
 ● `subject`: 应用代码直接交互的对象是Subject, 也就是说Shiro的对外API核心就是Subject, Subject代表了当前的用户，这个用户不一定是一个具体的人，与当前应用交互的任何东西都是Subject,如网络爬虫，机器人等，与Subject的所有交互都会委托给SecurityManager; Subject其实是一个门面， SecurityManageer 才是实际的执行者
 ● `SecurityManager`: 安全管理器，即所有与安全有关的操作都会与SercurityManager交互, 并且它管理着所有的Subject,可以看出它是Shiro的核心，它负责与Shiro的其他组件进行交互，它相当于SpringMVC的DispatcherServlet的角色
 ● `Realm`: Shiro从Realm获取安全数据 (如用户,角色，权限)，就是说SecurityManager要验证用户身份，那么它需要从Realm获取相应的用户进行比较，来确定用户的身份是否合法;也需要从Realm得到用户相应的角色、权限，进行验证用户的操作是否能够进行，可以把Realm看DataSource;
 
 ### 16.1.3 Shiro架构(内部)
 
-![image-20220403132756268](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403132756268.png)
+![image-20220403132756268](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6033c29cc20158e9c4aa901343cf4fa5.png)
 ● `Subject`: 任何可以与应用交互的用户;
 ● `Security Manager`:相当于SpringMVC中的DispatcherSerlet; 是Shiro的心脏， 所有具体的交互都通过Security Manager进行控制，它管理者所有的Subject, 且负责进行认证,授权，会话，及缓存的管理。
 ● `Authenticator`:负责Subject认证， 是-一个扩展点，可以自定义实现;可以使用认证策略(Authentication Strategy)，即什么情况下算用户认证通过了;
@@ -1371,7 +1371,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 4. 运行：
 
-   ![image-20220403135721889](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403135721889.png)
+   ![image-20220403135721889](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4e5ef51887292600daf92c4e1f0f48d0.png)
 
 **总结主要方法**：
 
@@ -1877,7 +1877,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 3. 此时在数据库的user表中添加一个perms字段，用于存放用户的权限，例如给狂神update权限，给xiaoluadd权限，如下图：
 
-   ![image-20220403171551122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403171551122.png)
+   ![image-20220403171551122](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/160f7159242c432f72a7457f0a55fd68.png)
 
    
 
@@ -2032,7 +2032,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 - `SecurityManager`负责真正的身份验证逻辑；它会委托给`Authenticator` 进行身份验证；
 - `Authenticator` 才是真正的身份验证者，`Authenticator` 会把相应的token 传入`Realm`，从`Realm` 获取身份验证信息，如果没有返回/抛出异常表示身份验证失败了，如果有就返回`AuthenticationInfo`验证信息，此信息中包含了身份（pricipals）及凭证，也就是账号密码。
 
-![image-20220403181857060](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403181857060.png)
+![image-20220403181857060](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/457a78197f0d5b9d69a45c8198bd8be1.png)
 
 3、授权
 
@@ -2041,21 +2041,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 - `Authorizer`执行`Realm`（自定义的Realm）从数据库查询权限数据并封装
 - `Authorizer`对用户授权信息进行判定(判断用户访问资源时需要什么权限，假如用户所具有的权限包含这个资源访问时所需要的权限，那么用户就可以访问这个资源了)
 
-![image-20220403181951827](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220403181951827.png)
+![image-20220403181951827](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/69bd56e8003d87d1bf61a317a8a3c3ff.png)
 
 # 17. Swagger
 
 - 了解Swagger的概念及作用
 - 了解前后端分离
 - 在springboot中集成swagger
-
-## 17.1 Swagger简介
-
-- 号称世界上最流行的API框架
-- Restful Api 文档在线自动生成器 => **API 文档 与API 定义同步更新**
-- 直接运行，在线测试API
-- 支持多种语言 （如：Java，PHP等）
-- 官网：[https://swagger.io/](https://gitee.com/link?target=https%3A%2F%2Fswagger.io%2F)
 
 
 
@@ -2075,34 +2067,42 @@ Vue+SpringBoot
 
 **产生的问题**
 
-- 前后端集成联调，前端或者后端无法做到“及时协商，尽早解决”，最终导致问题集中爆发
+- 前后端集成联调，前端或者后端无法做到 “及时协商，尽早解决”，最终导致问题集中爆发
 
 **解决方案**
 
-- 首先定义schema [ 计划的提纲 ]，并实时跟踪最新的API，降低集成风险；
-- 早些年：指定word计划文档；
+- 首先定义schema [ 计划的提纲 ]，并实时跟踪最新的API，降低集成风险
+- 早些年：指定word计划文档
 - 前后端分离：
   - 前端测试后端接口：postman
   - 后端提供接口，需要实时更新最新的消息及改动
+
+## 17.1 Swagger简介
+
+- 号称世界上最流行的API框架
+- Restful Api 文档在线自动生成器 => **API 文档 与API 定义同步更新**
+- 直接运行，在线测试API
+- 支持多种语言 （如：Java，PHP等）
+- 官网：[https://swagger.io/](https://gitee.com/link?target=https%3A%2F%2Fswagger.io%2F)
 
 ## 17.2 SpringBoot集成Swagger
 
 **SpringBoot集成Swagger** => **springfox**，两个jar包
 
-- **[Springfox-swagger2](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Fio.springfox%2Fspringfox-swagger2)**
+- [Springfox-swagger2](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Fio.springfox%2Fspringfox-swagger2)
 - [springfox-swagger-ui](https://gitee.com/link?target=https%3A%2F%2Fmvnrepository.com%2Fartifact%2Fio.springfox%2Fspringfox-swagger-ui)
 
 **使用Swagger**
 
-要求：jdk 1.8 + 否则swagger2无法运行
+要求：jdk 1.8 + ，否则swagger2无法运行
 
 步骤：
 
 1. 新建一个SpringBoot-web项目
 
-2. 添加Maven依赖（注意：2.9.2版本之前，之后的不行）
+2. 添加Maven依赖（注意：2.9.2版本之前）
 
-   ```
+   ```xml
    <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
@@ -2118,52 +2118,59 @@ Vue+SpringBoot
 
 3. 编写HelloController，测试确保运行成功！
 
-4. 要使用Swagger，我们需要编写一个配置类-SwaggerConfig来配置 Swagger
+4. 要使用Swagger，我们需要编写一个配置类`SwaggerConfig`来配置 Swagger
 
-   ```
-   @Configuration //配置类
-   @EnableSwagger2// 开启Swagger2的自动配置
+   ```java
+   @Configuration 		//配置类
+   @EnableSwagger2		// 开启Swagger2的自动配置
    public class SwaggerConfig {  
    }
    ```
 
-5. 访问测试 ：[http://localhost:8080/swagger-ui.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fswagger-ui.html) ，可以看到swagger的界面；
+5. 访问测试 ：[http://localhost:8080/swagger-ui.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fswagger-ui.html) ，可以看到swagger的界面，若报错或者进不去此页面，降springboot版本；
 
-   ![image-20200731132229265](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731132229265.png)
+   ![image-20220404110035005](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/aafc42ddad81e7ab9dd1dc6bf470fd73.png)
 
 ## 17.3 配置Swagger
 
-1. Swagger实例Bean是Docket，所以通过配置Docket实例来配置Swaggger。
+1. Swagger实例Bean是`Docket`，所以通过配置Docket实例来配置Swaggger。
 
-   ```
-   @Bean //配置docket以配置Swagger具体参数
-   public Docket docket() {
-      return new Docket(DocumentationType.SWAGGER_2);
+   ```java
+   @Configuration 		//配置类
+   @EnableSwagger2		// 开启Swagger2的自动配置
+   public class SwaggerConfig {
+   
+       @Bean       //配置docket的Bean实例，以配置Swagger具体参数
+       public Docket docket() {
+           return new Docket(DocumentationType.SWAGGER_2);
+       }
+       
    }
    ```
 
-2. 可以通过apiInfo()属性配置文档信息
+2. 可以通过`apiInfo()`属性配置文档信息
 
-   ```
-   //配置文档信息
-   private ApiInfo apiInfo() {
-      Contact contact = new Contact("联系人名字", "http://xxx.xxx.com/联系人访问链接", "联系人邮箱");
-      return new ApiInfo(
-              "Swagger学习", // 标题
-              "学习演示如何配置Swagger", // 描述
-              "v1.0", // 版本
-              "http://terms.service.url/组织链接", // 组织链接
-              contact, // 联系人信息
-              "Apach 2.0 许可", // 许可
-              "许可链接", // 许可连接
-              new ArrayList<>()// 扩展
-     );
-   }
+   ```java
+   //配置Swagger文档信息
+       private ApiInfo apiInfo() {
+           //作者信息
+           Contact contact = new Contact("联系人名字", "http://xxx.xxx.com/联系人访问链接", "联系人邮箱");
+           return new ApiInfo(
+                   "Swagger学习",        // 标题
+                   "学习演示如何配置Swagger",      // 描述
+                   "v1.0", // 版本
+                   "http://terms.service.url/组织链接",        // 组织链接
+                   contact,        // 联系人信息
+                   "Apach 2.0 许可",         // 许可
+                   "许可链接",         // 许可连接
+                   new ArrayList<>()       // 扩展
+           );
+       }
    ```
 
-3. Docket 实例关联上 apiInfo()
+3. `Docket` 实例关联上 `apiInfo()`，覆盖默认的apiInfo：
 
-   ```
+   ```java
    @Bean
    public Docket docket() {
       return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo());
@@ -2172,33 +2179,34 @@ Vue+SpringBoot
 
 4. 重启项目，访问测试 [http://localhost:8080/swagger-ui.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fswagger-ui.html)  看下效果；
 
-   ![image-20200731161851136](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731161851136.png)
+   ![image-20220404111517626](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/21c96bea67b0a7153c43f551547fd111.png)
 
 ## 17.4 配置扫描接口
 
-1. 构建Docket时通过select()方法配置怎么扫描接口。
+1. 构建`Docket`时通过`select()`方法配置怎么扫描接口。
 
-   ```
-   @Bean
-   public Docket docket() {
-      return new Docket(DocumentationType.SWAGGER_2)
-         .apiInfo(apiInfo())
-         .select()// 通过.select()方法，去配置扫描接口,RequestHandlerSelectors配置如何扫描接口
-         .apis(RequestHandlerSelectors.basePackage("nuc.ss.swagger.controller"))
-         .build();
-   }
+   ```java
+       @Bean       //配置docket的Bean实例，以配置Swagger具体参数
+       public Docket docket() {
+           return new Docket(DocumentationType.SWAGGER_2)
+                   .apiInfo(apiInfo())
+                   .select()
+                   // 通过.select()方法，去配置扫描接口,RequestHandlerSelectors配置如何扫描接口
+                   .apis(RequestHandlerSelectors.basePackage("com.run.swagger.controller"))
+                   .build();
+       }
    ```
 
 2. 重启项目测试，由于我们配置根据包的路径扫描接口，所以我们只能看到一个类
 
-   ![image-20200731165837391](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731165837391.png)
+   ![image-20220404112331553](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3a02416d861386aeca56d34d5355fc8d.png)
 
-3. 除了通过包路径配置扫描接口外，还可以通过配置其他方式扫描接口，这里注释一下所有的配置方式：
+3. 除了通过包路径配置扫描接口外，还可以通过配置其他方式扫描接口，这里注释一下所有的配置方式；这些方法在`apis中的RequestHandlerSelectors`中通过`.`使用：
 
-   ```
-   basePackage(final String basePackage) // 根据包路径扫描接口
-   any() // 扫描所有，项目中的所有接口都会被扫描到
-   none() // 不扫描接口
+   ```java
+   basePackage(final String basePackage) 		// 根据包路径扫描接口
+   any() 		// 扫描所有，项目中的所有接口都会被扫描到
+   none() 		// 不扫描接口
    // 通过方法上的注解扫描，如withMethodAnnotation(GetMapping.class)只扫描get请求
    withMethodAnnotation(final Class<? extends Annotation> annotation)
    // 通过类上的注解扫描，如.withClassAnnotation(Controller.class)只扫描有controller注解的类中的接口
@@ -2207,22 +2215,22 @@ Vue+SpringBoot
 
 4. 除此之外，我们还可以配置接口扫描过滤：
 
-   ```
+   ```java
    @Bean
    public Docket docket() {
       return new Docket(DocumentationType.SWAGGER_2)
          .apiInfo(apiInfo())
          .select()
-         .apis(RequestHandlerSelectors.basePackage("com.kuang.swagger.controller"))
-          // 配置如何通过path过滤,即这里只扫描请求以/ss开头的接口
-         .paths(PathSelectors.ant("/ss/**"))
+         .apis(RequestHandlerSelectors.basePackage("com.run.swagger.controller"))
+          // 配置如何通过path过滤,即这里只扫描请求以/user开头的接口
+         .paths(PathSelectors.ant("/user/**"))
          .build();
    }
    ```
 
-5. 这里的可选值还有
+   - `paths的PathSelectors`中的可选值还有
 
-   ```
+   ```java
    any() // 任何请求都扫描
    none() // 任何请求都不扫描
    regex(final String pathRegex) // 通过正则表达式控制
@@ -2231,14 +2239,14 @@ Vue+SpringBoot
 
 ## 17.5 配置Swagger开关
 
-1. 通过enable()方法配置是否启用swagger，如果是false，swagger将不能在浏览器中访问了
+1. 通过`enable()`方法配置是否启用swagger，如果是false，swagger将不能在浏览器中访问了
 
-   ```
+   ```java
    @Bean
    public Docket docket() {
       return new Docket(DocumentationType.SWAGGER_2)
          .apiInfo(apiInfo())
-         .enable(false) //配置是否启用Swagger，如果是false，在浏览器将无法访问
+         .enable(false) 		//配置是否启用Swagger，如果是false，在浏览器将无法访问
          .select()
          .apis(RequestHandlerSelectors.basePackage("nuc.ss.swagger.controller"))
          .paths(PathSelectors.ant("/ss/**"))
@@ -2246,75 +2254,80 @@ Vue+SpringBoot
    }
    ```
 
-![image-20200731190614381](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731190614381.png)
+![image-20220404113026018](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a05828ce523ac72625e823dde7c5b18b.png)
 
-1. 如何动态配置当项目处于test、dev环境时显示swagger，处于prod时不显示？
+如何动态配置当项目处于dev环境时显示swagger，处于pro时不显示？
 
-   ```
-   @Bean
-   public Docket docket(Environment environment) {
-      // 设置要显示swagger的环境
-      Profiles of = Profiles.of("dev", "test");
-      // 判断当前是否处于该环境
-      // 通过 enable() 接收此参数判断是否要显示
-      boolean b = environment.acceptsProfiles(of);
-      
-      return new Docket(DocumentationType.SWAGGER_2)
-         .apiInfo(apiInfo())
-         .enable(b)
-         .select()
-         .apis(RequestHandlerSelectors.basePackage("com.kuang.swagger.controller"))
-         .paths(PathSelectors.ant("/ss/**"))
-         .build();
-   }
-   ```
+- 在`Docket`方法中配置：
 
-2. 可以在项目中增加配置文件
+  ```java
+      @Bean       //配置docket的Bean实例，以配置Swagger具体参数
+      public Docket docket(Environment environment) {
+          // 设置要显示swagger的环境，可以配置多个，里面test并没有写
+          Profiles of = Profiles.of("dev", "test");
+          // 判断当前是否处于该环境
+          boolean b = environment.acceptsProfiles(of);
+          // 下面通过 enable() 接收此参数判断是否要显示
+  
+          return new Docket(DocumentationType.SWAGGER_2)
+                  .apiInfo(apiInfo())
+                  .enable(b)
+                  .select()
+                  // 通过.select()方法，去配置扫描接口,RequestHandlerSelectors配置如何扫描接口
+                  .apis(RequestHandlerSelectors.basePackage("com.run.swagger.controller"))
+                  .build();
+      }
+  ```
 
-   - dev测试环境
+  
 
-     ```
-     server.port=8081
-     ```
+可以在项目中增加配置文件
 
-     ![image-20200731193109826](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731193109826.png)
+- dev测试环境：降主配置文件`application.properties`设置成dev环境，dev环境的端口为8081
 
-     项目运行结果
+  ![image-20220404115207467](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8c23ee9a8d41d872bbd40a05e4873f4f.png)
+  
+  
 
-     ![image-20200731193425090](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731193425090.png)
+  项目运行结果，可以发现，走8081端口，进入了dev环境：
 
-   - pro测试环境
+  ![image-20220404115421402](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5731c3bbff9c1c5890c9c20e136ec8fb.png)
 
-     ```
-     server.port=8082
-     ```
+- pro测试环境：降主配置文件`application.properties`设置成pro环境，pro环境的端口为8082
 
-     ![image-20200731194455510](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731194455510.png)
+  ![image-20220404115524869](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f46e321eca19ead48b16de866938305b.png)
 
-     项目运行结果
+  
 
-     ![image-20200731194559290](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731194559290.png)
+  项目运行结果，因为不是dev环境，所以进不去Swagger页面
+
+  ![image-20220404115616468](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0eef18acba022ae7533ad00525798538.png)
 
 ## 17.6 配置API分组
 
-1. 如果没有配置分组，默认是default。通过groupName()方法即可配置分组：
+1. 如果没有配置分组，默认是default。通过`groupName()`方法即可配置分组：
 
-   ```
+   ```java
    @Bean
    public Docket docket(Environment environment) {
-      return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
-         .groupName("狂神") // 配置分组
-          // 省略配置....
+      return new Docket(DocumentationType.SWAGGER_2)
+                   .apiInfo(apiInfo())
+                   .groupName("AruNi")     //配置分组
+                   //.enable(b)
+                   .select()
+                   // 通过.select()方法，去配置扫描接口,RequestHandlerSelectors配置如何扫描接口
+                   .apis(RequestHandlerSelectors.basePackage("com.run.swagger.controller"))
+                   .build();
    }
    ```
 
 2. 重启项目查看分组
 
-   ![image-20200731195354714](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731195354714.png)
+   ![image-20220404122110998](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/102d870450de26e62d1935ff4128206d.png)
 
-3. 如何配置多个分组？配置多个分组只需要配置多个docket即可：
+3. 如何配置多个分组？配置多个分组只需要配置多个`Docket`即可：
 
-   ```
+   ```java
    @Bean
    public Docket docket1(){
       return new Docket(DocumentationType.SWAGGER_2).groupName("group1");
@@ -2331,62 +2344,48 @@ Vue+SpringBoot
 
 4. 重启项目查看即可
 
-   ![image-20200731195543102](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731195543102.png)
+   ![image-20220404122220500](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cc520ef5d190b4685911201ede1b2066.png)
 
 ## 17.7 实体配置
 
-1. 新建一个实体类
+1. 新建一个实体类，private属性不会在Swagger的实体中显示
 
-   ```
+   ```java
    //@Api("注释")
    @ApiModel("用户实体")
    public class User {
        @ApiModelProperty("用户名")
-       private String username;
+       public String username;
        @ApiModelProperty("密码")
-       private String password;
+       public String password;
    
-       public String getUsername() {
-           return username;
-       }
-   
-       public void setUsername(String username) {
-           this.username = username;
-       }
-   
-       public String getPassword() {
-           return password;
-       }
-   
-       public void setPassword(String password) {
-           this.password = password;
-       }
+       //set, get方法，有参无参构造器
    }
    ```
-
+   
 2. 只要这个实体在**请求接口**的返回值上（即使是泛型），都能映射到实体项中：
 
-   ```
+   ```java
    @RestController
    public class HelloController {
    
-       //   /error默认错误请求
        @GetMapping("/hello")
        public String hello() {
            return "hello";
        }
    
-       //只要我们的接口中，返回值中存在实体类，他就会被扫描到Swagger中
+       //只要接口中，返回值中存在实体类，他就会被扫描到Swagger中
        @PostMapping("/user")
        public User user() {
            return new User();
        }
+       
    }
    ```
 
 3. 重启查看测试
 
-   ![image-20200731200413725](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731200413725.png)
+   ![image-20220404123150755](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/692c6e4ab2fb0b29e5b4e537c78d628c.png)
 
 注：并不是因为@ApiModel这个注解让实体显示在这里了，而是只要出现在接口方法的返回值上的实体都会显示在这里，而@ApiModel和@ApiModelProperty这两个注解只是为实体添加注释的。
 
@@ -2401,7 +2400,7 @@ Vue+SpringBoot
 
 Swagger是一个优秀的工具，几乎所有大公司都有使用它
 
-【注意点】：在正式发布的时候，关闭Swagger！！！
+【注意点】：在项目正式发布的时候，关闭Swagger！！！
 
 - 出于安全考虑
 - 而且节省内存
@@ -2424,16 +2423,28 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 1. 在HelloController控制类中的接口添加api接口注释
 
-   ```
+   ```java
+   @Api(tags = "HelloController模块")
    @RestController
    public class HelloController {
-       ......
-       @ApiOperation("Hello控制接口")
+   
        @GetMapping("/hello")
-       public String hello2(@ApiParam("用户名") String username) {
-           return "hello" + username;
+       public String hello() {
+           return "Hello Swagger";
        }
-       
+   
+       //只要接口中，返回值中存在实体类，他就会被扫描到Swagger中
+       @PostMapping("/user")
+       public User user() {
+           return new User();
+       }
+   
+       @ApiOperation("Hi控制接口")
+       @GetMapping("/hi")
+       public String hi(@ApiParam("用户名") String username) {
+           return "Hi" + username;
+       }
+   
        @ApiOperation("get测试")
        @GetMapping("/get")
        public User hello2(@ApiParam("用户") User user) {
@@ -2442,15 +2453,21 @@ Swagger的所有注解定义在io.swagger.annotations包下
    }
    ```
 
-   ![image-20200731201755001](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731201755001.png)
+2. 运行项目，可以看见在HelloController模块中，有对应的请求方法：
 
-2. 进行try it out测试
+   ![image-20220404124658297](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/399996141796ea8707b2de9bbde79a2d.png)
 
-   ![image-20200731202958255](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731202958255.png)
+3. 在`/get`中进行try it out测试
 
-   测试结果
+   ![image-20220404124820937](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1c47efe3e7af4bd1a89de4e154729dd8.png)
 
-   ![image-20200731203034702](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731203034702.png)
+   点击try it out后，填入账号密码，进行测试：
+
+   ![image-20220404124920698](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/326a2cec8302c8c5c859f63c8e69bbab.png)
+
+   测试结果，可以看到测试成功，返回了user对象中的信息，状态码为200：
+
+   ![image-20220404125332238](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fb68b477947b70b4225c99a4eb9488d8.png)
 
 **总结：**
 
@@ -2464,7 +2481,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 1、默认的  **访问 [http://localhost:8080/swagger-ui.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fswagger-ui.html)**
 
-```
+```xml
 <dependency> 
    <groupId>io.springfox</groupId>
    <artifactId>springfox-swagger-ui</artifactId>
@@ -2472,11 +2489,11 @@ Swagger的所有注解定义在io.swagger.annotations包下
 </dependency>
 ```
 
-![image-20200731204929854](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731204929854.png)
+![image-20220404125716852](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8f1a3670fe259a83e4501f432e97b071.png)
 
 2、bootstrap-ui  **访问 [http://localhost:8080/doc.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdoc.html)**
 
-```
+```xml
 <!-- 引入swagger-bootstrap-ui包 /doc.html-->
 <dependency>
    <groupId>com.github.xiaoymin</groupId>
@@ -2485,11 +2502,11 @@ Swagger的所有注解定义在io.swagger.annotations包下
 </dependency>
 ```
 
-![image-20200731205550845](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731205550845.png)
+![image-20220404125937979](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0a952c790aec8982144807059d639c82.png)
 
 3、Layui-ui  **访问 [http://localhost:8080/docs.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdocs.html)**
 
-```
+```xml
 <!-- 引入swagger-ui-layer包 /docs.html-->
 <dependency>
    <groupId>com.github.caspar-chen</groupId>
@@ -2498,11 +2515,11 @@ Swagger的所有注解定义在io.swagger.annotations包下
 </dependency>
 ```
 
-- 我这个测试没成功(Layui-ui)
+- Layui已经停止维护了，可能访问不成功
 
 4、mg-ui  **访问 [http://localhost:8080/document.html](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fdocument.html)**
 
-```
+```xml
 <!-- 引入swagger-ui-layer包 /document.html-->
 <dependency>
    <groupId>com.zyplayer</groupId>
@@ -2511,7 +2528,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 </dependency>
 ```
 
-![image-20200731205723914](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200731205723914.png)
+![image-20220404130143149](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9fb7657db70c2a257f6e2c83174b8ad6.png)
 
 
 
@@ -2521,15 +2538,15 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 ## 18.1 异步任务
 
-1. 创建一个service包
+异步处理还是十分常用的，比如我们在网站上发送邮件，后台会去发送邮件，此时前台会造成响应不动，直到邮件发送完毕，响应才会成功，所以我们一般会采用多线程的方式去处理这些任务。
 
-2. 创建一个类AsyncService
+1. 新建SpringBoot-Web项目
 
-   异步处理还是非常常用的，比如我们在网站上发送邮件，后台会去发送邮件，此时前台会造成响应不动，直到邮件发送完毕，响应才会成功，所以我们一般会采用多线程的方式去处理这些任务。
+2. 创建一个service包，创建一个类AsyncService
 
    编写方法，假装正在处理数据，使用线程设置一些延时，模拟同步等待的情况；
 
-   ```
+   ```java
    @Service
    public class AsyncService {
    
@@ -2544,13 +2561,11 @@ Swagger的所有注解定义在io.swagger.annotations包下
    }
    ```
 
-3. 编写controller包
-
-4. 编写AsyncController类
+3. 新建controller包，编写AsyncController类
 
    我们去写一个Controller测试一下
 
-   ```
+   ```java
    @RestController
    public class AsyncController {
    
@@ -2566,13 +2581,13 @@ Swagger的所有注解定义在io.swagger.annotations包下
    }
    ```
 
-5. 访问[http://localhost:8080/hello进行测试，3秒后出现OK，这是同步等待的情况。](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A8080%2Fhello%E8%BF%9B%E8%A1%8C%E6%B5%8B%E8%AF%95%EF%BC%8C3%E7%A7%92%E5%90%8E%E5%87%BA%E7%8E%B0OK%EF%BC%8C%E8%BF%99%E6%98%AF%E5%90%8C%E6%AD%A5%E7%AD%89%E5%BE%85%E7%9A%84%E6%83%85%E5%86%B5%E3%80%82)
+5. 访问http://localhost:8080/hello进行测试，浏览器必须转3秒后，才显示OK，然后控制台打印出业务进行中...
 
-   问题：我们如果想让用户直接得到消息，就在后台使用多线程的方式进行处理即可，但是每次都需要自己手动去编写多线程的实现的话，太麻烦了，我们只需要用一个简单的办法，在我们的方法上加一个简单的注解即可，如下：
+   如果想让用户直接得到消息，就在后台使用多线程的方式进行处理即可，但是每次都需要自己手动去编写多线程的实现的话，太麻烦了，我们只需要用一个简单的办法，在我们的方法上加一个简单的注解即可，如下：
 
 6. 给hello方法添加@Async注解；
 
-   ```
+   ```java
    //告诉Spring这是一个异步方法
    @Async
    public void hello(){
@@ -2587,7 +2602,7 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
    SpringBoot就会自己开一个线程池，进行调用！但是要让这个注解生效，我们还需要在主程序上添加一个注解@EnableAsync ，开启异步注解功能；
 
-   ```
+   ```java
    @EnableAsync //开启异步注解功能
    @SpringBootApplication
    public class SpringbootTaskApplication {
@@ -2599,32 +2614,32 @@ Swagger的所有注解定义在io.swagger.annotations包下
    }
    ```
 
-7、重启测试，网页瞬间响应，后台代码依旧执行！
+7、重启测试，网页瞬间响应OK，后台的业务进行中...是3秒过后才在控制台输出，所以后台代码依旧执行。
 
 ## 18.2 邮件任务
 
 邮件发送，在我们的日常开发中，也非常的多，Springboot也帮我们做了支持
 
-- 邮件发送需要引入spring-boot-start-mail
-- SpringBoot 自动配置MailSenderAutoConfiguration
-- 定义MailProperties内容，配置在application.yml中
-- 自动装配JavaMailSender
+- 邮件发送需要引入`spring-boot-start-mail`
+- SpringBoot 自动配置`MailSenderAutoConfiguration`
+- 定义`MailProperties`内容，配置在`application.yml`中
+- 自动装配`JavaMailSender`
 - 测试邮件发送
 
 **测试：**
 
 1. 引入pom依赖
 
-   ```
+   ```xml
    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
    </dependency>
    ```
 
-   看它引入的依赖，可以看到 jakarta.mail
+   点击进去看它引入的依赖，可以看到 `jakarta.mail`
 
-   ```
+   ```xml
    <dependency>
       <groupId>com.sun.mail</groupId>
       <artifactId>jakarta.mail</artifactId>
@@ -2632,17 +2647,13 @@ Swagger的所有注解定义在io.swagger.annotations包下
    </dependency>
    ```
 
-2. 查看自动配置类：MailSenderAutoConfiguration
+2. 查看自动配置类：`MailSenderAutoConfiguration`，可以发现这个类中没有注册bean，点进`MailSenderJndiConfiguration.class`查看导入的其他类，这个类中存在bean，`JavaMailSenderImpl`：
 
-   ![image-20200801104504309](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801104504309.png)
+   ![image-20220404145845221](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7056ba7fb14621b6b4deaea30da3ca86.png)
 
-   这个类中存在bean，JavaMailSenderImpl
+   然后点进`MailProperties`去看下配置文件
 
-   ![img](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801104504309.png)
-
-   然后我们去看下配置文件
-
-   ```
+   ```java
    @ConfigurationProperties(prefix = "spring.mail")
    public class MailProperties {
    
@@ -2659,63 +2670,86 @@ Swagger的所有注解定义在io.swagger.annotations包下
    }
    ```
 
-3. 配置文件：
+3. 自己在`application.properties`中配置Mail配置文件：
 
-   ```
+   ```properties
    spring.mail.username=1710841251@qq.com
    spring.mail.password=你的qq授权码
    spring.mail.host=smtp.qq.com
-   # qq需要配置ssl
+   # QQ需要配置ssl加密验证
    spring.mail.properties.mail.smtp.ssl.enable=true
    ```
 
    获取授权码：在QQ邮箱中的设置->账户->开启pop3和smtp服务
 
-   ![image-20200801105503766](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801105503766.png)
+   ![image-20220404150506323](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9372c8da7e7f4946879b53c0beff55f5.png)
 
-4. Spring单元测试
+4. 在SpringBoot单元测试中测试：
 
-   ```
-   @Autowired
-   JavaMailSenderImpl javaMailSender;
-   @Test//邮件设置1：一个简单的邮件
-   void contextLoads() {
-       SimpleMailMessage mailMessage = new SimpleMailMessage();
-       mailMessage.setSubject("狂神，你好");
-       mailMessage.setText("谢谢你的狂神说Java系列课程");
+   ```java
+   @SpringBootTest
+   class SpringBootTaskApplicationTests {
    
-       mailMessage.setTo("24736743@qq.com");
-       mailMessage.setFrom("1710841251@qq.com");
-       javaMailSender.send(mailMessage);
-   }
+       @Autowired
+       JavaMailSenderImpl mailSender;
    
-   @Test// 一个复杂的邮件
-   void contextLoads2() throws MessagingException {
-       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-       //组装
-       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-   
-       //正文
-       helper.setSubject("狂神，你好~plus");
-       helper.setText("<p style='color:red'>谢谢你的狂神说Java系列课程</p>", true);
-   
-       //附件
-       helper.addAttachment("1.jpg", new File(""));
-       helper.addAttachment("2.jpg", new File(""));
-   
-       helper.setTo("24736743@qq.com");
-       helper.setFrom("1710841251@qq.com");
-   
-       javaMailSender.send(mimeMessage);
-   
+       @Test
+       void contextLoads() {
+           SimpleMailMessage mailMessage = new SimpleMailMessage();
+           //邮件主题
+           mailMessage.setSubject("SpringBoot如何编写邮件");
+           //邮件内容
+           mailMessage.setText("只需要导入一个spring-boot-starter-mail依赖，您就可以轻松的编写邮件啦！！！");
+           //发送给谁
+           mailMessage.setTo("1298911600@qq.com");
+           mailMessage.setFrom("1298911600@qq.com");
+           //发送
+           mailSender.send(mailMessage);
+       }
+       
    }
    ```
 
-   ![image-20200801112646650](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801112646650.png)
+   这样一个简单的邮件就发送成功了，查看邮箱：
 
-查看邮箱，邮件接收成功！
+   ![image-20220404151909904](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/52cbeb75aba47d856916fdeebb53fbd1.png)
 
-我们只需要使用Thymeleaf进行前后端结合即可开发自己网站邮件收发功能了！
+5. 发送复杂的邮件
+
+   ```java
+   @SpringBootTest
+   class SpringBootTaskApplicationTests {
+   
+       @Autowired
+       JavaMailSenderImpl mailSender;
+   
+       //复杂的邮件
+       @Test
+       void contextLoads2() throws MessagingException {
+           MimeMessage mimeMessage = mailSender.createMimeMessage();
+           //组装，第二个参数开启多文件发送
+           MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+   
+           //正文
+           helper.setSubject("SpringBoot如何发送复杂邮件");
+           //第二个参数开启支持html标签
+           helper.setText("<a href=https://spring.io/ style='color:green'>点击前往官网学习！</a>", true);
+   
+           //附件
+           helper.addAttachment("Spring.jpg", new File("D:\\shejie\\Spring.jpg"));
+       
+           helper.setTo("1298911600@qq.com");
+           helper.setFrom("1298911600@qq.com");
+           
+           mailSender.send(mimeMessage);
+       }
+   
+   }
+   ```
+
+   查看邮箱：
+
+   ![image-20220404153926297](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/35da9bbff0cd2f65bef21a644b61a223.png)
 
 ## 18.3 定时任务
 
@@ -2726,8 +2760,8 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 两个注解：
 
-- @EnableScheduling——开启定时功能的注解
-- @Scheduled——什么时候执行
+- `@EnableScheduling`——开启定时功能的注解
+- `@Scheduled`——什么时候执行
 
 **cron表达式：**
 
@@ -2754,16 +2788,15 @@ Swagger的所有注解定义在io.swagger.annotations包下
 
 **测试步骤：**
 
-1、创建一个ScheduledService
+1、创建一个`ScheduledService`类
 
 我们里面存在一个hello方法，他需要定时执行，怎么处理呢？
 
-```
+```java
 @Service
 public class ScheduledService {
 
-    // 在一个特定的时间执行这个方法——Timer
-    //cron表达式
+    //cron表达式，以空格分隔
     // 秒 分 时 日 月 周几
 
     /*
@@ -2781,9 +2814,9 @@ public class ScheduledService {
 
 2、这里写完定时任务之后，我们需要在主程序上增加@EnableScheduling 开启定时任务功能
 
-```
-@EnableAsync //开启异步注解功能
-@EnableScheduling //开启基于注解的定时任务
+```java
+@EnableAsync 		//开启异步注解功能
+@EnableScheduling 		//开启基于注解的定时任务
 @SpringBootApplication
 public class SpringbootTaskApplication {
 
@@ -2794,13 +2827,13 @@ public class SpringbootTaskApplication {
 }
 ```
 
-3、我们来详细了解下cron表达式；
+3、运行项目，发现hello方法每2秒执行一次，定时任务成功！
 
-[http://www.bejson.com/othertools/cron/](https://gitee.com/link?target=http%3A%2F%2Fwww.bejson.com%2Fothertools%2Fcron%2F)
+- cron在线生成：[http://www.bejson.com/othertools/cron/](https://gitee.com/link?target=http%3A%2F%2Fwww.bejson.com%2Fothertools%2Fcron%2F)
 
-4、常用的表达式
+> 常用cron表达式
 
-```
+```text
 （1）0/2 * * * * ?   表示每2秒 执行任务
 （1）0 0/2 * * * ?   表示每2分钟 执行任务
 （1）0 0 2 1 * ?   表示在每月的1日的凌晨2点调整任务
@@ -2827,10 +2860,6 @@ public class SpringbootTaskApplication {
 （22）0 15 10 ? * 6#3   每月的第三个星期五上午10:15触发
 ```
 
-
-
-
-
 # 19. Dubbo和Zookeeper集成
 
 ## 19.1 分布式理论
@@ -2845,19 +2874,19 @@ public class SpringbootTaskApplication {
 
 首先需要明确的是，只有当单个节点的处理能力无法满足日益增长的计算、存储任务的时候，且硬件的提升（加内存、加磁盘、使用更好的CPU）高昂到得不偿失的时候，应用程序也不能进一步优化的时候，我们才需要考虑分布式系统。因为，分布式系统要解决的问题本身就是和单机系统一样的，而由于分布式系统多节点、通过网络通信的拓扑结构，会引入很多单机系统没有的问题，为了解决这些问题又会引入更多的机制、协议，带来更多的问题。。。
 
-### 19.1.2 Dubbo文档
+
 
 随着互联网的发展，网站应用的规模不断扩大，常规的垂直应用架构已无法应对，分布式服务架构以及流动计算架构势在必行，急需**一个治理系统**确保架构有条不紊的演进。
 
 在Dubbo的官网文档有这样一张图
 
-![img](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/dubbo-architecture-roadmap.jpg)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/23791576e8f92918933e5ec1909d4538.jpeg)
 
-### 19.1.3 单一应用架构
+### 19.1.2 单一应用架构
 
 当网站流量很小时，只需一个应用，将所有功能都部署在一起，以减少部署节点和成本。此时，用于简化增删改查工作量的数据访问框架(ORM)是关键。
 
-![image-20200801133522303](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133522303.png)
+![image-20200801133522303](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b53b931eba09b6b309e8083d1fbdc4d5.png)
 
 适用于小型网站，小型管理系统，将所有功能都部署到一个功能里，简单易用。
 
@@ -2869,27 +2898,27 @@ public class SpringbootTaskApplication {
 
 3、不利于升级维护
 
-### 19.1.4 垂直应用架构
+### 19.1.3 垂直应用架构
 
 当访问量逐渐增大，单一应用增加机器带来的加速度越来越小，将应用拆成互不相干的几个应用，以提升效率。此时，用于加速前端页面开发的Web框架(MVC)是关键。
 
-![image-20200801133625663](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133625663.png)
+![image-20200801133625663](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/db4f4b956f6bc3564b0179d5053855b1.png)
 
 通过切分业务来实现各个模块独立部署，降低了维护和部署的难度，团队各司其职更易管理，性能扩展也更方便，更有针对性。
 
 缺点：公用模块无法重复利用，开发性的浪费
 
-### 19.1.5 分布式服务架构
+### 19.1.4 分布式服务架构
 
 当垂直应用越来越多，应用之间交互不可避免，将核心业务抽取出来，作为独立的服务，逐渐形成稳定的服务中心，使前端应用能更快速的响应多变的市场需求。此时，用于提高业务复用及整合的**分布式服务框架(RPC)**是关键。
 
-![image-20200801133710784](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133710784.png)
+![image-20200801133710784](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/28ce18804e556da83272c56e6d4af10f.png)
 
-### 19.1.6 流动计算架构
+### 19.1.5 流动计算架构
 
 当服务越来越多，容量的评估，小服务资源的浪费等问题逐渐显现，此时需增加一个调度中心基于访问压力实时管理集群容量，提高集群利用率。此时，用于**提高机器利用率的资源调度和治理中心**(SOA)[ Service Oriented Architecture]是关键。
 
-![image-20200801133801873](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801133801873.png)
+![image-20200801133801873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fd5d4ac8e6f2f547444deda813480e74.png)
 
 ## 19.2 什么是RPC
 
@@ -2901,13 +2930,14 @@ RPC【Remote Procedure  Call】是指远程过程调用，是一种进程间通�
 
 **RPC基本原理**
 
-![image-20200801134404631](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801134404631.png)
+![image-20220404161600156](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2b4e8fb8fe70058822f631b080f25f2c.png)
 
-![image-20200801134657756](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801134657756.png)
+![image-20200801134657756](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2533494e3b47af7b1a725031b7696001.png)
 
-RPC两个核心模块：通讯，序列化。
+RPC两个核心模块：
 
-
+- 通讯
+- 序列化
 
 ## 19.3 Dubbo
 
@@ -2915,15 +2945,12 @@ Apache Dubbo |ˈdʌbəʊ| 是一款高性能、轻量级的开源Java RPC框架�
 
 dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?target=http%3A%2F%2Fdubbo.apache.org%2Fzh-cn%2Findex.html)
 
-1.了解Dubbo的特性
-
-2.查看官方文档
+1. 了解Dubbo的特性
+2. 查看官方文档
 
 **dubbo基本概念**
 
-![dubbo-architucture](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/dubbo-architecture.jpg)
-
-![img](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/architecture.png)
+![image-20220404163957402](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/05fb6f668e7b47c68f37e0e4dfcb7b86.png)
 
 **服务提供者**（Provider）：暴露服务的服务提供方，服务提供者在启动时，向注册中心注册自己提供的服务。
 
@@ -2944,65 +2971,53 @@ dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?ta
 
 ## 19.4 Dubbo环境搭建
 
-点进dubbo官方文档，推荐我们使用Zookeeper 注册中心
-
-![image-20200801140529370](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801140529370.png)
+dubbo官方文档，推荐我们使用Zookeeper 注册中心
 
 什么是zookeeper呢？可以查看[官方文档](https://gitee.com/link?target=https%3A%2F%2Fzookeeper.apache.org%2F)
 
 ## 19.5 安装Zookeeper
 
-1. 下载zookeeper ：[地址](https://gitee.com/link?target=https%3A%2F%2Fmirror.bit.edu.cn%2Fapache%2Fzookeeper%2F)， 我们下载3.6.1， 最新版！解压zookeeper
+1. 下载zookeeper ：[地址](https://gitee.com/link?target=https%3A%2F%2Fmirror.bit.edu.cn%2Fapache%2Fzookeeper%2F)， 下载带bin的
 
-   下载带bin的
-
-   ![image-20200801173958146](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801173958146.png)
-
-2. 运行/bin/zkServer.cmd ，初次运行会报错，没有zoo.cfg配置文件；
+2. 运行/bin/zkServer.cmd ，初次运行会报错，没有`zoo.cfg`配置文件；
 
    可能遇到问题：闪退 !
 
-   解决方案：编辑zkServer.cmd文件末尾添加pause 。这样运行出错就不会退出，会提示错误信息，方便找到原因。
+   解决方案：编辑`zkServer.cmd`文件末尾添加pause 。这样运行出错就不会退出，会提示错误信息，方便找到原因。
 
-   ![image-20200801172648723](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801172648723.png)
+   ![image-20220404175253688](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b033bf19c258299959b1364f17cd953e.png)
 
-   ![image-20200801173023636](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801173023636.png)
+3. 修改`zoo.cfg`配置文件
 
-3. 修改zoo.cfg配置文件
-
-   - 将conf文件夹下面的zoo_sample.cfg复制一份改名为zoo.cfg即可。
+   - 将conf文件夹下面的`zoo_sample.cfg`复制一份改名为`zoo.cfg`即可。
 
    - 注意几个重要位置：
 
-     dataDir=./  临时数据存储的目录（可写相对路径）
+     `dataDir=./` ：临时数据存储的目录（可写相对路径）
 
-     clientPort=2181  zookeeper的端口号
+     `clientPort=2181` ：zookeeper的端口号
 
    - 修改完成后再次启动zookeeper
 
-     ![image-20200801174251778](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801174251778.png)
+     ![image-20220404180651111](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/742466c79333f5c4c545374bf43f8201.png)
 
-4. 使用zkCli.cmd测试
+4. 使用`zkCli.cmd`测试
 
-   - ls /：列出zookeeper根下保存的所有节点
+   - `ls /`：列出zookeeper根下保存的所有节点
 
-     ![image-20200801175746901](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801175746901.png)
+     ![image-20220404180741993](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5f5fe841ae851a1dcbdc84973da3e511.png)
 
-     报错别着急，多试几次就好了，我试了三次o(╥﹏╥)o，看报错信息
+   - `create –e /AruNi 123`：创建一个AruNi节点，值为123
 
-     ![image-20200801175928795](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801175928795.png)
+     ![image-20220404180836309](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fe4349c9d15ceda09ba3e47ed59dc2a4.png)
 
-   - create –e /kuangshen 123：创建一个kuangshen节点，值为123
+   - `get /AruNi`：获取 /AruNi节点的值
 
-     ![image-20200801180120251](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801180120251.png)
-
-   - get /kuangshen：获取/kuangshen节点的值
-
-     ![image-20200801180225001](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801180225001.png)
+     ![image-20220404180922172](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fe5d55f1e155bfe4dee52193194c283d.png)
 
    - 我们再来查看一下节点：ls /
 
-     ![image-20200801180302890](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801180302890.png)
+     ![image-20220404180948329](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4ce422656de11d3afef418495051949e.png)
 
 ## 19.6 安装Dubbo-admin
 
@@ -3017,9 +3032,9 @@ dubbo官网 [http://dubbo.apache.org/zh-cn/index.html](https://gitee.com/link?ta
 
 **2、解压进入目录**
 
-修改 dubbo-admin\src\main\resources \application.properties 指定zookeeper地址
+修改 `dubbo-admin-server\src\main\resources \application.properties` 指定zookeeper地址`dubbo.registry.address`，若没有修改过，是2181就行。
 
-```
+```properties
 server.port=7001
 spring.velocity.cache=false
 spring.velocity.charset=UTF-8
@@ -3032,17 +3047,15 @@ spring.guest.password=guest
 dubbo.registry.address=zookeeper://127.0.0.1:2181
 ```
 
-**3、在项目目录下**打包dubbo-admin
+**3、在项目目录下**打包dubbo-admin，需要maven环境
 
-```
+```shell
 mvn clean package -Dmaven.test.skip=true
 ```
 
 **第一次打包的过程有点慢，需要耐心等待！直到成功！**
 
-![image-20200801181825286](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801181825286.png)
-
-4、执行 dubbo-admin\target 下的dubbo-admin-0.0.1-SNAPSHOT.jar
+4、执行 dubbo-admin\target 下的`dubbo-admin-0.0.1-SNAPSHOT.jar`
 
 ```
 java -jar dubbo-admin-0.0.1-SNAPSHOT.jar
@@ -3052,11 +3065,11 @@ java -jar dubbo-admin-0.0.1-SNAPSHOT.jar
 
 执行完毕，我们去访问一下 [http://localhost:7001/](https://gitee.com/link?target=http%3A%2F%2Flocalhost%3A7001%2F) ， 这时候我们需要输入登录账户和密码，我们都是默认的root-root；
 
-![image-20200801183043114](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801183043114.png)
+![image-20200801183043114](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4ca84c7b5728810ed3b2fbaa41c9ec3e.png)
 
 登录成功后，查看界面
 
-![image-20200801183113485](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801183113485.png)
+![image-20200801183113485](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/755e0e3c808b59fc518cd9307e66d98c.png)
 
 安装完成！
 
@@ -3080,7 +3093,7 @@ java -jar dubbo-admin-0.0.1-SNAPSHOT.jar
 
 编写接口
 
-```
+```java
 package nuc.ss.service;
 
 public interface TicketService {
@@ -3090,7 +3103,7 @@ public interface TicketService {
 
 编写实现类
 
-```
+```java
 package nuc.ss.service;
 
 public class TicketServiceImpl implements TicketService {
@@ -3107,7 +3120,7 @@ public class TicketServiceImpl implements TicketService {
 
 编写service
 
-```
+```java
 package nuc.ss.service;
 
 public interface UserService {
@@ -3123,7 +3136,7 @@ public interface UserService {
 
 **我们从dubbo官网进入github，看下方的帮助文档，找到dubbo-springboot，找到依赖包**
 
-```
+```xml
 <!-- Dubbo Spring Boot Starter -->
 <dependency>
    <groupId>org.apache.dubbo</groupId>
@@ -3134,7 +3147,7 @@ public interface UserService {
 
 **zookeeper的包我们去maven仓库下载，zkclient；**
 
-```
+```xml
 <!-- https://mvnrepository.com/artifact/com.github.sgroschupf/zkclient -->
 <dependency>
    <groupId>com.github.sgroschupf</groupId>
@@ -3145,7 +3158,7 @@ public interface UserService {
 
 **【新版的坑】zookeeper及其依赖包，解决日志冲突，还需要剔除日志依赖；**
 
-```
+```xml
 <!-- 引入zookeeper -->
 <dependency>
    <groupId>org.apache.curator</groupId>
@@ -3173,7 +3186,7 @@ public interface UserService {
 
 **2、在springboot配置文件中配置dubbo相关属性！**
 
-```
+```properties
 server.port=8001
 
 #当前应用名字
@@ -3186,7 +3199,7 @@ dubbo.scan.base-packages=nuc.ss.service
 
 **3、在service的实现类中配置服务注解，发布服务！注意导包问题**
 
-```
+```java
 package nuc.ss.service;
 
 import org.apache.dubbo.config.annotation.Service;
@@ -3202,21 +3215,21 @@ public class TicketServiceImpl implements TicketService {
 }
 ```
 
-**逻辑理解 ：应用启动起来，dubbo就会扫描指定的包下带有@component注解的服务，将它发布在指定的注册中心中！**
+**逻辑理解 ：应用启动起来，dubbo就会扫描指定的包下带有`@component`注解的服务，将它发布在指定的注册中心中！**
 
 **4、运行测试**
 
-![image-20200801204543375](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801204543375.png)
+![image-20200801204543375](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8969774122417431ba64628643e975f6.png)
 
-![image-20200801205620564](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801205620564.png)
+![image-20200801205620564](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fce2c168367cccb5b134df0589635f38.png)
 
-![image-20200801205708690](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801205708690.png)
+![image-20200801205708690](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5ea693118ba2da05c41262a053f89ea3.png)
 
 ### 19.7.3 服务消费者
 
 **1、导入依赖，和之前的依赖一样；**
 
-```
+```xml
 <!--dubbo-->
 <!-- Dubbo Spring Boot Starter -->
 <dependency>
@@ -3258,7 +3271,7 @@ public class TicketServiceImpl implements TicketService {
 
 2、**配置参数**
 
-```
+```properties
 server.port=8002
 
 #当前应用名字
@@ -3269,11 +3282,11 @@ dubbo.registry.address=zookeeper://127.0.0.1:2181
 
 **3. 本来正常步骤是需要将服务提供者的接口打包，然后用pom文件导入，我们这里使用简单的方式，直接将服务的接口拿过来，路径必须保证正确，即和服务提供者相同；**
 
-![image-20200801211028698](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801211028698.png)
+![image-20200801211028698](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3c4582f51e70a7ea2d422f2a4fe86955.png)
 
 **4. 完善消费者的服务类**
 
-```
+```java
 package nuc.ss.service;
 
 import org.apache.dubbo.config.annotation.Reference;
@@ -3296,7 +3309,7 @@ public class UserService {
 
 **5. 测试类编写；**
 
-```
+```java
 @SpringBootTest
 public class ConsumerServerApplicationTests {
 
@@ -3323,10 +3336,10 @@ public class ConsumerServerApplicationTests {
 
 **4. 消费者消费测试，结果：**
 
-![image-20200801221551593](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801221551593.png)
+![image-20200801221551593](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/16160f428abf351d56d1ea6b56738114.png)
 
 **监控中心 ：**
 
-![image-20200801222026747](https://gitee.com/lzh_gitee/springboot_image/raw/master/img/image-20200801222026747.png)
+![image-20200801222026747](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f002c47c60ce97a4743413b5b621c6d7.png)
 
-**ok , 这就是SpingBoot + dubbo + zookeeper实现分布式开发的应用，其实就是一个服务拆分的思想；**
+**这就是SpingBoot + dubbo + zookeeper实现分布式开发的应用，其实就是一个服务拆分的思想；**
