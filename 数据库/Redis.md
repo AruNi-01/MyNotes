@@ -438,7 +438,7 @@ OK
 
 127.0.0.1:6379> set age 20
 OK
-127.0.0.1:6379> EXPIRE age 15 	# 设置键值对的过期时间，单位秒
+127.0.0.1:6379> expire age 15 	# 设置键值对的过期时间，单位秒
 (integer) 1 	# 设置成功 开始计数
 127.0.0.1:6379> ttl age		 # 查看key的过期剩余时间
 (integer) 13
@@ -1365,14 +1365,12 @@ Zset其实就是SortedSet，这里的Z就行XYZ轴的Z，意味一个新的维�
 
 ### 4.1 Geospatial(地理位置)
 
-> 使用经纬度定位地理坐标并用一个**有序集合zset保存**，所以zset命令也可以使用
-
 | 命令                                                         | 描述                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `geoadd key longitud(经度) latitude(纬度) member [..]`       | 将具体经纬度的坐标存入一个有序集合                           |
 | `geopos key member [member..]`                               | 获取集合中的一个/多个成员坐标                                |
 | `geodist key member1 member2 [unit]`                         | 返回两个给定位置之间的距离。默认以米作为单位。               |
-| `georadius key longitude latitude radius m|km|mi|ft [WITHCOORD][WITHDIST] [WITHHASH] [COUNT count]` | 以给定的经纬度为中心， 返回集合包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素。 |
+| `GEORADIUS key longitude latitude radius m|km|mi|ft [WITHCOORD][WITHDIST] [WITHHASH] [COUNT count]` | 以给定的经纬度为中心， 返回集合包含的位置元素当中， 与中心的距离不超过给定最大距离的所有位置元素。 |
 | `GEORADIUSBYMEMBER key member radius...`                     | 功能与GEORADIUS相同，只是中心位置不是具体的经纬度，而是使用结合中已有的成员作为中心点。 |
 | `geohash key member1 [member2..]`                            | 返回一个或多个位置元素的Geohash表示。使用Geohash位置52点整数编码。 |
 
@@ -1392,50 +1390,92 @@ Zset其实就是SortedSet，这里的Z就行XYZ轴的Z，意味一个新的维�
 
 > 通过`georadius`就可以完成 **附近的人**功能
 >
-> withcoord:带上坐标
+> withcoord: 带上坐标
 >
-> withdist:带上距离，单位与半径单位相同
+> withdist: 带上距离，单位与半径单位相同
 >
-> COUNT n : 只显示前n个(按距离递增排序)
+> COUNT n: 只显示前n个(按距离递增排序)
 
 ```bash
-----------------georadius---------------------
-127.0.0.1:6379> GEORADIUS china:city 120 30 500 km withcoord withdist # 查询经纬度(120,30)坐标500km半径内的成员
-1) 1) "hangzhou"
-   2) "29.4151"
-   3) 1) "120.20000249147415"
-      2) "30.199999888333501"
-2) 1) "shanghai"
-   2) "205.3611"
-   3) 1) "121.40000134706497"
-      2) "31.400000253193539"
-     
-------------geohash---------------------------
-127.0.0.1:6379> geohash china:city yichang shanghai # 获取成员经纬坐标的geohash表示
-1) "wmrjwbr5250"
-2) "wtw6ds0y300"
-123456789101112131415
+-------------GEOADD--GEOPOS-------------
+127.0.0.1:6379> geoadd china:city 116.40 39.90 beijing		# 添加beijing的经纬度到集合中
+(integer) 1
+127.0.0.1:6379> geoadd china:city 121.47 31.23 shanghai 106.50 29.53 chongqin
+(integer) 2
+127.0.0.1:6379> geopos china:city beijing chongqin		# 获取集合中元素的经纬度
+1) 1) "116.39999896287918091"
+    2) "39.90000009167092543"
+2) 1) "106.49999767541885376"
+    2) "29.52999957900659211"
+
+------------------GEODIST------------------
+127.0.0.1:6379> geodist china:city beijing shanghai 	# 查看两地之间的直线距离，默认以m为单位，可以在后面指定单位
+"1067378.7564"
+127.0.0.1:6379> geodist china:city beijing shanghai km
+"1067.3788"
+
+
+-------------------GEORADIUS--GEORADIUSBYMEMBER-----------------------
+# 集合中只有beijing shanghai chongqin三个元素
+127.0.0.1:6379> georadius china:city 120 30 1300 km withcoord withdist		# 查询经纬度(120,30)坐标1300km半径内的成员，带上坐标和距离
+1) 1) "shanghai"
+    2) "196.2512"
+    3) 1) "121.47000163793563843"
+        2) "31.22999903975783553"
+2) 1) "beijing"
+    2) "1148.7178"
+    3) 1) "116.39999896287918091"
+        2) "39.90000009167092543"
+127.0.0.1:6379> georadius china:city 120 30 1300 km withcoord withdist count 1	# 可以用COUNT参数来指定查询的个数
+1) 1) "shanghai"
+    2) "196.2512"
+    3) 1) "121.47000163793563843"
+        2) "31.22999903975783553"
+        
+127.0.0.1:6379> georadiusbymember china:city beijing 1100 km	# 查询集合中指定元素1100km半径内的周围的其他元素
+1) "beijing"
+2) "shanghai"
+
+
+-----------------GEOHASH-----------------------
+127.0.0.1:6379> geohash china:city beijing shanghai		# 获取成员经纬坐标用geohash表示，将二维的经纬度转为一维的字符串
+1) "wx4fbxxfke0"
+2) "wtw3sj5zbj0"
 ```
 
-### 4.2 Hyperloglog(基数统计)
+> GEO的底层就是用Zset实现的，所以可以使用Zset的所有命令
 
-> Redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定的、并且是很小的。
->
-> 花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基数。
->
-> 因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。
->
-> 其底层使用string数据类型
+```bash
+127.0.0.1:6379> zrange china:city 0 -1
+1) "chongqin"
+2) "shanghai"
+3) "beijing"
+127.0.0.1:6379> zrem china:city chongqin
+(integer) 1
+127.0.0.1:6379> zrange china:city 0 -1
+1) "shanghai"
+2) "beijing"
+```
+
+### 4.2 HyperLogLog(基数统计)
+
+- Redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定的、并且是很小的
+
+- 花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基数
+
+- 因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素
+
+- 其底层使用string数据类型
 
 **什么是基数？**
 
-> 数据集中不重复的元素的个数。
+- 数据集中不重复的元素的个数
 
-**应用场景：**
+**应用场景**：
 
-网页的访问量（UV）：一个用户多次访问，也只能算作一个人。
+- 网页的访问量UV(Unique Visitor)：一个用户多次访问，也只能算作一个人
 
-> 传统实现，存储用户的id,然后每次进行比较。当用户变多之后这种方式及其浪费空间，而我们的目的只是**计数**，Hyperloglog就能帮助我们利用最小的空间完成。
+传统实现：存储用户的id，然后每次进行比较。当用户变多之后这种方式及其浪费空间，而我们的目的只是**计数**，Hyperloglog就能帮助我们利用最小的空间完成。
 
 | 命令                                      | 描述                                      |
 | ----------------------------------------- | ----------------------------------------- |
@@ -1445,38 +1485,33 @@ Zset其实就是SortedSet，这里的Z就行XYZ轴的Z，意味一个新的维�
 
 ```bash
 ----------PFADD--PFCOUNT---------------------
-127.0.0.1:6379> PFADD myelemx a b c d e f g h i j k # 添加元素
+127.0.0.1:6379> pfadd myelemx a b c d e f g h i j k 	# 添加元素
 (integer) 1
-127.0.0.1:6379> type myelemx # hyperloglog底层使用String
+127.0.0.1:6379> type myelemx 	# hyperloglog底层使用String
 string
-127.0.0.1:6379> PFCOUNT myelemx # 估算myelemx的基数
+127.0.0.1:6379> pfcount myelemx 	# 估算myelemx的基数，会去重
 (integer) 11
-127.0.0.1:6379> PFADD myelemy i j k z m c b v p q s
+127.0.0.1:6379> pfadd myelemy i j k z m c b v p q s
 (integer) 1
-127.0.0.1:6379> PFCOUNT myelemy
+127.0.0.1:6379> pfcount myelemy
 (integer) 11
 
 ----------------PFMERGE-----------------------
-127.0.0.1:6379> PFMERGE myelemz myelemx myelemy # 合并myelemx和myelemy 成为myelemz
+127.0.0.1:6379> pfmerge myelemz myelemx myelemy 		# 合并myelemx和myelemy 成为myelemz
 OK
-127.0.0.1:6379> PFCOUNT myelemz # 估算基数
+127.0.0.1:6379> pfcount myelemz		 # 估算基数，会去重
 (integer) 17
-1234567891011121314151617
 ```
 
-如果允许容错，那么一定可以使用Hyperloglog !
+- 如果允许容错，那么一定可以使用Hyperloglog 
 
-如果不允许容错，就使用set或者自己的数据类型即可 ！
+- 如果不允许容错，就使用set或者自己的数据类型即可 
 
 ### 4.3 BitMaps(位图)
 
-> 使用位存储，信息状态只有 0 和 1
->
-> Bitmap是一串连续的2进制数字（0或1），每一位所在的位置为偏移(offset)，在bitmap上可执行AND,OR,XOR,NOT以及其它位操作。
+- 使用位存储，信息状态只有 0 和 1
 
-**应用场景**
-
-签到统计、状态统计
+- Bitmap是一串连续的2进制数字（0或1），每一位所在的位置为偏移(offset)，在bitmap上可执行AND,OR,XOR,NOT以及其它位操作。
 
 | 命令                                  | 描述                                                         |
 | ------------------------------------- | ------------------------------------------------------------ |
@@ -1488,39 +1523,46 @@ OK
 
 ```bash
 ------------setbit--getbit--------------
-127.0.0.1:6379> setbit sign 0 1 # 设置sign的第0位为 1 
+127.0.0.1:6379> setbit sign 0 1 		# 设置sign的第0位为 1 
 (integer) 0
-127.0.0.1:6379> setbit sign 2 1 # 设置sign的第2位为 1  不设置默认 是0
+127.0.0.1:6379> setbit sign 2 1 		# 设置sign的第2位为 1  不设置默认 是0
 (integer) 0
 127.0.0.1:6379> setbit sign 3 1
 (integer) 0
 127.0.0.1:6379> setbit sign 5 1
 (integer) 0
-127.0.0.1:6379> type sign
+127.0.0.1:6379> type sign   		# bitmaps底层是string
 string
 
-127.0.0.1:6379> getbit sign 2 # 获取第2位的数值
+127.0.0.1:6379> getbit sign 2 	# 获取第2位的数值
 (integer) 1
 127.0.0.1:6379> getbit sign 3
 (integer) 1
-127.0.0.1:6379> getbit sign 4 # 未设置默认是0
+127.0.0.1:6379> getbit sign 4 		# 未设置默认是0
 (integer) 0
 
 -----------bitcount----------------------------
 127.0.0.1:6379> BITCOUNT sign # 统计sign中为1的位数
 (integer) 4
-12345678910111213141516171819202122
 ```
+
+**应用场景**：
+
+- 签到统计、状态统计、打卡记录
+
+
+
+
 
 **bitmaps的底层**
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-9PlszjhS-1597890996519)(D:\我\MyBlog\狂神说 Redis.assets\image-20200803234336175.png)]
+
 
 这样设置以后你能get到的值是：**\xA2\x80**，所以bitmaps是一串从左到右的二进制串
 
 ## 5. 事务
 
-Redis的单条命令是保证原子性的，但是redis事务不能保证原子性
+Redis的**单条命令**是**保证原子性**的，但是Redis**事务不能保证原子性**
 
 > Redis事务本质：一组命令的集合。
 >
@@ -1535,22 +1577,25 @@ Redis的单条命令是保证原子性的，但是redis事务不能保证原子�
 > ------
 >
 > 1. Redis事务没有隔离级别的概念
-> 2. Redis单条命令是保证原子性的，但是事务不保证原子性！
+>    - 所有命令在事务中，并没有被直接执行；只有发起执行命令的时候才会按顺序执行
+> 2. Redis单条命令是保证原子性的，但是事务不保证原子性
+
+
 
 ### 5.1 Redis事务操作过程
 
 - 开启事务（`multi`）
-- 命令入队
+- 命令入队（常用命令）
 - 执行事务（`exec`）
 
-所以事务中的命令在加入时都没有被执行，直到提交时才会开始执行(Exec)一次性完成。
+所以事务中的命令在加入时都没有被执行，直到提交时才会开始执行(Exec)一次性完成
 
 ```bash
-127.0.0.1:6379> multi # 开启事务
+127.0.0.1:6379> multi		 # 开启事务
 OK
-127.0.0.1:6379> set k1 v1 # 命令入队
+127.0.0.1:6379> set k1 v1 		# 命令入队
 QUEUED
-127.0.0.1:6379> set k2 v2 # ..
+127.0.0.1:6379> set k2 v2 	# ..
 QUEUED
 127.0.0.1:6379> get k1
 QUEUED
@@ -1558,15 +1603,14 @@ QUEUED
 QUEUED
 127.0.0.1:6379> keys *
 QUEUED
-127.0.0.1:6379> exec # 事务执行
+127.0.0.1:6379> exec		 # 事务执行，将队列里的命令依次执行
 1) OK
 2) OK
 3) "v1"
 4) OK
 5) 1) "k3"
-   2) "k2"
-   3) "k1"
-1234567891011121314151617181920
+    2) "k2"
+    3) "k1"
 ```
 
 **取消事务(`discurd`)**
@@ -1578,13 +1622,12 @@ OK
 QUEUED
 127.0.0.1:6379> set k2 v2
 QUEUED
-127.0.0.1:6379> DISCARD # 放弃事务
+127.0.0.1:6379> DISCARD 	# 放弃事务
 OK
 127.0.0.1:6379> EXEC 
-(error) ERR EXEC without MULTI # 当前未开启事务
-127.0.0.1:6379> get k1 # 被放弃事务中命令并未执行
+(error) ERR EXEC without MULTI 		# 当前未开启事务
+127.0.0.1:6379> get k1 		# 被放弃事务中命令并未执行
 (nil)
-123456789101112
 ```
 
 ### 5.2 事务错误
@@ -1598,18 +1641,17 @@ OK
 QUEUED
 127.0.0.1:6379> set k2 v2
 QUEUED
-127.0.0.1:6379> error k1 # 这是一条语法错误命令
-(error) ERR unknown command `error`, with args beginning with: `k1`, # 会报错但是不影响后续命令入队 
+127.0.0.1:6379> error k1 	# 这是一条语法错误命令
+(error) ERR unknown command `error`, with args beginning with: `k1`, 	# 会报错但是不影响后续命令入队 
 127.0.0.1:6379> get k2
 QUEUED
-127.0.0.1:6379> EXEC
-(error) EXECABORT Transaction discarded because of previous errors. # 执行报错
+127.0.0.1:6379> exec
+(error) EXECABORT Transaction discarded because of previous errors. 	# 执行报错
 127.0.0.1:6379> get k1 
-(nil) # 其他命令并没有被执行
-1234567891011121314
+(nil) 		# 其他命令并没有被执行，k1不存在
 ```
 
-> 代码逻辑错误 (运行时异常) **其他命令可以正常执行 ** >>> 所以不保证事务原子性
+> 代码逻辑错误 (运行时异常) **其他命令可以正常执行 ** >> 所以不保证事务原子性
 
 ```bash
 127.0.0.1:6379> multi
@@ -1618,19 +1660,18 @@ OK
 QUEUED
 127.0.0.1:6379> set k2 v2
 QUEUED
-127.0.0.1:6379> INCR k1 # 这条命令逻辑错误（对字符串进行增量）
+127.0.0.1:6379> incr k1 		# 这条命令逻辑错误（对字符串进行增量）
 QUEUED
 127.0.0.1:6379> get k2
 QUEUED
 127.0.0.1:6379> exec
 1) OK
 2) OK
-3) (error) ERR value is not an integer or out of range # 运行时报错
-4) "v2" # 其他命令正常执行
+3) (error) ERR value is not an integer or out of range 		# 运行时报错
+4) "v2" 		# 其他命令正常执行
 
-# 虽然中间有一条命令报错了，但是后面的指令依旧正常执行成功了。
-# 所以说Redis单条指令保证原子性，但是Redis事务不能保证原子性。
-123456789101112131415161718
+# 虽然中间有一条命令报错了，但是后面的指令依旧正常执行成功了
+# 所以说Redis单条指令保证原子性，但是Redis事务不能保证原子性
 ```
 
 ### 5.3 监控
@@ -1645,16 +1686,18 @@ QUEUED
 - 获取version
 - 更新的时候比较version
 
-使用`watch key`监控指定数据，相当于乐观锁加锁。
+Redis使用`watch key`监控指定数据，相当于乐观锁加锁
+
+`unwatch`解锁
 
 > 正常执行
 
 ```bash
-127.0.0.1:6379> set money 100 # 设置余额:100
+127.0.0.1:6379> set money 100 		# 设置余额: 100
 OK
-127.0.0.1:6379> set use 0 # 支出使用:0
+127.0.0.1:6379> set use 0 		# 支出使用: 0
 OK
-127.0.0.1:6379> watch money # 监视money (上锁)
+127.0.0.1:6379> watch money 	# 监视money (上锁)
 OK
 127.0.0.1:6379> multi
 OK
@@ -1662,10 +1705,9 @@ OK
 QUEUED
 127.0.0.1:6379> INCRBY use 20
 QUEUED
-127.0.0.1:6379> exec # 监视值没有被中途修改，事务正常执行
+127.0.0.1:6379> exec 		# 监视值没有被中途修改，事务正常执行
 1) (integer) 80
 2) (integer) 20
-123456789101112131415
 ```
 
 > 测试多线程修改值，使用watch可以当做redis的乐观锁操作（相当于getversion）
@@ -1675,7 +1717,11 @@ QUEUED
 线程1：
 
 ```bash
-127.0.0.1:6379> watch money # money上锁
+127.0.0.1:6379> set money 100 		# 设置余额: 100
+OK
+127.0.0.1:6379> set use 0 		# 支出使用: 0
+OK
+127.0.0.1:6379> watch money 	# money上锁
 OK
 127.0.0.1:6379> multi
 OK
@@ -1684,41 +1730,38 @@ QUEUED
 127.0.0.1:6379> INCRBY use 20
 QUEUED
 127.0.0.1:6379> 	# 此时事务并没有执行
-123456789
 ```
 
 模拟线程插队，线程2：
 
 ```bash
-127.0.0.1:6379> INCRBY money 500 # 修改了线程一中监视的money
+127.0.0.1:6379> INCRBY money 500 	# 修改了线程一中监视的money
 (integer) 600
-12
 ```
 
 回到线程1，执行事务：
 
 ```bash
-127.0.0.1:6379> EXEC # 执行之前，另一个线程修改了我们的值，这个时候就会导致事务执行失败
-(nil) # 没有结果，说明事务执行失败
+127.0.0.1:6379> EXEC	 # 执行之前，另一个线程修改了我们的值，这个时候就会导致事务执行失败
+(nil) 		# 没有结果，说明事务执行失败
 
-127.0.0.1:6379> get money # 线程2 修改生效
+127.0.0.1:6379> get money 		# 线程2 修改生效
 "600"
-127.0.0.1:6379> get use # 线程1事务执行失败，数值没有被修改
+127.0.0.1:6379> get use 		# 线程1事务执行失败，数值没有被修改
 "0"
-1234567
 ```
 
-> 解锁获取最新值，然后再加锁进行事务。
->
-> `unwatch`进行解锁。
+如果执行失败，可以先解锁`unwatch`获取最新的值，然后再次进行监视`watch`，重新开始事务
 
 注意：每次提交执行exec后都会自动释放锁，不管是否成功
 
 ## 6. Jedis
 
-使用Java来操作Redis，Jedis是Redis官方推荐使用的Java连接redis的客户端。
+- Jedis是Redis官方推荐使用的Java连接Redis的客户端
 
-1. 导入依赖
+使用步骤：
+
+1. 新建一个空项目，添加一个Maven项目，导入依赖
 
    ```xml
    <!--导入jredis的包-->
@@ -1731,152 +1774,162 @@ QUEUED
    <dependency>
        <groupId>com.alibaba</groupId>
        <artifactId>fastjson</artifactId>
-       <version>1.2.70</version>
+       <version>1.2.73</version>
    </dependency>
-   123456789101112
    ```
+   
+2. 连接Redis
 
-2. 编码测试
+   1. 修改redis的配置文件
 
-   - 连接数据库
-
-     1. 修改redis的配置文件
-
-        ```bash
-        vim /usr/local/bin/myconfig/redis.conf
-        1
-        ```
-
-        1. 将只绑定本地注释
-
-           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-4IRUFJ95-1597890996520)(狂神说 Redis.assets/image-20200813161921480.png)]
-
-        2. 保护模式改为 no
-
-           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-oKjIVapw-1597890996521)(狂神说 Redis.assets/image-20200813161939847.png)]
-
-        3. 允许后台运行
-
-           [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-c2IMvpZL-1597890996522)(狂神说 Redis.assets/image-20200813161954567.png)]
-
+      ```bash
+      vim /usr/local/bin/r/redis.conf
+      ```
+      
+   1. 将只绑定本地`bind 127.0.0.1`注释掉
+      
+   2. 保护模式`protected-mode`设置为 no
+      
+      ![image-20220407170131122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407170131122.png)
+      
+   3. redis后台启动`daemonize`设置为yes
+   
 3. 开放端口6379
 
    ```bash
-   firewall-cmd --zone=public --add-port=6379/tcp --permanet
-   1
+   firewall-cmd --zone=public --add-port=6379/tcp --permanent
    ```
+   
 
-   重启防火墙服务
+![image-20220407172356551](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407172356551.png)
+
+若开放失败先查看防火墙是否开启：
+
+   1. 开启防火墙：`systemctl start firewalld`
+   
+      关闭防火墙：`systemctl stop firewalld`
+
+      查看防火墙状态：`systemctl status firewalld`
+
+4. 重启防火墙服务
 
    ```bash
    systemctl restart firewalld.service
-   1
    ```
 
-   1. 阿里云服务器控制台配置安全组
+5. 可以查看一下开启的端口：`firewall-cmd --list-ports`
 
-   2. 重启redis-server
+   ![image-20220407172715533](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407172715533.png)
 
-      ```bash
-      [root@AlibabaECS bin]# redis-server myconfig/redis.conf 
-      1
-      ```
+6. 云服务器在控制台配置Redis端口的安全组或防火墙
 
+7. 重启redis-server
 
+   ```bash
+   [root@VM-16-12-centos bin]# redis-server run-config/redis.conf
+   ```
 
-- 操作命令
-
-  **TestPing.java**
-
-  ```java
-  public class TestPing {
-      public static void main(String[] args) {
-          Jedis jedis = new Jedis("192.168.xx.xxx", 6379);
-          String response = jedis.ping();
-          System.out.println(response); // PONG
-      }
-  }
-  1234567
-  ```
-
-- 断开连接
-
-1. **事务**
+8. 测试连接：`TestPing.java`
 
    ```java
-   public class TestTX {
+   public class TestPing {
        public static void main(String[] args) {
-           Jedis jedis = new Jedis("39.99.xxx.xx", 6379);
-   
-           JSONObject jsonObject = new JSONObject();
-           jsonObject.put("hello", "world");
-           jsonObject.put("name", "kuangshen");
-           // 开启事务
-           Transaction multi = jedis.multi();
-           String result = jsonObject.toJSONString();
-           // jedis.watch(result)
-           try {
-               multi.set("user1", result);
-               multi.set("user2", result);
-               // 执行事务
-               multi.exec();
-           }catch (Exception e){
-               // 放弃事务
-               multi.discard();
-           } finally {
-               // 关闭连接
-               System.out.println(jedis.get("user1"));
-               System.out.println(jedis.get("user2"));
-               jedis.close();
-           }
+           Jedis jedis = new Jedis("152.136.20.129",6379);		//服务器ip地址和redis端口号
+           String response = jedis.ping();
+           System.out.println(response);		//输出PONG
        }
    }
-   123456789101112131415161718192021222324252627
    ```
+
+若报错，则可能需要先设置一下Redis的密码
+
+- `vim run-config/redis.conf`将里面的`requirepass`设置一个值，取消注释
+
+  ![image-20220407212342880](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407212342880.png)
+
+- 此时在测试中添加Redis的密码`jedis.auth("123456")`
+
+> 事务
+
+```java
+public class TestTransaction {
+    public static void main(String[] args) {
+        Jedis jedis = new Jedis("152.136.20.129", 6379);
+        jedis.auth("123456");
+        
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "AruNi");
+        jsonObject.put("age", 18);
+        // 开启事务
+        Transaction multi = jedis.multi();
+        String info = jsonObject.toJSONString();
+        //jedis.watch(result);      // 开启乐观锁
+        try {
+            multi.set("user", info);
+            // 执行事务
+            multi.exec();
+        } catch (Exception e) {
+            // 放弃事务
+            multi.discard();
+        } finally {
+            System.out.println(jedis.get("user"));
+            // 关闭连接
+            jedis.close();
+        }
+    }
+}
+```
+
+输出：
+
+```text
+{"name":"AruNi","age":18}
+
+Process finished with exit code 0
+```
+
+
 
 ## 7. SpringBoot整合
 
-1. 导入依赖
+新建SpringBoot项目，勾选相关工具
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
-1234
-```
+![image-20220407220613111](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407220613111.png)
 
-springboot 2.x后 ，原来使用的 Jedis 被 lettuce 替换。
+SpringBoot 2.x后，原来使用的 Jedis 被 lettuce 替换
 
-> jedis：采用的直连，多个线程操作的话，是不安全的。如果要避免不安全，使用jedis pool连接池！更像BIO模式
->
-> lettuce：采用netty，实例可以在多个线程中共享，不存在线程不安全的情况！可以减少线程数据了，更像NIO模式
+- Jedis：采用的**直连**，多个线程操作的话，是不安全的。如果要避免不安全，使用jedis pool连接池！更像BIO(阻塞)模式
+- lettuce：采用netty，实例可以在**多个线程中共享**，不存在线程不安全的情况！可以减少线程数据了，更像NIO(New IO)模式
 
-我们在学习SpringBoot自动配置的原理时，整合一个组件并进行配置一定会有一个自动配置类xxxAutoConfiguration,并且在spring.factories中也一定能找到这个类的完全限定名。Redis也不例外。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214531573.png)
 
-那么就一定还存在一个RedisProperties类
+> 源码浅析
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214554661.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+我们在学习SpringBoot自动配置的原理时，整合一个组件并进行配置一定会有一个自动配置类`xxxAutoConfiguration`, 并且在`spring.factories`中也一定能找到这个类的完全限定名。Redis也不例外。
+
+![image-20220407221205347](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407221205347.png)
+
+那么就一定还存在一个`RedisProperties`类
+
+![image-20220407221402362](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407221402362.png)
 
 之前我们说SpringBoot2.x后默认使用Lettuce来替换Jedis，现在我们就能来验证了。
 
-先看Jedis:
+先看Jedis：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214607475.png)
+![image-20220407222304786](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407222304786.png)
 
-@ConditionalOnClass注解中有两个类是默认不存在的，所以Jedis是无法生效的
+`@ConditionalOnClass`注解中有两个类是默认不存在的，所以Jedis是无法生效的
+
+
 
 然后再看Lettuce：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214618179.png)
+![image-20220407222714051](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407222714051.png)
 
-完美生效。
 
-现在我们回到RedisAutoConfiguratio
 
-![img](https://img-blog.csdnimg.cn/2020051321462777.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+现在我们回到`RedisAutoConfiguratio`：
 
 只有两个简单的Bean
 
@@ -1885,30 +1938,59 @@ springboot 2.x后 ，原来使用的 Jedis 被 lettuce 替换。
 
 当看到xxTemplate时可以对比RestTemplat、SqlSessionTemplate,通过使用这些Template来间接操作组件。那么这俩也不会例外。分别用于操作Redis和Redis中的String数据类型。
 
-在RedisTemplate上也有一个条件注解，说明我们是可以对其进行定制化的
+在RedisTemplate上也有一个条件注解`@ConditionalOnMissingBean`，说明我们是可以对其进行定制化的
 
-说完这些，我们需要知道如何编写配置文件然后连接Redis，就需要阅读RedisProperties
+```java
+public class RedisAutoConfiguration {
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214638238.png)
+	@Bean
+	@ConditionalOnMissingBean(name = "redisTemplate")	// 在缺失bean的时候使用官方这个默认的，所以可以自定义Template添加上Bean注解来替换这个
+	@ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+	public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        	// 默认的RedisTemplate没有过多的设置，redis对象都是需要序列化的
+        	// 两个泛型都是Object类型，后面使用需要强制转换<String, Object>
+		RedisTemplate<Object, Object> template = new RedisTemplate<>();
+		template.setConnectionFactory(redisConnectionFactory);
+		return template;
+	}
 
-这是一些基本的配置属性。
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+        // 由于String是redis中最常使用的类型，所以单独提出来了一个Bean
+	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		return new StringRedisTemplate(redisConnectionFactory);
+	}
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214649380.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+}
+```
+
+说完这些，我们需要知道如何编写配置文件然后连接Redis，就需要阅读`RedisProperties`：
+
+![image-20220407223914763](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407223914763.png)
+
+这是一些基本的配置属性：
+
+![image-20220407224008458](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407224008458.png)
 
 还有一些连接池相关的配置。注意使用时一定使用Lettuce的连接池。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214700372.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220407224103052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407224103052.png)
+
+分析完源码，来配置一下SpringDataRedis！
+
+> 配置SpringDataRedis
 
 1. 编写配置文件
 
    ```properties
    # 配置redis
-   spring.redis.host=39.99.xxx.xx
+   spring.redis.host=152.136.20.129
    spring.redis.port=6379
-   123
+   spring.redis.password=123456
    ```
-
-2. 使用RedisTemplate
+   
+2. 在测试类中使用RedisTemplate
 
    ```java
    @SpringBootTest
@@ -1919,7 +2001,6 @@ springboot 2.x后 ，原来使用的 Jedis 被 lettuce 替换。
    
        @Test
        void contextLoads() {
-   
            // redisTemplate 操作不同的数据类型，api和我们的指令是一样的
            // opsForValue 操作字符串 类似String
            // opsForList 操作List 类似List
@@ -1928,24 +2009,26 @@ springboot 2.x后 ，原来使用的 Jedis 被 lettuce 替换。
            // 除了基本的操作，我们常用的方法都可以直接通过redisTemplate操作，比如事务和基本的CRUD
    
            // 获取连接对象
-           //RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
-           //connection.flushDb();
-           //connection.flushAll();
+           // RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
+           // connection.flushDb();
+           // connection.flushAll();
    
-           redisTemplate.opsForValue().set("mykey","kuangshen");
-           System.out.println(redisTemplate.opsForValue().get("mykey"));
+           redisTemplate.opsForValue().set("name", "AruNi");
+           System.out.println(redisTemplate.opsForValue().get("name"));    //AruNi
        }
+   
    }
-   12345678910111213141516171819202122232425
    ```
-
+   
 3. 测试结果
 
-   **此时我们回到Redis查看数据时候，惊奇发现全是乱码，可是程序中可以正常输出：**
+   **此时我们回到Redis查看数据时候，惊奇的发现key全是乱码，可是程序中可以正常输出**！user是上面Jedis测试时候插入的元素，第一个元素是刚刚插入的name，发现已经乱码了。
 
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214734520.png)
+   ![image-20220407225112055](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407225112055.png)
 
-    这时候就关系到存储对象的序列化问题，在网络中传输的对象也是一样需要序列化，否者就全是乱码。
+   
+
+   这时候就关系到存储对象的**序列化**问题，在网络中传输的对象也是一样需要序列化，否者就全是乱码。
 
    我们转到看那个默认的RedisTemplate内部什么样子：
 
