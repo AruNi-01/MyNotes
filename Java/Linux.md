@@ -279,7 +279,7 @@ rmdir [-p] 目录名称
 
 测试：
 
-```
+```bash
 # 看看有多少目录存在？
 [root@kuangshen home]# ls -l
 drwxr-xr-x 2 root root  4096 Mar 12 21:55 test

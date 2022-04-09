@@ -4,7 +4,7 @@
 
 > 1、单机Mysql时代
 
-![image-20220405190302277](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405190302277.png)
+![image-20220405190302277](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b70477a767f3a2c2caa82a7fe2979b87.png)
 
 90年代，一个网站的访问量一般不会太大，单个数据库完全够用。随着用户增多，网站出现以下问题
 
@@ -16,7 +16,7 @@
 
 网站80%的情况都是在读，每次都要去查询数据库的话就十分的麻烦！所以说我们希望减轻数据库的压力，我们可以使用**缓存**来保证效率！
 
-![image-20220405192019200](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405192019200.png)
+![image-20220405192019200](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/35fcd5810e0eaabdaa808aeb6883a111.png)
 
 优化过程经历了以下几个过程：
 
@@ -34,7 +34,7 @@
 
 有了Mysql集群后，很好解决了当时的所有需求
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200820103739584.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RERERlbmdf,size_16,color_FFFFFF,t_70#pic_center)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/86d2f5001149eb6b6f139c0b8c2e6a85.png)
 
 > 4、如今最近的年代
 
@@ -42,7 +42,7 @@
 
 > 目前一个基本的互联网项目
 
-![image-20220405193823327](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405193823327.png)
+![image-20220405193823327](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a7abf57a6cbaac2ec42f3532a4dc67c0.png)
 
 > 为什么要用NoSQL ？
 
@@ -108,9 +108,9 @@ Not Only Structured Query Language
 
 推荐阅读：阿里云的这群疯子https://yq.aliyun.com/articles/653511
 
-![image-20220405200217079](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405200217079.png)
+![image-20220405200217079](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0966ece97f9af0b663114807babe12c1.png)
 
-![image-20220405201024758](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405201024758.png)
+![image-20220405201024758](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bc73178b2b07bbf682e9de8e63d43bd2.png)
 
 ```shell
 # 商品信息
@@ -214,9 +214,9 @@ windows版本的Redis已经停更很久了…
 https://github.com/dmajkic/redis
 
 1. 解压安装包
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200820103922318.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RERERlbmdf,size_16,color_FFFFFF,t_70#pic_center)
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/36160ddab6497a9d5d665ca83debdec4.png)
 2. 开启`redis-server.exe`
-3. 启动`redis-cli.exe`测试![在这里插入图片描述](https://img-blog.csdnimg.cn/20200820103950934.png#pic_center)
+3. 启动`redis-cli.exe`测试![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c475d8b0eb5b6b90b30cea48ef8388bb.png)
 
 ### 2.4 Linux安装
 
@@ -233,13 +233,13 @@ mellanox  redis-6.0.6.tar.gz  rh
 
 解压完成后查看目录：
 
-![image-20220405224639191](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405224639191.png)
+![image-20220405224639191](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/43396ee7e60f887c2d64d13cf9e0a1f4.png)
 
 
 
 3、进入redis目录，可以看到redis的配置文件：
 
-![image-20220405224842259](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405224842259.png)4、基本环境安装
+![image-20220405224842259](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ba5ecf5bd52416d66457c5a6726473a4.png)4、基本环境安装
 
 ```bash
 # 先安装gcc
@@ -250,7 +250,7 @@ make
 make install
 ```
 
-![image-20220405231347844](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405231347844.png)
+![image-20220405231347844](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f3c39bf977b6b230ff0c84dfe7f3ab93.png)
 
 注意：安装6.0以上版本需要升级gcc到5.3及以上,如下：升级到gcc 9.3：
 `yum -y install centos-release-scl`
@@ -265,35 +265,35 @@ make install
 
 5、redis默认安装路径 `/usr/local/bin`
 
-![image-20220405231850548](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405231850548.png)
+![image-20220405231850548](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7cda151f3fd5218a797811d120616521.png)
 
 6、将redis的配置文件复制到当前程序安装目录 `/usr/local/bin/自己的配置文件处`下，我们之后就用这个配置文件启动redis
 
-![image-20220405232203634](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405232203634.png)
+![image-20220405232203634](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/68c2bef1f5cdf04b4d1652a17916a3b0.png)
 
 7、redis默认不是后台启动的，需要修改配置文件：`vim redis.conf`后按`i`进入编辑，将`daemonize no`改为`yes`后按`esc`，再按`:`+`wq`保存退出
 
-![image-20220405232405071](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405232405071.png)
+![image-20220405232405071](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bf6af700e8940ecaade24413bc30c651.png)
 
 8、通过指定的配置文件启动redis服务`redis-server run-config/redis.conf`
 
-![image-20220405232724996](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405232724996.png)
+![image-20220405232724996](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e995951883dc782b151472421b8a70ae.png)
 
 9、使用`redis-cli`连接指定的端口号测试，Redis的默认端口6379：`redis-cli -p 6379`
 
-![image-20220405233015262](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405233015262.png)
+![image-20220405233015262](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a203a551f589307803094866a34c5a74.png)
 
 10、新建一个会话，链接服务器；查看redis进程是否开启`ps -ef|grep redis`
 
-![image-20220405233659344](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405233659344.png)
+![image-20220405233659344](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1d3aeaf64c7a2140c264367d649b75a8.png)
 
 11、关闭Redis服务 `shutdown`，退出`exit`
 
-![image-20220405233956439](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405233956439.png)
+![image-20220405233956439](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b41a5fccb0927ecff13cf270f243621c.png)
 
 12、再次查看进程是否存在，可以看到redis-server和redis-cli都没有了
 
-![image-20220405233902856](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405233902856.png)
+![image-20220405233902856](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9a90206448ec6a8835190b908bfedb37.png)
 
 13、后面我们会使用单机多Redis启动集群测试
 
@@ -301,21 +301,21 @@ make install
 
 **redis-benchmark：**Redis官方提供的性能测试工具，参数选项如下：
 
-![image-20220405234225650](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405234225650.png)
+![image-20220405234225650](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9d10abc41e6816807f12ae8e4767afd6.png)
 
 **简单测试**：100个并发连接 100000请求`redis-benchmark -h localhost -p 6379 -c 100 -n 100000`
 
 1. 先开启redis服务：
 
-   ![image-20220405235035837](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405235035837.png)
+   ![image-20220405235035837](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/42c9c63c6b8880fa14a084eb2cbf609f.png)
 
 2. 在另一个会话中测试：
 
-   ![image-20220405235253678](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405235253678.png)
+   ![image-20220405235253678](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/aa0f9232446d290eae85ac2822204cc1.png)
 
 3. 分析：
 
-   ![image-20220405235704492](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220405235704492.png)
+   ![image-20220405235704492](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6da574c400a343a21d675d6edfbc91c3.png)
 
 ### 2.6 基础知识
 
@@ -677,7 +677,7 @@ String类似的使用场景：value除了是字符串还可以是数字，用途
 
 首先我们列表，可以经过规则定义将其变为队列、栈、双端队列等
 
-![[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-VPvbIltc-1597890996518)(狂神说 Redis.assets/image-20200813114255459.png)]](https://img-blog.csdnimg.cn/20200820104440398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RERERlbmdf,size_16,color_FFFFFF,t_70#pic_center)
+![[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-VPvbIltc-1597890996518)(狂神说 Redis.assets/image-20200813114255459.png)]](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fa386ed6b605b06f11359df4a31ff0e7.png)
 
 正如图Redis中List是可以进行**双端**操作的，所以命令也就分为了LXXX和RXXX两类，有时候L也表示List例如LLEN
 
@@ -922,11 +922,11 @@ String类似的使用场景：value除了是字符串还可以是数字，用途
 
   可以在该列表等待的时候，另外开一个会话，向该列表中插入一个元素，此时就发现可弹出元素了：
 
-  ![image-20220406194041230](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220406194041230.png)
+  ![image-20220406194041230](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f6d1e7206a6b346ca3dbd6b60552b567.png)
 
-  ![image-20220406194134770](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220406194134770.png)
+  ![image-20220406194134770](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b1ec9835fd2672f647eda6e652947830.png)
 
-  ![image-20220406194404661](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220406194404661.png)
+  ![image-20220406194404661](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7ff208c79eee7d0a9c49926e77b31644.png)
 
 > 小结
 
@@ -1790,7 +1790,7 @@ QUEUED
       
    2. 保护模式`protected-mode`设置为 no
       
-      ![image-20220407170131122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407170131122.png)
+      ![image-20220407170131122](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c372bc35a971f4a38b0250463bd2d863.png)
       
    3. redis后台启动`daemonize`设置为yes
    
@@ -1801,7 +1801,7 @@ QUEUED
    ```
    
 
-![image-20220407172356551](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407172356551.png)
+![image-20220407172356551](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/44a9ec79bf9c6fa4e36a58c8a08005b3.png)
 
 若开放失败先查看防火墙是否开启：
 
@@ -1819,7 +1819,7 @@ QUEUED
 
 5. 可以查看一下开启的端口：`firewall-cmd --list-ports`
 
-   ![image-20220407172715533](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407172715533.png)
+   ![image-20220407172715533](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2ff42b6bcf45736d1db910eec86290c3.png)
 
 6. 云服务器在控制台配置Redis端口的安全组或防火墙
 
@@ -1845,7 +1845,7 @@ QUEUED
 
 - `vim run-config/redis.conf`将里面的`requirepass`设置一个值，取消注释
 
-  ![image-20220407212342880](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407212342880.png)
+  ![image-20220407212342880](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c9e4b43ca92cdb6360f0302be51b4ff6.png)
 
 - 此时在测试中添加Redis的密码`jedis.auth("123456")`
 
@@ -1894,7 +1894,7 @@ Process finished with exit code 0
 
 新建SpringBoot项目，勾选相关工具
 
-![image-20220407220613111](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407220613111.png)
+![image-20220407220613111](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/982a0ff474b10045e5f9967a7bb0738a.png)
 
 SpringBoot 2.x后，原来使用的 Jedis 被 lettuce 替换
 
@@ -1907,17 +1907,17 @@ SpringBoot 2.x后，原来使用的 Jedis 被 lettuce 替换
 
 我们在学习SpringBoot自动配置的原理时，整合一个组件并进行配置一定会有一个自动配置类`xxxAutoConfiguration`, 并且在`spring.factories`中也一定能找到这个类的完全限定名。Redis也不例外。
 
-![image-20220407221205347](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407221205347.png)
+![image-20220407221205347](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/407dcaa4dbdf331f00c80964bc6b4468.png)
 
 那么就一定还存在一个`RedisProperties`类
 
-![image-20220407221402362](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407221402362.png)
+![image-20220407221402362](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a89529391865369e6e57f66c5789580e.png)
 
 之前我们说SpringBoot2.x后默认使用Lettuce来替换Jedis，现在我们就能来验证了。
 
 先看Jedis：
 
-![image-20220407222304786](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407222304786.png)
+![image-20220407222304786](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/58276864d54e24a8db773f76bbe3058f.png)
 
 `@ConditionalOnClass`注解中有两个类是默认不存在的，所以Jedis是无法生效的
 
@@ -1925,7 +1925,7 @@ SpringBoot 2.x后，原来使用的 Jedis 被 lettuce 替换
 
 然后再看Lettuce：
 
-![image-20220407222714051](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407222714051.png)
+![image-20220407222714051](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8ae76673f609afb940595cd11aafee52.png)
 
 
 
@@ -1967,15 +1967,15 @@ public class RedisAutoConfiguration {
 
 说完这些，我们需要知道如何编写配置文件然后连接Redis，就需要阅读`RedisProperties`：
 
-![image-20220407223914763](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407223914763.png)
+![image-20220407223914763](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0d273e44aadbda9a120945fdef04eaf0.png)
 
 这是一些基本的配置属性：
 
-![image-20220407224008458](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407224008458.png)
+![image-20220407224008458](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/975e02a27dda1daa261f54c8722c007c.png)
 
 还有一些连接池相关的配置。注意使用时一定使用Lettuce的连接池。
 
-![image-20220407224103052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407224103052.png)
+![image-20220407224103052](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ff6e89816b5f3d50fe75401783413825.png)
 
 分析完源码，来配置一下SpringDataRedis！
 
@@ -2024,7 +2024,7 @@ public class RedisAutoConfiguration {
 
    **此时我们回到Redis查看数据时候，惊奇的发现key全是乱码，可是程序中可以正常输出**！user是上面Jedis测试时候插入的元素，第一个元素是刚刚插入的name，发现已经乱码了。
 
-   ![image-20220407225112055](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220407225112055.png)
+   ![image-20220407225112055](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fa8537cae5dd1b88f0a69123bb315edc.png)
 
    
 
@@ -2032,17 +2032,17 @@ public class RedisAutoConfiguration {
 
    我们转到看那个默认的RedisTemplate内部什么样子：
 
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214746506.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+   ![image-20220408102323297](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7ab71b3004e421cd131f3f641f25fadd.png)
 
    在最开始就能看到几个关于序列化的参数。
 
    默认的序列化器是采用JDK序列化器
 
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214757247.png)
+   ![image-20220408102423429](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9fbc08337458ae237864c1fed9a21888.png)
 
    而默认的RedisTemplate中的所有序列化器都是使用这个序列化器：
 
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214809494.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+   ![image-20220408102525263](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3e439ec18fedc460071bd2bbbc85a6fb.png)
 
    后续我们定制RedisTemplate就可以对其进行修改。
 
@@ -2050,123 +2050,236 @@ public class RedisAutoConfiguration {
 
    - 直接调用RedisSerializer的静态方法来返回序列化器，然后set
 
-     ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214818682.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+     例如：`template.setKeySerializer(RedisSerializer.string());`  key采用String序列化方式
 
-   - 自己new 相应的实现类，然后set
+     ![image-20220408102616265](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2a8146490f2b87491f059adbc59ea06c.png)
 
-     ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214827233.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+   - 自己new相应的序列化对象，然后set想要的序列化类型，可以设置的参数如下：
 
-4. **定制RedisTemplate的模板：**
+     我们下面的自定义RedisTemplate就采用这种方式
 
-   我们创建一个Bean加入容器，就会触发RedisTemplate上的条件注解使默认的RedisTemplate失效。
+     ![image-20220408111859225](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7f11788e99997ef7e2333214231189e6.png)
 
-   ```java
-   @Configuration
-   public class RedisConfig {
-   
-      @Bean
-       public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
-           // 将template 泛型设置为 <String, Object>
-           RedisTemplate<String, Object> template = new RedisTemplate();
-           // 连接工厂，不必修改
-           template.setConnectionFactory(redisConnectionFactory);
-           /*
-            * 序列化设置
-            */
-           // key、hash的key 采用 String序列化方式
-           template.setKeySerializer(RedisSerializer.string());
-           template.setHashKeySerializer(RedisSerializer.string());
-           // value、hash的value 采用 Jackson 序列化方式
-           template.setValueSerializer(RedisSerializer.json());
-           template.setHashValueSerializer(RedisSerializer.json());
-           template.afterPropertiesSet();
-           
-           return template;
-       }
-   }
-   1234567891011121314151617181920212223
-   ```
+> 自定义RedisTemplate
 
-   这样一来，只要实体类进行了序列化，我们存什么都不会有乱码的担忧了。
+我们创建一个Bean加入容器，就会触发RedisTemplate上的条件注解使默认的RedisTemplate失效。
 
-   [外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-oc8kJP08-1597890996523)(狂神说 Redis.assets/image-20200817175638086.png)]
+```java
+@Configuration
+public class RedisConfig {
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        // 将template 泛型设置为 <String, Object>，为了开发方便
+        RedisTemplate<String, Object> template = new RedisTemplate();
+        // 连接工厂，不必修改
+        template.setConnectionFactory(redisConnectionFactory);
+
+        // Json序列化配置
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+        //String序列化配置
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+        // 序列化设置
+        // key和 hash的key采用String序列化方式
+
+        // 方式一：直接调用RedisSerializer的静态方法来返回序列化器，然后set
+        // template.setKeySerializer(RedisSerializer.string());
+        // template.setHashKeySerializer(RedisSerializer.string());
+
+        //方式二：自己new相应的序列化对象(如上序列化配置)，然后set想要的序列化类型
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+
+        // value和hash的value采用Jackson序列化方式
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+
+        // 将自己的配置set进去
+        template.afterPropertiesSet();
+        return template;
+    }
+
+}
+```
+
+这样一来，只要**实体类进行了序列化**，我们存什么都不会有乱码了。
+
+在使用自己定义的RedisTemplate时，可以采用`@Qualifier`注解指定，防止使用了默认的Template：
+
+```java
+@Autowired
+@Qualifier("redisTemplate")     //可以指定使用自定义的template，防止使用了默认的
+private RedisTemplate redisTemplate;
+```
+
+示例：
+
+新建一个实体类User并将其序列化
+
+```java
+@Component
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class User implements Serializable {
+    private String name;
+    private int age;
+}
+```
+
+使用自定义的RedisTemplate进行测试：
+
+```java
+@SpringBootTest
+class Redis02SpringbootApplicationTests {
+
+    @Autowired
+    @Qualifier("redisTemplate")     // 可以指定使用自定义的template，防止使用了默认的
+    private RedisTemplate redisTemplate;
+
+    @Test
+    public void test() throws JsonProcessingException {
+        // 真实开发一般都是用Json来传递对象
+        User user = new User("AruNi", 17);
+        redisTemplate.opsForValue().set("user", user);
+    }
+}
+```
+
+运行后，在Redis中查看，可以发现user没有乱码：
+
+![image-20220408134608957](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/26bbdb013861bf6ff6714bab594af36a.png)
+
+
+
+
 
 ## 8. 自定义Redis工具类
 
-使用RedisTemplate需要频繁调用`.opForxxx`然后才能进行对应的操作，这样使用起来代码效率低下，工作中一般不会这样使用，而是将这些常用的公共API抽取出来封装成为一个工具类，然后直接使用工具类来间接操作Redis,不但效率高并且易用。
+直接用RedisTemplate操作Redis，需要很多行代码，使用`RedisTemplate`需要频繁调用`.opsForxxx`然后才能进行对应的操作；因此直接封装好一个RedisUtils，这样写代码更方便点。这个RedisUtils交给Spring容器实例化，使用时直接注解注入。
 
 工具类参考博客：
 
 https://www.cnblogs.com/zeng1994/p/03303c805731afc9aa9c60dbbd32a323.html
 
-https://www.cnblogs.com/zhzhlong/p/11434284.html
+工具类的使用和Redis的命令完全一致，下面给出一个List的示例：
+
+```java
+@SpringBootTest
+class Redis02SpringbootApplicationTests {
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Test
+    public void test2() {
+        User user1 = new User("AruNi", 17);
+        User user2 = new User("kuangshen", 3);
+        List<User> list = new ArrayList<>();
+        list.add(user1);
+        list.add(user2);
+        redisUtil.lSet("user", list);
+        System.out.println(redisUtil.lGet("user", 0, -1));
+    }
+}
+```
+
+运行后在控制台查看：
+
+```text
+[[{name=AruNi, age=17}, {name=kuangshen, age=3}]]
+
+Process finished with exit code 0
+```
+
+在Redis中查看：
+
+![image-20220408141001378](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d3c3c4bd989c4c4a894e19d1ade23508.png)
+
+> 总结
+
+在开发中，我们一般只需要自己编写一个`RedisConfig`配置类，自定义`RedisTemplate`，然后再导入一个`RedisUitl`的工具类，就可以直接通过工具类在Java中使用Redis。
 
 ## 9. Redis.conf
 
-> 容量单位不区分大小写，G和GB有区别
+Redis启动的时候，就是通过配置文件来启动的！
 
-![img](https://img-blog.csdnimg.cn/2020051321485460.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+> 容量单位unit不区分大小写，X和XB有区别
 
-> 可以使用 include 组合多个配置问题
+![image-20220408142611122](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/47f23cf27810c6920b5b36a8b61dd8d0.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214902552.png)
+> 可以使用include组合多个配置文件
+
+![image-20220408142734451](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8facde92ad4dfdd2d3f550fc74e169ed.png)
 
 > 网络配置
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214912813.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408142919456](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f0624fad27ce1c494634f369d2a06e35.png)
 
-> 日志输出级别
+> 通用配置GENERAL
 
-![img](https://img-blog.csdnimg.cn/20200513214923678.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408143251897](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/af03562f9a9ad7db4d98a7144964d8b0.png)
 
-> 日志输出文件
+**pid文件扩展**：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214933713.png)
+- pid文件的作用：防止启动多个进程副本
 
-> 持久化规则
+- pid文件的原理：进程运行后会给`.pid`文件加一个文件锁，只有获得该锁的进程才有写入权限（F_WRLCK），把自身的pid写入该文件中。其他试图获得该锁的进程会自动退出
+- 注意事项：
+  1. 进程退出，该进程加的锁自动失效
+  2. 进程关闭了该文件描述符，加的锁失效
+  3. 锁的状态不会被子进程继承，进程关闭则锁失效，不管子进程是否在运行
 
-由于Redis是基于内存的数据库，需要将数据由内存持久化到文件中
+> 日志输出级别、输出文件
+
+![image-20220408143440880](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5de8b99948a5cdaa9a465f35df05302b.png)
+
+> 快照
+
+由于Redis是基于内存的数据库，需要将数据由内存持久化到文件`.rdb`、`.aof`中
 
 持久化方式：
 
 - RDB
 - AOF
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214944964.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408144446449](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cda976af90574c16bd1d816204a0c8a9.png)
 
 > RDB文件相关
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513214955679.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408144745182](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2c284ae9626f8ba02867bb9a37da2555.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215006207.png)
+![image-20220408144822526](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2cb977c1be9a643b310b2ebe2aaac387.png)
 
 > 主从复制
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215016371.png)
+![image-20220408145121598](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8028bbc72a124b88d52978c803e7470b.png)
 
 > Security模块中进行密码设置
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215026143.png)
+![image-20220408145319647](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b3999310e7dc5387f1a0fbc6cd3d626c.png)
 
 > 客户端连接相关
 
 ```bash
-maxclients 10000  最大客户端数量
-maxmemory <bytes> 最大内存限制
-maxmemory-policy noeviction # 内存达到限制值的处理策略
-123
+maxclients 10000  		# 最大客户端数量
+maxmemory <bytes> 		# 最大内存限制
+maxmemory-policy noeviction 		# 内存达到限制值的处理策略
 ```
 
-redis 中的**默认**的过期策略是 **volatile-lru** 。
+redis 中的**默认**的过期策略是 **volatile-lru**
 
 **设置方式**
 
 ```bash
 config set maxmemory-policy volatile-lru 
-1
 ```
 
-#### **maxmemory-policy 六种方式**
+#### maxmemory-policy 六种方式
 
 **1、volatile-lru：**只对设置了过期时间的key进行LRU（默认值）
 
@@ -2182,181 +2295,237 @@ config set maxmemory-policy volatile-lru
 
 > AOF相关部分
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215037918.png)
+![image-20220408145657261](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6edf7be34738a0b28ed3ebf499b0494e.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215047999.png)
+![image-20220408145905934](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c184e9d0e3e84069ae610475a3f959a4.png)
+
+- always：每次修改都会 sync，消耗性能
+- no：不执行 sync，这时操作系统自己同步数据，速度最快
 
 ## 10. 持久化RDB
 
+Redis是内存数据库，如果不将内存中的数据库状态保存到磁盘，那么一旦服务器进程退出，服务器中的数据库状态也会消失。所以Redis提供了持久化功能！
+
+Redis持久化有不同的级别：
+
+- RDB持久化方式：可以在指定的时间间隔能对数据进行快照存储
+- AOF持久化方式：记录每次对服务器写的操作，当服务器重启的时候会重新执行这些命令来恢复原始的数据，AOF命令以redis协议追加保存每次写的操作到文件末尾。Redis还能对AOF文件进行后台重写，使得AOF文件的体积不至于过大
+
+如果服务器开启了AOF持久化功能。服务器会优先使用AOF文件还原数据。只有关闭了AOF持久化功能，服务器才会使用RDB文件还原数据
+![image-20220408152928008](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/733a03b9a688a3e2311f66d98b0f1bc9.png)
+
+### 10.1 什么是RDB
+
 RDB：Redis Databases
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-C0mm1D4A-1597890996524)(狂神说 Redis.assets/image-20200818122236614.png)]
+在 Redis持久化时，RDB 程序将当前内存中的数据库状态保存到磁盘文件中
 
-### 什么是RDB
+在 Redis 重启动时，RDB 程序可以通过载入 RDB 文件来还原数据库的状态
 
-------
+![image-20220408153039398](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/68c94bce556f001590cacf651c9eeeaa.png)
 
-在指定时间间隔后，将内存中的数据集快照写入数据库 ；在恢复时候，直接读取快照文件，进行数据的恢复 ；
+默认情况下， Redis 将数据库快照保存在名字为`dump.rdb`的二进制文件中。文件名可以在配置文件中进行自定义。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215126515.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
-
-默认情况下， Redis 将数据库快照保存在名字为 dump.rdb的二进制文件中。文件名可以在配置文件中进行自定义。
-
-### 工作原理
+### 10.2 工作原理
 
 ------
 
-在进行 **`RDB`** 的时候，**`redis`** 的主线程是不会做 **`io`** 操作的，主线程会 **`fork`** 一个子线程来完成该操作；
+在进行 **`RDB`** 的时候，**`redis`** 的主线程是不会做 **`io`** 操作的，主线程会 **`fork`** 一个子线程来完成该操作：
 
 1. Redis 调用forks。同时拥有父进程和子进程。
 2. 子进程将数据集写入到一个临时 RDB 文件中。
 3. 当子进程完成对新 RDB 文件的写入时，Redis 用新 RDB 文件替换原来的 RDB 文件，并删除旧的 RDB 文件。
 
-这种工作方式使得 Redis 可以从写时复制（copy-on-write）机制中获益(因为是使用子进程进行写操作，而父进程依然可以接收来自客户端的请求。)
+这种工作方式使得 Redis 可以从 写时复制（copy-on-write）机制中获益 (因为是使用子进程进行写操作，而父进程依然可以接收来自客户端的请求)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215141519.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
-
-### 触发机制
+### 10.3 触发机制
 
 ------
 
 1. save的规则满足的情况下，会自动触发rdb原则
-2. 执行flushall命令，也会触发我们的rdb原则
+2. 执行`flushall`命令，也会触发我们的rdb原则
 3. 退出redis，也会自动产生rdb文件
 
-#### save
+#### 10.3.1 save
 
-使用 `save` 命令，会立刻对当前内存中的数据进行持久化 ,但是会阻塞，也就是不接受其他操作了；
+使用 `save` 命令，会立刻对当前内存中的数据进行持久化，但是会**阻塞**，也就是不接受其他操作了，直到RDB文件创建完毕为止
 
 > 由于 `save` 命令是同步命令，会占用Redis的主进程。若Redis数据非常多时，`save`命令执行速度会非常慢，阻塞所有客户端的请求。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215150892.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408153142839](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/de24f08cdbd53d74cf65f14c472e73fc.png)
 
-#### flushall命令
+#### 10.3.2 flushall命令
 
-`flushall` 命令也会触发持久化 ；
+`flushall` 命令也会触发持久化 
 
-#### 触发持久化规则
-
-满足配置条件中的触发条件 ；
-
-> 可以通过配置文件对 Redis 进行设置， 让它在“ N 秒内数据集至少有 M 个改动”这一条件被满足时， 自动进行数据集保存操作。
->
-> ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215205970.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215220858.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
-
-#### bgsave
+#### 10.3.3 bgsave
 
 `bgsave` 是异步进行，进行持久化的时候，`redis` 还可以将继续响应客户端请求 ；
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020051321523151.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408153224544](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d3eb11a05f8b4b9a31c338e6f3108f33.png)
 
-**bgsave和save对比**
+#### 10.3.4 自动触发策略
+
+自动触发策略，是指 Redis 在指定的时间内，数据发生了多少次变化时，会自动执行`BGSAVE`命令。自动触发的条件包含在了 Redis 的配置文件中
+
+![image-20220408152208965](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cda976af90574c16bd1d816204a0c8a9.png)
+
+> bgsave和save对比
 
 | 命令   | save               | bgsave                             |
 | ------ | ------------------ | ---------------------------------- |
 | IO类型 | 同步               | 异步                               |
-| 阻塞？ | 是                 | 是（阻塞发生在fock()，通常非常快） |
+| 阻塞   | 是                 | 是（阻塞发生在fock()，通常非常快） |
 | 复杂度 | O(n)               | O(n)                               |
 | 优点   | 不会消耗额外的内存 | 不阻塞客户端命令                   |
 | 缺点   | 阻塞客户端命令     | 需要fock子进程，消耗内存           |
 
-### 优缺点
+### 10.4 优缺点
 
-**优点：**
+**优点**：
 
 1. 适合大规模的数据恢复
 2. 对数据的完整性要求不高
 
-**缺点：**
+**缺点**：
 
-1. 需要一定的时间间隔进行操作，如果redis意外宕机了，这个最后一次修改的数据就没有了。
-2. fork进程的时候，会占用一定的内容空间。
+1. 需要一定的时间间隔进行操作，如果redis意外宕机了，这个最后一次修改的数据就没有了
+2. fork进程的时候，会占用一定的内容空间
 
 ## 11. 持久化AOF
 
 **Append Only File**
 
-将我们所有的命令都记录下来，history，恢复的时候就把这个文件全部再执行一遍
+将我们所有的命令都记录下来 history，恢复的时候就把这个文件全部再执行一遍
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Z8wr9lBW-1597890996525)(狂神说 Redis.assets/image-20200818123711375.png)]
+> 以日志的形式来记录每个写的操作，将Redis执行过的所有指令记录下来（读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作
 
-> 以日志的形式来记录每个写的操作，将Redis执行过的所有指令记录下来（读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。
+![image-20220408154525442](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a6a22e12683a5f553cadc7c5db767a49.png)
 
-### 什么是AOF
+### 11.1 什么是AOF
 
- 快照功能（RDB）并不是非常耐久（durable）： 如果 Redis 因为某些原因而造成故障停机， 那么服务器将丢失最近写入、以及未保存到快照中的那些数据。 从 1.1 版本开始， Redis 增加了一种完全耐久的持久化方式： AOF 持久化。
+快照功能（RDB）并不是非常耐久（durable）： 如果 Redis 因为某些原因而造成故障停机， 那么服务器将丢失最近写入、以及未保存到快照中的那些数据。 从 1.1 版本开始， Redis 增加了一种完全耐久的持久化方式： AOF 持久化。
 
 如果要使用AOF，需要修改配置文件：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215247113.png)
-
-`appendonly no yes`则表示启用AOF
+```bash
+appendonly yes  	# 默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分的情况下，rdb完全够用
+appendfilename "appendonly.aof"
+```
 
 默认是不开启的，我们需要手动配置，然后重启redis，就可以生效了！
 
-如果这个aof文件有错位，这时候redis是启动不起来的，我需要修改这个aof文件
+如果这个aof文件有错误，这时候redis是启动不了的，我需要修改这个aof文件
 
-redis给我们提供了一个工具`redis-check-aof --fix`
+redis给我们提供了一个工具：`redis-check-aof --fix`，执行之后重启redis即可
 
-> 优点和缺点
 
-```bash
-appendonly yes  # 默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分的情况下，rdb完全够用
-appendfilename "appendonly.aof"
 
-# appendfsync always # 每次修改都会sync 消耗性能
-appendfsync everysec # 每秒执行一次 sync 可能会丢失这一秒的数据
-# appendfsync no # 不执行 sync ,这时候操作系统自己同步数据，速度最快
-123456
-```
+### 11.2 持久化策略
 
-**优点**
+AOF持久化策略(即缓冲区内容写入和同步sync到AOF中)，可以通过配置appendfsync属性来选择AOF持久化策略：
+
+- always：将aof_buf缓冲区中的所有内容写入并同步到AOF文件，每次有新命令追加到 AOF 文件时就执行一次 fsync。
+- everysec（默认）：如果上次同步AOF的时间距离现在超过一秒，先将aof_buf缓冲区中的所有内容写入到AOF文件，再次对AOF文件进行同步，且同步操作由一个专门线程负责执行。
+- no：将aof_buf缓冲区中的所有内容写入到AOF文件，但并不对AOF文件进行同步，何时同步由操作系统(OS)决定。
+
+![image-20220408154821972](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c184e9d0e3e84069ae610475a3f959a4.png)
+
+![image-20220408154842789](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1bef5db779c91a35fa4dd82697de34b3.png)
+
+AOF持久化策略的效率与安全性：
+
+- `always`：效率最慢的，但安全性是最安全的，即使出现故障宕机，持久化也只会丢失一个事件 循环的命令数据
+- `everysec`：兼顾速度和安全性，出现宕机也只是丢失一秒钟的命令数据
+- `no`：写入最快，但综合起来单次同步是时间是最长的，且出现宕机时会丢失上传同步AOF文件之后的所有命令数据。
+
+
+
+### 11.3 AOF重写
+
+由于AOF持久化会把执行的写命令追加到AOF文件中，所以随着时间写入命令会不断增加， AOF文件的体积也会变得越来越大。AOF文件体积大对Reids服务器，甚至宿主服务器造成影响。
+
+为了解决AOF文件体积膨胀的问题，Redis提供了AOF文件重写（rewrite）功能：
+
+- 生成一个不保存任何浪费空间的冗余命令新的AOF文件，且新旧AOF文件保存数据库状态一样的
+
+- 新的AOF文件是通过读取数据库中的键值对来实现的，程序无须对现有的AOF文件进行读入，分析，或者写入操作。
+
+- 为防止缓冲区溢出，重写处理list，hash，set以及Zset时，超过设置常量数量时会多条相同命令记录一个集合。
+
+- 可以通过配置自动触发 AOF 重写，触发参数 `auto-aof-rewrite-percentage`(触发AOF文件执行重写的增长率) 以及 `auto-aof-rewrite-min-size`(触发AOF文件执行重写的最小尺寸)
+
+  ![image-20220408155519837](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cec2444e2f036500d1a4f7616b560127.png)
+
+**AOF重写的作用**：
+
+- 减少磁盘占用量
+- 加速数据恢复
+
+Redis服务器使用**单个线程**来处理命令请求，服务器大量调用`aof_rewrite`函数，在AOF重写期间，则无法处理client发来的命令请求，所以**AOF重写程序**放在**子进程**执行，好处：
+
+1. 子进程进行AOF重写期间，服务器进程可以继续处理命令请求
+2. 子进程带有服务器进程的数据副本，保证了数据的安全性
+
+AOF重写使用子进程会造成数据库与重写后的AOF保存的数据不一致，为了解决这种数据不一致，redis使用了AOF重写缓冲区实现：
+
+![image-20220408155652215](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ac888ab0fbb95298895697939b1ecba8.png)
+
+BGREWRITEAOF命令实现原理（只有信号处理函数执行时才对服务器进程造成阻塞）：
+
+- 执行命令，同时将命令追加到AOF缓冲区和AOF重写缓冲区
+- 当AOF子进程重写完成后，发送一个信号给父进程，父进程将执行AOF重写缓冲区中的所有内容写入到新AOF文件中，新AOF文件保存的数据库状态将和服务器当前的数据库状态一致
+- 对新的AOF文件进行改名，原子性地覆盖现有AOF文件，完成新旧两个AOF文件替换处理完成
+
+### 11.4 优缺点
+
+**优点**：
 
 1. 每一次修改都会同步，文件的完整性会更加好
 2. 没秒同步一次，可能会丢失一秒的数据
 3. 从不同步，效率最高
 
-**缺点**
+**缺点**：
 
-1. 相对于数据文件来说，aof远远大于rdb，修复速度比rdb慢！
-2. Aof运行效率也要比rdb慢，所以我们redis默认的配置就是rdb持久化
+1. 相对于数据文件来说，aof远远大于rdb，修复速度比rdb慢
+2. aof运行效率也要比rdb慢，所以我们redis默认的配置就是rdb持久化
 
-## 12. RDB和AOP选择
+## 12. 持久化方式抉择
 
-### RDB 和 AOF 对比
+### 12.1 RDB 和 AOF 对比
 
-| RDB        | AOF    |              |
+|            | RDB    | AOF          |
 | ---------- | ------ | ------------ |
 | 启动优先级 | 低     | 高           |
 | 体积       | 小     | 大           |
 | 恢复速度   | 快     | 慢           |
 | 数据安全性 | 丢数据 | 根据策略决定 |
 
-### 如何选择使用哪种持久化方式？
+### 12.2 如何选择持久化方式
 
-一般来说， 如果想达到足以媲美 PostgreSQL 的数据安全性， 你应该同时使用两种持久化功能。
+一般来说，如果想达到足以媲美 PostgreSQL 的数据安全性，你应该同时使用两种持久化功能。
 
-如果你非常关心你的数据， 但仍然可以承受数分钟以内的数据丢失， 那么你可以只使用 RDB 持久化。
+如果你非常关心你的数据，但仍然可以承受数分钟以内的数据丢失，那么你可以只使用 RDB 持久化。
 
-有很多用户都只使用 AOF 持久化， 但并不推荐这种方式： 因为定时生成 RDB 快照（snapshot）非常便于进行数据库备份， 并且 RDB 恢复数据集的速度也要比 AOF 恢复的速度要快。
+有很多用户都只使用 AOF 持久化，但并不推荐这种方式：因为定时生成 RDB 快照（snapshot）非常便于进行数据库备份，并且 RDB 恢复数据集的速度也要比 AOF 恢复的速度要快。
 
 ## 13. Redis发布与订阅
 
+### 13.1 介绍
+
 Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-IBT2pjCa-1597890996526)(狂神说 Redis.assets/image-20200818162849693.png)]
+![image-20220408161023036](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b86d26383ccd73036740cdbb88b466f7.png)
 
-下图展示了频道 channel1 ， 以及订阅这个频道的三个客户端 —— client2 、 client5 和 client1 之间的关系：
+下图展示了频道 channel1，以及订阅这个频道的三个客户端 —— client2 、client5 和 client1 之间的关系：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215523258.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dda8b22f22e9522fb754dfdedf453c65.png)
 
 当有新消息通过 PUBLISH 命令发送给频道 channel1 时， 这个消息就会被发送给订阅它的三个客户端：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020051321553483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408161208522](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bdcdf1d55a45fa2d36979c0853331e57.png)
 
-### 命令
+### 13.2 命令
 
 | 命令                                     | 描述                               |
 | ---------------------------------------- | ---------------------------------- |
@@ -2367,86 +2536,76 @@ Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消
 | `SUBSCRIBE channel [channel..]`          | 订阅给定的一个或多个频道。         |
 | `SUBSCRIBE channel [channel..]`          | 退订一个或多个频道                 |
 
-### 示例
+### 13.3 示例
 
-```bash
-------------订阅端----------------------
-127.0.0.1:6379> SUBSCRIBE sakura # 订阅sakura频道
-Reading messages... (press Ctrl-C to quit) # 等待接收消息
-1) "subscribe" # 订阅成功的消息
-2) "sakura"
-3) (integer) 1
-1) "message" # 接收到来自sakura频道的消息 "hello world"
-2) "sakura"
-3) "hello world"
-1) "message" # 接收到来自sakura频道的消息 "hello i am sakura"
-2) "sakura"
-3) "hello i am sakura"
+模拟一个订阅端，此时还没有信息发送到此频道：
 
---------------消息发布端-------------------
-127.0.0.1:6379> PUBLISH sakura "hello world" # 发布消息到sakura频道
-(integer) 1
-127.0.0.1:6379> PUBLISH sakura "hello i am sakura" # 发布消息
-(integer) 1
+![image-20220408161738275](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7e70d12d21079ffd9067558474fd5d01.png)
 
------------------查看活跃的频道------------
-127.0.0.1:6379> PUBSUB channels
-1) "sakura"
-12345678910111213141516171819202122
-```
+开启另一个客户端，模拟信息发布端，向频道发出信息：
 
-### 原理
+![image-20220408162108242](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d89f2d04c79e490aa539ec19ec33d5d3.png)
+
+此时查看订阅端：
+
+![image-20220408162200478](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/efa720ce03376d1ef50c24c235f01f3e.png)
+
+可以在发布端查看活跃的频道：
+
+![image-20220408162535475](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/39f44ecd8fbadfceaeae0b759f836e2a.png)
+
+### 13.4 原理
 
 每个 Redis 服务器进程都维持着一个表示服务器状态的 redis.h/redisServer 结构， 结构的 pubsub_channels 属性是一个字典， 这个字典就用于保存订阅频道的信息，其中，字典的键为正在被订阅的频道， 而字典的值则是一个链表， 链表中保存了所有订阅这个频道的客户端。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020051321554964.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220408162855722](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e76dc55782efc0f77fa13afe9910d996.png)
 
 客户端订阅，就被链接到对应频道的链表的尾部，退订则就是将客户端节点从链表中移除。
 
-### 缺点
+### 13.5 缺点
 
-1. 如果一个客户端订阅了频道，但自己读取消息的速度却不够快的话，那么不断积压的消息会使redis输出缓冲区的体积变得越来越大，这可能使得redis本身的速度变慢，甚至直接崩溃。
-2. 这和数据传输可靠性有关，如果在订阅方断线，那么他将会丢失所有在短线期间发布者发布的消息。
+1. 如果一个客户端订阅了频道，但自己读取消息的速度却不够快的话，那么不断积压的消息会使redis输出缓冲区的体积变得越来越大，这可能使得redis本身的速度变慢，甚至直接崩溃
+2. 这和数据传输可靠性有关，如果在订阅方断线，那么他将会丢失所有在短线期间发布者发布的消息
 
-### 应用
+### 13.6 应用
 
-1. 消息订阅：公众号订阅，微博关注等等（起始更多是使用消息队列来进行实现）
+1. 消息订阅：公众号订阅，微博关注等等（其实更多是使用**消息队列**来进行实现）
 2. 多人在线聊天室。
 
-稍微复杂的场景，我们就会使用消息中间件MQ处理。
+稍微复杂的场景，我们就会使用消息中间件MQ(Message Queue)处理
 
 ## 14. Redis主从复制
 
-### 概念
+### 14.1 概念
 
- 主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点（Master/Leader）,后者称为从节点（Slave/Follower）， 数据的复制是单向的！只能由主节点复制到从节点（主节点以写为主、从节点以读为主）。
+ 主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点（Master/Leader），后者称为从节点（Slave/Follower），数据的复制是**单向**的！只能由主节点复制到从节点（**主节点以写为主、从节点以读为主**）。
 
-默认情况下，每台Redis服务器都是主节点，一个主节点可以有0个或者多个从节点，但每个从节点只能由一个主节点。
+默认情况下，**每台Redis服务器都是主节点**，一个主节点可以有0个或者多个从节点，但每个从节点只能有一个主节点。
 
-### 作用
+### 14.2 作用
 
-1. 数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余的方式。
+1. 数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余的方式
 2. 故障恢复：当主节点故障时，从节点可以暂时替代主节点提供服务，是一种服务冗余的方式
-3. 负载均衡：在主从复制的基础上，配合读写分离，由主节点进行写操作，从节点进行读操作，分担服务器的负载；尤其是在多读少写的场景下，通过多个从节点分担负载，提高并发量。
-4. 高可用基石：主从复制还是哨兵和集群能够实施的基础。
+3. 负载均衡：在主从复制的基础上，配合读写分离，由主节点进行写操作，从节点进行读操作，分担服务器的负载；尤其是在多读少写的场景下，通过多个从节点分担负载，提高并发量
+4. 高可用基石：主从复制还是哨兵和集群能够实施的基础
 
-### 为什么使用集群
+### 14.3 为什么使用集群
 
 1. 单台服务器难以负载大量的请求
 2. 单台服务器故障率高，系统崩坏概率大
-3. 单台服务器内存容量有限。
+3. 单台服务器内存容量有限
 
-### 环境配置
+### 14.4 环境配置
 
-我们在讲解配置文件的时候，注意到有一个`replication`模块 (见Redis.conf中第8条)
+Redis配置文件中，有一个`replication`模块 (见Redis.conf中第8条)
 
 查看当前库的信息：`info replication`
 
 ```bash
 127.0.0.1:6379> info replication
 # Replication
-role:master # 角色
-connected_slaves:0 # 从机数量
+role:master 		# 角色
+connected_slaves:0 		# 从机数量
 master_replid:3b54deef5b7b7b7f7dd8acefa23be48879b4fcff
 master_replid2:0000000000000000000000000000000000000000
 master_repl_offset:0
@@ -2455,111 +2614,183 @@ repl_backlog_active:0
 repl_backlog_size:1048576
 repl_backlog_first_byte_offset:0
 repl_backlog_histlen:0
-123456789101112
 ```
 
-既然需要启动多个服务，就需要多个配置文件。每个配置文件对应修改以下信息：
+既然需要启动多个服务，就需要多个配置文件。每个配置文件对应修改以下信息，因为使用默认的会重复：
 
 - 端口号
 - pid文件名
 - 日志文件名
 - rdb文件名
 
-启动单机多服务集群：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215610163.png)
 
-### 一主二从配置
 
-==默认情况下，每台Redis服务器都是主节点；==我们一般情况下只用配置从机就好了！
 
-认老大！一主（79）二从（80，81）
+示例：搭建一个单机多服务
 
-使用`SLAVEOF host port`就可以为从机配置主机了。
+1. 在自己的配置文件中新建多个`redis.conf`，这里创建了3个新的配置文件：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215637483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+   ![image-20220408164852903](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bff26277ed62e13b9dff33d01f84d7b0.png)
 
-然后主机上也能看到从机的状态：
+2. 分别对新建的配置文件修改其对应的端口号，pid文件名，日志文件名，rdb文件名
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215645778.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+3. 修改完后在不同的客户端启动所有端口的redis服务：
 
-我们这里是使用命令搭建，是暂时的，==真实开发中应该在从机的配置文件中进行配置，==这样的话是永久的。
+   ![image-20220408171436545](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b54c84f5f389176cdfd5300af469b910.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215654634.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+4. 现在到另一个客户端查看redis进程：
 
-### 使用规则
+   ![image-20220408171509717](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3b4898dba95cc97b459aeca0bbc56ff5.png)
 
-1. 从机只能读，不能写，主机可读可写但是多用于写。
+### 14.5 一主二从配置
+
+**默认情况下，每台Redis服务器都是主节点**；我们一般情况下只用配置从机就好了！
+
+1. 首先确认主从：一主（79）二从（80，81）
+
+2. 连接`redis-cli`
+
+3. 使用`SLAVEOF host port`就可以为从机配置主机，主机有密码则需要配置主机的密码，使用`config set masterauth 密码`，下面给出6380从机的示例：
+
+   ![image-20220408172959307](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a79ae414d0f24bd01b1b427bffd1481b.png)
+
+4. 然后主机上也能看到从机的状态：
+
+   ![image-20220408173120793](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8268dd0fc979cc193db7e8d1013339d8.png)
+
+我们这里是使用命令搭建，是暂时的，**真实开发中应该在从机的配置文件中进行配置**，这样的话是永久的。
+
+![image-20220408173533376](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3b0690c27502a66ea83343688dd0d131.png)
+
+### 14.6 使用规则
+
+1. 从机只能读，不能写，主机可读可写但是多用于写
 
    ```bash
-    127.0.0.1:6381> set name sakura # 从机6381写入失败
+   127.0.0.1:6381> set name sakura 	# 从机6381写入失败
    (error) READONLY You can't write against a read only replica.
    
-   127.0.0.1:6380> set name sakura # 从机6380写入失败
+   127.0.0.1:6380> set name sakura 	# 从机6380写入失败
    (error) READONLY You can't write against a read only replica.
    
    127.0.0.1:6379> set name sakura
    OK
    127.0.0.1:6379> get name
    "sakura"
-   12345678910
    ```
+   
+2. 当**主机断电宕机**后，默认情况下**从机的角色不会发生变化** ，集群中只是失去了写操作，当主机恢复以后，又会连接上从机恢复原状
 
-2. 当主机断电宕机后，默认情况下从机的角色不会发生变化 ，集群中只是失去了写操作，当主机恢复以后，又会连接上从机恢复原状。
+3. 当**从机断电宕机**后，若**不是使用配置文件配置的从机(临时的)**，再次启动后作为主机是无法获取之前主机的数据的，若此时重新配置成为从机，又可以获取到主机的所有数据。这里就涉及同步原理
 
-3. 当从机断电宕机后，若不是使用配置文件配置的从机，再次启动后作为主机是无法获取之前主机的数据的，若此时重新配置称为从机，又可以获取到主机的所有数据。这里就要提到一个同步原理。
+   - 若主机在宕机的时候，另一个从机通过手动命令`slaveof on one`让自己变成主机，那其他的结点也可以通过手动命令连接到此新的主机。
+     - 若此时原来的主机修复了，它也没有从机，需要从机重新配置，认他做主机
 
-4. 第二条中提到，默认情况下，主机故障后，不会出现新的主机，有两种方式可以产生新的主机：
+4. 若这台从机是另一台的主机，也可以完成主从复制；不过对于这台从机而言，他还是从节点。
 
-   - 从机手动执行命令`slaveof no one`,这样执行以后从机会独立出来成为一个主机
-   - 使用哨兵模式（自动选举）
+第二条中提到，默认情况下，主机故障后，不会出现新的主机，有两种方式可以产生新的主机：
 
-> 如果没有老大了，这个时候能不能选择出来一个老大呢？手动！
+- 从机手动执行命令`slaveof no one`，这样执行以后从机会独立出来成为一个主机
+- 使用哨兵模式（自动选举）
 
-如果主机断开了连接，我们可以使用`SLAVEOF no one`让自己变成主机！其他的节点就可以手动连接到最新的主节点（手动）！如果这个时候老大修复了，那么久重新连接！
+
+
+### 14.7 主从复制原理
+
+从总体上来说，Redis主从复制的策略就是：当主从服务器刚建立连接的时候，进行全量同步；全量复制结束后，进行增量复制。当然，如果有需要，slave 在任何时候都可以发起全量同步。
+
+#### 14.7.1 全量复制
+
+Redis全量复制一般发生在Slave初始化阶段，这时Slave需要将Master上的所有数据都复制一份，具体步骤如下：
+
+1. slave服务器连接到master服务器，便开始进行数据同步，发送psync命令（Redis2.8之前是sync命令）
+
+2. master服务器收到psync命令之后，开始执行bgsave命令生成RDB快照文件并使用缓存区记录此后执行的所有写命令
+
+   > - 如果master收到了多个slave并发连接请求，它只会进行一次持久化，而不是每个连接都执行一次，然后再把这一份持久化的数据发送给多个并发连接的slave
+   > - 如果RDB复制时间超过60秒（repl-timeout），那么slave服务器就会认为复制失败，可以适当调节大这个参数
+
+3. master服务器bgsave执行完之后，就会向所有Slava服务器发送快照文件，并在发送期间继续在缓冲区内记录被执行的写命令
+
+   > `client-output-buffer-limit slave 256MB 64MB 60`，如果在复制期间，内存缓冲区持续消耗超过64MB，或者一次性超过256MB，那么停止复制，复制失败
+
+4. slave服务器收到RDB快照文件后，会将接收到的数据写入磁盘，然后清空所有旧数据，在从本地磁盘载入收到的快照到内存中，同时基于旧的数据版本对外提供服务
+
+5. master服务器发送完RDB快照文件之后，便开始向slave服务器发送缓冲区中的写命令
+
+6. slave服务器完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令
+
+7. 如果slave node开启了AOF，那么会立即执行BGREWRITEAOF，重写AOF
+
+![image-20220408175344464](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8e96bcb6b98b6196b2fcb0b7a68c78df.png)
+
+
+
+#### 14.7.2 增量复制
+
+Redis的增量复制是指在初始化的全量复制并开始正常工作之后，master服务器将发生的写操作同步到slave服务器的过程，增量复制的过程主要是master服务器每执行一个写命令就会向slave服务器发送相同的写命令，slave服务器接收并执行收到的写命令。
 
 ## 15. 哨兵模式
 
 更多信息参考博客：https://www.jianshu.com/p/06ab9daf921d
 
-**主从切换技术的方法是：当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。**这不是一种推荐的方式，更多时候，我们优先考虑**哨兵模式**。
+**主从切换技术的方法是：当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可**。这不是一种推荐的方式，更多时候，我们优先考虑**哨兵模式**。
 
-单机单个哨兵
+### 15.1 概述
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-2ENYVAPp-1597890996527)(狂神说 Redis.assets/image-20200818233231154.png)]
+哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是**哨兵通过发送命令，等待Redis服务器响应，从而监控运行的多个Redis实例**。
 
-哨兵的作用：
+单哨兵模式：
+
+![image-20220409102321051](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7070c061b6ffdaf82144523cbd489db3.png)
+
+这里的哨兵有两个作用
 
 - 通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。
 - 当哨兵监测到master宕机，会自动将slave切换成master，然后通过**发布订阅模式**通知其他的从服务器，修改配置文件，让它们切换主机。
 
-多哨兵模式
+然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。
 
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Ga1RyfVc-1597890996528)(狂神说 Redis.assets/image-20200818233316478.png)]
+多哨兵模式：
 
-哨兵的核心配置
+![image-20220409102444378](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/19c5a99f06a7d1440648dfe4831dafe0.png)
 
-```
-sentinel monitor mymaster 127.0.0.1 6379 1
-```
+**故障切换(failover)**的过程：假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为**主观下线**。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机，这个过程称为**客观下线**。这样对于客户端而言，一切都是透明的。
 
-- 数字1表示 ：当一个哨兵主观认为主机断开，就可以客观认为主机故障，然后开始选举新的主机。
+哨兵的核心配置：`sentinel monitor 被监控的名称 host port 1`
 
-> 测试
+数字1表示 ：只有1个或1个以上的哨兵认为主服务器不可用的时候，才会进行failover操作
 
-```
-redis-sentinel xxx/sentinel.conf
-```
 
-成功启动哨兵模式
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215752444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+### 15.2 测试
 
-此时哨兵监视着我们的主机6379，当我们断开主机后：
+目前的状态是一主二从
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215806972.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+1. 添加哨兵配置文件`sentinel.conf`，在配置文件中配置哨兵和对应的密码
 
-> 哨兵模式优缺点
+   ![image-20220409110740356](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f2963705a83e844aeedf0b52d60b3b9d.png)
+
+2. 启动哨兵模式`redis-sentinel run-config/sentinel.conf `：
+
+   ![image-20220409110941813](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b9c42596f4bb281c5040aa7926f86a00.png)
+
+3. 此时哨兵监视着我们的主机6379，当我们断开主机后，就会选举出新的主机(通过一个算法)：
+
+   ![image-20220409111855308](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4c895dd3c9f4a83db2d54add8d7dbee4.png)
+
+4. 此时查看6381，已经成为主机了，处于连接中的6380属于它的从机：
+
+   ![image-20220409111954453](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5d253c24c00e6a237475f446b6dd5331.png)
+
+5. 此时重新连接6379，发现已经成为了6381的从机：
+
+   ![image-20220409112538760](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cb340e182b2363d5ec95b046866e280d.png)
+
+   
+
+### 15.3 优缺点
 
 **优点：**
 
@@ -2572,9 +2803,13 @@ redis-sentinel xxx/sentinel.conf
 1. Redis不好在线扩容，集群容量一旦达到上限，在线扩容就十分麻烦
 2. 实现哨兵模式的配置其实是很麻烦的，里面有很多配置项
 
-> 哨兵模式的全部配置
 
-完整的哨兵模式配置文件 sentinel.conf
+
+### 15.4 全部配置
+
+完整的哨兵模式配置文件 `sentinel.conf`，可以在redis的文件目录查看：
+
+![image-20220409113922747](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/447134f607e72595bed780b4d231c61b.png)
 
 ```bash
 # Example sentinel.conf
@@ -2594,7 +2829,7 @@ sentinel monitor mymaster 127.0.0.1 6379 1
 # 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码
 # 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码
 # sentinel auth-pass <master-name> <password>
-sentinel auth-pass mymaster MySUPER--secret-0123passw0rd
+sentinel auth-pass mymaster 123456
  
  
 # 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒
@@ -2621,21 +2856,21 @@ sentinel failover-timeout mymaster 180000
  
 # SCRIPTS EXECUTION
  
-#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。
-#对于脚本的运行结果有以下规则：
-#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10
-#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。
-#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。
-#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。
+# 配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。
+# 对于脚本的运行结果有以下规则：
+# 若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10
+# 若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。
+# 如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。
+# 一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。
  
-#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，
-#这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，
-#一个是事件的类型，
-#一个是事件的描述。
-#如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。
-#通知脚本
+# 通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，
+# 这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，
+# 一个是事件的类型，
+# 一个是事件的描述。
+# 如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。
+# 通知脚本
 # sentinel notification-script <master-name> <script-path>
-  sentinel notification-script mymaster /var/redis/notify.sh
+sentinel notification-script mymaster /var/redis/notify.sh
  
 # 客户端重新配置主节点参数脚本
 # 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。
@@ -2647,72 +2882,208 @@ sentinel failover-timeout mymaster 180000
 # 这个脚本应该是通用的，能被多次调用，不是针对性的。
 # sentinel client-reconfig-script <master-name> <script-path>
 sentinel client-reconfig-script mymaster /var/redis/reconfig.sh
-
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071
 ```
 
-## 16. 缓存穿透与雪崩
+## 16. 缓存穿透/击穿和雪崩
 
-### 缓存穿透（查不到）
+Redis缓存的使用,极大的提升了应用程序的性能和效率，特别是数据查询方面。但同时，它也带来了一些问题。 其中，最要害的问题，就是数据的一致性问题，从严格意义上讲，这个问题无解。如果对数据的一致性要求很高，那么就不能使用缓存。
 
-> 概念
+另外的一些典型问题就是缓存穿透、缓存雪崩和缓存击穿。目前，业界也都有比较流行的解决方案。
 
-在默认情况下，用户请求数据时，会先在缓存(Redis)中查找，若没找到即缓存未命中，再在数据库中进行查找，数量少可能问题不大，可是一旦大量的请求数据（例如秒杀场景）缓存都没有命中的话，就会全部转移到数据库上，造成数据库极大的压力，就有可能导致数据库崩溃。网络安全中也有人恶意使用这种手段进行攻击被称为洪水攻击。
+### 16.1 缓存穿透（查不到）
 
-> 解决方案
+#### 16.1.1 概念
 
-**布隆过滤器**
+意味着有特殊请求在查询一个不存在的数据，**即不数据存在 Redis 也不存在于数据库。**
+
+导致每次请求都会**穿透**到数据库，若黑客利用此漏洞进行攻击可能压垮数据库。
+
+![image-20220409115221006](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/77ec001294c43e9b1be7fcb46cfbdb01.png)
+
+#### 16.1.2 解决方案
+
+**布隆过滤器**：
 
 对所有可能查询的参数以Hash的形式存储，以便快速确定是否存在这个值，在控制层先进行拦截校验，校验不通过直接打回，减轻了存储系统的压力。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215824722.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+BloomFilter 要缓存全量的 key，这就要求全量的 key 数量不大，10 亿 条数据以内最佳，因为 10 亿 条数据大概要占用 1.2GB 的内存。
 
-**缓存空对象**
+![image-20220409120621814](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a906901a09fbcdff2f9dc042c404e83b.png)
 
-一次请求若在缓存和数据库中都没找到，就在缓存中方一个空对象用于处理后续这个请求。
+> 布隆过滤器原理
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215836317.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+BloomFilter 的算法是，首先分配一块内存空间做 bit 数组，数组的 bit 位初始值全部设为 0。
 
- 这样做有一个缺陷：存储空对象也需要空间，大量的空对象会耗费一定的空间，存储效率并不高。解决这个缺陷的方式就是设置较短过期时间
+加入元素时，采用 k 个相互独立的 Hash 函数计算，然后将元素 Hash 映射的 K 个位置全部设置为 1。
 
-即使对空值设置了过期时间，还是会存在缓存层和存储层的数据会有一段时间窗口的不一致，这对于需要保持一致性的业务会有影响。
+检测 key 是否存在，仍然用这 k 个 Hash 函数计算出 k 个位置，如果位置全部为 1，则表明 key 存在，否则不存在。
 
-### 缓存击穿（量太大，缓存过期）
+如下图所示：
 
-> 概念
+![image-20220409120208659](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/980e9b393693bcc5b34452ce9273e2ec.png)
 
- 相较于缓存穿透，缓存击穿的目的性更强，一个存在的key，在缓存过期的一刻，同时有大量的请求，这些请求都会击穿到DB，造成瞬时DB请求量大、压力骤增。这就是缓存被击穿，只是针对其中某个key的缓存不可用而导致击穿，但是其他的key依然可以使用缓存响应。
+**哈希函数会出现碰撞，所以布隆过滤器会存在误判**。
 
- 比如热搜排行上，一个热点新闻被同时大量访问就可能导致缓存击穿。
+这里的误判率是指，BloomFilter 判断某个 key 存在，但它实际不存在的概率，因为它存的是 key 的 Hash 值，而非 key 的值。
 
-> 解决方案
+所以有概率存在这样的 key，它们内容不同，但多次 Hash 后的 Hash 值都相同。
 
-1. **设置热点数据永不过期**
+**对于 BloomFilter 判断不存在的 key ，则是 100% 不存在的，反证法，如果这个 key 存在，那它每次 Hash 后对应的 Hash 值位置肯定是 1，而不会是 0。布隆过滤器判断存在不一定真的存在**。
 
-   这样就不会出现热点数据过期的情况，但是当Redis内存空间满的时候也会清理部分数据，而且此种方案会占用空间，一旦热点数据多了起来，就会占用部分空间。
 
-2. **加互斥锁(分布式锁)**
 
-   在访问key之前，采用SETNX（set if not exists）来设置另一个短期key来锁住当前key的访问，访问结束再删除该短期key。保证同时刻只有一个线程访问。这样对锁的要求就十分高。
 
-### 缓存雪崩
 
-> 概念
+**缓存空对象**：
 
-大量的key设置了相同的过期时间，导致在缓存在同一时刻全部失效，造成瞬时DB请求量大、压力骤增，引起雪崩。
+一次请求若在缓存和数据库中都没找到，就在缓存中放置一个空对象，设置一个缺省值（比如：None）。当后续再次进行查询则直接返回空值或者缺省值。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200513215850428.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg3MzIyNw==,size_16,color_FFFFFF,t_70)
+![image-20220409115906957](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/47ad32eb7edc43f4b60ca1fc1291c380.png)
 
-> 解决方案
+缺陷：
 
-- redis高可用
+- 存储空对象也需要空间，大量的空对象会耗费一定的空间，存储效率并不高。解决这个缺陷的方式就是设置较短过期时间
 
-  这个思想的含义是，既然redis有可能挂掉，那我多增设几台redis，这样一台挂掉之后其他的还可以继续工作，其实就是搭建的集群
+- 即使对空值设置了过期时间，还是会存在缓存层和存储层的数据会有一段时间窗口的不一致，这对于需要保持一致性的业务会有影响
 
-- 限流降级
+### 16.2 缓存击穿（量太大，缓存过期）
 
-  这个解决方案的思想是，在缓存失效后，通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。
+#### 16.2.1 概念
 
-- 数据预热
+**高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis**。
 
-  数据加热的含义就是在正式部署之前，我先把可能的数据先预先访问一遍，这样部分可能大量访问的数据就会加载到缓存中。在即将发生大并发访问前手动触发加载缓存不同的key，设置不同的过期时间，让缓存失效的时间点尽量均匀。
+缓存被击穿只是针对其中**某个key的缓存不可用而导致击穿**，但是其他的key依然可以使用缓存响应。
+
+关键字：**单一热点数据、高并发、数据失效**
+
+但是由于高并发，可能会把 DB 压垮，导致服务不可用。如下图所示：
+
+![image-20220409121236298](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d31886fa8bac61cd0ce48e8b5c719350.png)
+
+
+
+#### 16.2.2 解决方案
+
+> 过期时间 + 随机值
+
+对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。
+
+或者过期时间再加一个随机值。
+
+设计缓存的过期时间时，使用公式：过期时间=baes 时间+随机时间。
+
+即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力
+
+> 预热
+
+预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。
+
+> 使用锁
+
+当发现缓存失效的时候，不是立即从数据库加载数据。
+
+而是先获取分布式锁，获取锁成功才执行数据库查询和写数据到缓存的操作，获取锁失败，则说明当前有线程在执行数据库查询操作，当前线程睡眠一段时间在重试。
+
+这样只让一个请求去数据库读取数据。
+
+伪代码如下：
+
+```java
+public Object getData(String id) {
+    String desc = redis.get(id);
+        // 缓存为空，过期了
+        if (desc == null) {
+            // 互斥锁，只有一个请求可以成功
+            if (redis(lockName)) {
+                try 
+                    // 从数据库取出数据
+                    desc = getFromDB(id);
+                    // 写到 Redis
+                    redis.set(id, desc, 60 * 60 * 24);
+                } catch (Exception ex) {
+                    LogHelper.error(ex);
+                } finally {
+                    // 确保最后删除，释放锁
+                    redis.del(lockName);
+                    return desc;
+                }
+            } else {
+                // 否则睡眠200ms，接着获取锁
+                Thread.sleep(200);
+                return getData(id);
+            }
+        }
+}
+```
+
+### 16.3 缓存雪崩
+
+#### 16.3.1 概念
+
+缓存雪崩指的是**大量的请求无法在 Redis 缓存系统中处理，请求全部打到数据库，导致数据库压力激增**，甚至宕机。
+
+出现该原因主要有两种：
+
+- 大量热点数据同时过期，导致大量请求需要查询数据库并写到缓存
+- Redis 故障宕机，缓存系统异常
+
+**缓存雪崩是发生在大量数据同时失效的场景，而缓存击穿（失效）是在某个热点数据失效的场景，这是他们最大的区别**。
+
+> 缓存大量数据同时过期
+
+数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。
+
+系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。
+
+![image-20220409122051714](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f633de63dc10f9c1cd0f0ff50b297b40.png)
+
+#### 16.3.2 解决方案
+
+> 缓存过期
+
+- **过期时间添加随机值**：
+
+  要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。
+
+  这样一来，就不会导致同一时刻热点数据全部失效，同时过期时间差别也不会太大，既保证了相近时间失效，又能满足业务需求。
+
+- **接口限流**：
+
+  当访问的不是核心数据的时候，在查询的方法上加上**接口限流保护**。比如设置 10000 req/s。
+
+  如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。
+
+  这样的话，只有部分请求会发送到数据库，减少了压力。
+
+  限流，就是指在**业务系统的请求入口前端控制每秒进入系统的请求数，避免过多的请求被发送到数据库**，如下图：
+
+  ![image-20220409122552305](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9891e181c1dc5ae7d8c13d33f2c8af8f.png)
+
+> Redis 故障宕机
+
+一个 Redis 实例能支撑 10 万的 QPS，而一个数据库实例只有 1000 QPS。
+
+一旦 Redis 宕机，会导致大量请求打到数据库，从而发生缓存雪崩。
+
+
+
+对于缓存系统故障导致的缓存雪崩的解决方案有两种：
+
+- **服务熔断和接口限流**：
+
+  在业务系统中，**针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。**
+
+  **服务熔断就是当从缓存获取数据发现异常，则直接返回错误数据给前端，防止所有流量打到数据库导致宕机**。
+
+  **服务熔断和限流属于在发生了缓存雪崩，如何降低雪崩对数据库造成的影响的方案**。
+
+- **构建高可用缓存集群系统**：
+
+  缓存系统一定要构建一套 Redis 高可用集群，比如 Redis 哨兵集群或者 Redis Cluster 集群，如果 Redis 的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。
+
+### 16.4 总结
+
+- **缓存穿透**：数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设
+- **缓存击穿（失效）**：数据库有数据，缓存本应该也有数据，但是缓存过期了，Redis 这层流量防护屏障被击穿了，请求直奔数据库
+- **缓存雪崩**：**大量**的热点数据无法在 Redis 缓存中处理（大面积热点数据缓存失效、Redis 宕机），流量全部打到数据库，导致数据库极大压力
+
