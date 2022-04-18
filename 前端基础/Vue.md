@@ -842,6 +842,62 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 
 由于`Vue.js`是一个视图层框架并且作者(尤雨溪) 严格准守SoC(关注度分离原则)所以`Vue.js`并不包含AJAX的通信功能， 为了解决通信问题， 作者单独开发了一个名为`vue-resource`的插件， 不过在进入2.0版本以后停止了对该插件的维护并推荐了`Axios`框架。少用`jQuery`， 因为它操作Dom太频繁!
 
+> 简单的Axios使用
+
+```html
+<body>
+
+    <div id="app">
+        <input type="button" value="获取笑话" @click="getJoke">
+        <p>{{ joke }}</p>
+    </div>
+
+    <!-- 官网提供的 axios 在线地址 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    
+    <script>
+        /*
+            接口：随机获取一条笑话
+            请求地址：https://autumnfish.cn/api/joke
+            请求方式：get
+        */
+        var app = new Vue({
+            el: "#app",
+            data: {
+                joke: "我是一个笑话"
+            },
+            methods: {
+                getJoke: function() {
+                    console.log(this.joke);     // 我是一个笑话
+                    // 需要在axios外面定义一个变量来引用传递到this(也可以用箭头函数=>)
+                    var that = this;
+                    axios
+                    .get("https://autumnfish.cn/api/joke")
+                    .then(
+                        function(response) {
+                            console.log(this.joke);     // undefined 说明this.joke的值已经改变了
+                            // 将数据响应回去
+                            that.joke = response.data;
+                        },
+                        function(err) {
+                            
+                        }
+                    )
+                    // 箭头函数写法：
+                    axios
+                    .get("https://autumnfish.cn/api/joke")
+                    .then(response=>(this.joke=response.data));
+                }
+            }
+        })
+
+    </script>
+</body>
+```
+
+![image-20220416222903521](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d913830583fbf0783dc68dbe27f8b557.png)
+
 ### 6.3 第一个Axios应用程序
 
 咱们开发的接口大部分都是采用JSON格式， 可以先在项目里模拟一段JSON数据
@@ -876,7 +932,7 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 }
 ```
 
-**测试代码:**
+**测试代码**：
 
 ```html
 <!DOCTYPE html>
@@ -899,7 +955,7 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
     <div>
         链接：
         <!--href绑定到json数据中的url-->
-        <a v-bind:href="info.url" target="_blank">百度一下</a>
+        <a v-bind:href="info.url" target>百度一下</a>
     </div>
 </div>
 
@@ -909,8 +965,7 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 <script>
     let vm = new Vue({
         el: "#vue",
-
-        //这里的data() 是方法；而data: 是属性
+        // 这里的data() 是方法；而data: 是属性
         data() {
             return {
                 info: {
@@ -928,7 +983,9 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
         //钩子函数
         mounted() {
             axios
+                // 去json文件里面取数据
                 .get('../data.json')
+                // 将取到的数据响应回
                 .then(response=>(this.info=response.data));
         }
     });
@@ -936,6 +993,8 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 </body>
 </html>
 ```
+
+![image-20220416224404059](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a998e420eb55ef7a95f99d07bdca4414.png)
 
 说明：
 
@@ -951,6 +1010,16 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 在Vue的整个生命周期中，它提供了一系列的事件，可以让我们在事件触发时注册JS方法，可以让我们用自己注册的JS方法控制整个大局，在这些事件响应方法中的this直接指向的是Vue的实例。
 
 ![1595253373596](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bd23627e82b9dba8e749768471f9e36a.png)
+
+
+
+
+
+### 6.5 Axios数据交互
+
+在实际开发中，大多数都是前后端分离的项目，前端只需要通过接口向后端寻要数据，渲染到页面就可以了。所以需要学习使用Axios实现前后端的数据交互！
+
+
 
 
 
@@ -1405,6 +1474,10 @@ npm run dev
 执行完成后，目录多了很多依赖
 
 ![1595305147701](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2682abd87a95a23c307064474e318f2e.png)
+
+> Vue-Cli项目结构
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/14d58fa25088256cd18c1439782db167.png)
 
 
 
@@ -2316,7 +2389,7 @@ new Vue({
 
 2. 传递参数
 
-   - 此时我们将 to 改为了 :to，是为了将这一属性当成对象使用，
+   - 此时我们将 `to` 改为了 `:to`，是为了将这一属性当成对象使用，
 
    - 去`Main.vue`主页中，在点击个人信息的时候传递2个参数过去；注意 `router-link` 中的 name 属性名称一定要和路由中的name 属性名称 匹配，因为这样 Vue 才能找到对应的路由路径；
 
@@ -2669,7 +2742,6 @@ export default {
 测试：在点击个人信息的时候，json中的数据获取成功
 
 ![image-20220329170114787](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/04c7b3318d506ad14139a7bfe8dd406a.png)
-
 
 
 
