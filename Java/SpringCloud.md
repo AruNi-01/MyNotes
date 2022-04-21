@@ -609,7 +609,7 @@ Eureka 包含两个组件：**Eureka Server** 和 **Eureka Client**
        register-with-eureka: false
        # 表示自己为注册中心，客户端的fetch-registry改为true
        fetch-registry: false
-       service-url:    # 监控页面，表示访问的路径及端口
+       service-url:    # 监控页面，重写Eureka的默认的访问路径及端口，自己定义
          defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
    ```
    
@@ -727,15 +727,13 @@ info:
 
 一句话总结就是：**某时刻某一个微服务不可用，eureka不会立即清理，依旧会对该微服务的信息进行保存**
 
-- 默认情况下，当eureka server在一定时间内没有收到实例的心跳，便会把该实例从注册表中删除（**默认是90秒**），但是，如果短时间内丢失大量的实例心跳，便会触发eureka server的自我保护机制，比如在开发测试时，需要频繁地重启微服务实例，但是我们很少会把eureka server一起重启（因为在开发过程中不会修改eureka注册中心），**当一分钟内收到的心跳数大量减少时，会触发该保护机制**。可以在eureka管理界面看到Renews threshold和Renews(last min)，当后者（最后一分钟收到的心跳数）小于前者（心跳阈值）的时候，触发保护机制，会出现红色的警告：`EMERGENCY!EUREKA MAY BE INCORRECTLY CLAIMING INSTANCES ARE UP WHEN THEY'RE NOT.RENEWALS ARE LESSER THAN THRESHOLD AND HENCE THE INSTANCES ARE NOT BEGING EXPIRED JUST TO BE SAFE.`从警告中可以看到，eureka认为虽然收不到实例的心跳，但它认为实例还是健康的，eureka会保护这些实例，不会把它们从注册表中删掉
+- 默认情况下，当eureka server在一定时间内没有收到实例的心跳，便会把该实例从注册表中删除（**默认是90秒**），但是，如果短时间内丢失大量的实例心跳，便会触发eureka server的自我保护机制，比如在开发测试时，需要频繁地重启微服务实例，但是我们很少会把eureka server一起重启（因为在开发过程中不会修改eureka注册中心），**当一分钟内收到的心跳数大量减少时，会触发该保护机制**。可以在eureka管理界面看到Renews threshold和Renews(last min)，当后者（最后一分钟收到的心跳数）小于前者（心跳阈值）的时候，触发保护机制，会出现红色的警告：`EMERGENCY!EUREKA MAY BE INCORRECTLY CLAIMING INSTANCES ARE UP WHEN THEY'RE NOT.RENEWALS ARE LESSER THAN THRESHOLD AND HENCE THE INSTANCES ARE NOT BEGING EXPIRED JUST TO BE SAFE.` 从警告中可以看到，eureka认为虽然收不到实例的心跳，但它认为实例还是健康的，eureka会保护这些实例，不会把它们从注册表中删掉
 - 该保护机制的目的是避免网络连接故障，在发生网络故障时，微服务和注册中心之间无法正常通信，但服务本身是健康的，不应该注销该服务，如果eureka因网络故障而把微服务误删了，那即使网络恢复了，该微服务也不会重新注册到eureka server了，因为只有在微服务启动的时候才会发起注册请求，后面只会发送心跳和服务列表请求，这样的话，该实例虽然是运行着，但永远不会被其它服务所感知。所以，eureka server在短时间内丢失过多的客户端心跳时，会进入自我保护模式，该模式下，eureka会保护注册表中的信息，不在注销任何微服务，当网络故障恢复后，eureka会自动退出保护模式。自我保护模式可以让集群更加健壮
 - 但是我们在开发测试阶段，需要频繁地重启发布，如果触发了保护机制，则旧的服务实例没有被删除，这时请求有可能跑到旧的实例中，而该实例已经关闭了，这就导致请求错误，影响开发测试。所以，在开发测试阶段，我们可以把自我保护模式关闭，只需在eureka server配置文件中加上如下配置即可：`eureka.server.enable-self-preservation=false`【不推荐关闭自我保护机制】
 
-详细内容可以参考下这篇博客内容：https://blog.csdn.net/wudiyong22/article/details/80827594
-
 ### 4. 注册进来的微服务，获取一些消息（团队开发会用到）
 
-**DeptController.java**新增方法
+`DeptController.java`新增方法
 
 ```java
 /**
@@ -766,12 +764,11 @@ public Object discovery() {
     }
     return this.client;
 }
-12345678910111213141516171819202122232425262728
 ```
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521130913485.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
 
-主启动类中加入@EnableDiscoveryClient 注解
+主启动类中加入`@EnableDiscoveryClient` 注解
 
 ```java
 @SpringBootApplication
@@ -782,24 +779,25 @@ public Object discovery() {
 public class DeptProvider_8001 {
     ...
 }
-12345678
 ```
 
-结果如图：
+启动项目，访问`/dept/discovery`结果如图：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201120101109857.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421082004744](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421082004744.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131103616.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+控制台输出的信息：
+
+![image-20220421082040469](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421082040469.png)
 
 ## 5.4 Eureka：集群环境配置
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201120102037473.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421083055071](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421083055071.png)
 
 ### 1.初始化
 
-新建springcloud-eureka-7002、springcloud-eureka-7003 模块
+新建`springcloud-eureka-7002`、`springcloud-eureka-7003` 模块
 
-1.为pom.xml添加依赖 (与springcloud-eureka-7001相同)
+1、为pom.xml添加依赖 (与springcloud-eureka-7001相同)
 
 ```xml
 <!--导包~-->
@@ -817,14 +815,13 @@ public class DeptProvider_8001 {
         <artifactId>spring-boot-devtools</artifactId>
     </dependency>
 </dependencies>
-123456789101112131415
 ```
 
-2.application.yml配置(与springcloud-eureka-7001相同)
+2、`application.yml`配置，只需改端口号(与springcloud-eureka-7001相同)
 
 ```yml
 server:
-  port: 7003
+  port: 7002
 
 # Eureka配置
 eureka:
@@ -834,9 +831,8 @@ eureka:
     register-with-eureka: false # 表示是否向 Eureka 注册中心注册自己(这个模块本身是服务器,所以不需要)
     fetch-registry: false # fetch-registry如果为false,则表示自己为注册中心
     service-url: # 监控页面~
-      # 重写Eureka的默认端口以及访问路径 --->http://localhost:7001/eureka/
+      # 重写Eureka的默认端口以及访问路径 --->http://localhost:7003/eureka/
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-12345678910111213
 ```
 
 3.主启动类(与springcloud-eureka-7001相同)
@@ -849,77 +845,82 @@ eureka:
  */
 @SpringBootApplication
 // @EnableEurekaServer 服务端的启动类，可以接受别人注册进来~
-public class EurekaServer_7003 {
+public class EurekaServer_7002 {
     public static void main(String[] args) {
-        SpringApplication.run(EurekaServer_7003.class,args);
+        SpringApplication.run(EurekaServer_7002.class,args);
     }
 }
-123456789101112
 ```
 
 ### 2.集群成员相互关联
 
 配置一些自定义本机名字，找到本机hosts文件并打开
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131127278.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421093923033](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421093923033.png)
 
-在hosts文件最后加上，要访问的本机名称，默认是localhost
+在hosts文件最后加上，要访问的本机名称，默认是localhost；无论访问`eureka7001.com`还是7002/ 7003，实际上都是访问localhost，这里只是做个演示。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131141804.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+若保存时无权限，可以拖到桌面修改好后再拖回该文件夹
 
-修改application.yml的配置，如图为springcloud-eureka-7001配置，springcloud-eureka-7002/springcloud-eureka-7003同样分别修改为其对应的名称即可
+![image-20220421083801069](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421083801069.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/202005211312020.png#pic_center)
+修改`application.yml`的配置，如图为`springcloud-eureka-7001`配置，`springcloud-eureka-7002/springcloud-eureka-7003`同样分别修改为其对应的名称即可：
 
-在集群中使springcloud-eureka-7001关联springcloud-eureka-7002、springcloud-eureka-7003
+![image-20220421084119088](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421084119088.png)
 
-完整的springcloud-eureka-7001下的application.yml如下
+在集群中使`springcloud-eureka-7001`关联`springcloud-eureka-7002`和`springcloud-eureka-7003`
+
+完整的`springcloud-eureka-7001`下的`application.yml`如下
 
 ```yml
 server:
   port: 7001
 
-#Eureka配置
+# Eureka配置
 eureka:
   instance:
-    hostname: eureka7001.com #Eureka服务端的实例名字
+    # Eureka服务端的示例名字
+    hostname: eureka7001.com
   client:
-    register-with-eureka: false #表示是否向 Eureka 注册中心注册自己(这个模块本身是服务器,所以不需要)
-    fetch-registry: false #fetch-registry如果为false,则表示自己为注册中心
-    service-url: #监控页面~
-      #重写Eureka的默认端口以及访问路径 --->http://localhost:7001/eureka/
-      # 单机： defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-      # 集群（关联）：7001关联7002、7003
+    # 是否向Eureka注册中心注册自己（这个模块本身就是服务器，选择false）
+    register-with-eureka: false
+    # 表示自己为注册中心，客户端的fetch-registry改为true
+    fetch-registry: false
+    service-url:    # 监控页面，重写Eureka的默认端口和访问路径
+      # 单机：defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      # 集群：7001关联7002和7003
       defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
-123456789101112131415
 ```
 
-同时在集群中使springcloud-eureka-7002关联springcloud-eureka-7001、springcloud-eureka-7003
+同时在集群中使`springcloud-eureka-7002`关联`springcloud-eureka-7001`和`springcloud-eureka-7003`
 
-完整的springcloud-eureka-7002下的application.yml如下
+完整的`springcloud-eureka-7002`下的`application.yml`如下
 
 ```yml
 server:
   port: 7002
 
-#Eureka配置
+# Eureka配置
 eureka:
   instance:
-    hostname: eureka7002.com #Eureka服务端的实例名字
+    # Eureka服务端的示例名字
+    hostname: eureka7002.com
   client:
-    register-with-eureka: false #表示是否向 Eureka 注册中心注册自己(这个模块本身是服务器,所以不需要)
-    fetch-registry: false #fetch-registry如果为false,则表示自己为注册中心
-    service-url: #监控页面~
-      #重写Eureka的默认端口以及访问路径 --->http://localhost:7001/eureka/
-      # 单机： defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-      # 集群（关联）：7002关联7001、7003
+    # 是否向Eureka注册中心注册自己（这个模块本身就是服务器，选择false）
+    register-with-eureka: false
+    # 表示自己为注册中心，客户端的fetch-registry改为true
+    fetch-registry: false
+    service-url: # 监控页面，重写Eureka的默认端口和访问路径
+      # 单机：defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      # 集群：7002关联7001和7003
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7003.com:7003/eureka/
-123456789101112131415
 ```
 
-springcloud-eureka-7003配置方式同理可得.
+`springcloud-eureka-7003`配置方式同理
 
-通过springcloud-provider-dept-8001下的yml配置文件，修改**Eureka配置：配置服务注册中心地址**
+
+
+通过`springcloud-provider-dept-8001`下的yml配置文件，修改**Eureka配置：配置服务注册中心地址**
 
 ```yml
 # Eureka配置：配置服务注册中心地址
@@ -930,20 +931,21 @@ eureka:
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
   instance:
     instance-id: springcloud-provider-dept-8001 #修改Eureka上的默认描述信息
-12345678
 ```
 
-这样模拟集群就搭建号了，就可以把一个项目挂载到三个服务器上了
+这样模拟集群就搭建好了，就可以把一个项目挂载到三个服务器上了，这样就算其中一台服务器崩了，其他的还可以正常使用。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131237217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+访问以下7002，可以看到其关联了7001和7003：
+
+![image-20220421090157089](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421090157089.png)
 
 ## 5.5 对比和Zookeeper区别
 
 ### **1. 回顾CAP原则**
 
-RDBMS (MySQL\Oracle\sqlServer) ===> ACID
+RDBMS (MySQL\Oracle\sqlServer) ===> ACID原则
 
-NoSQL (Redis\MongoDB) ===> CAP
+NoSQL (Redis\MongoDB) ===> CAP原则
 
 ### **2. ACID是什么？**
 
@@ -958,7 +960,7 @@ NoSQL (Redis\MongoDB) ===> CAP
 - A (Availability) 可用性
 - P (Partition tolerance) 分区容错性
 
-CAP的三进二：CA、AP、CP
+CAP的三进二：CA、AP、CP；不可能三则兼得！
 
 ### **4. CAP理论的核心**
 
@@ -975,11 +977,11 @@ CAP的三进二：CA、AP、CP
 - Zookeeper 保证的是 CP —> 满足一致性，分区容错的系统，通常性能不是特别高
 - Eureka 保证的是 AP —> 满足可用性，分区容错的系统，通常可能对一致性要求低一些
 
-**Zookeeper保证的是CP**
+**Zookeeper保证的是CP**：
 
  当向注册中心查询服务列表时，我们可以容忍注册中心返回的是几分钟以前的注册信息，但不能接收服务直接down掉不可用。也就是说，**服务注册功能对可用性的要求要高于一致性**。但zookeeper会出现这样一种情况，当master节点因为网络故障与其他节点失去联系时，剩余节点会重新进行leader选举。问题在于，选举leader的时间太长，30-120s，且选举期间整个zookeeper集群是不可用的，这就导致在选举期间注册服务瘫痪。在云部署的环境下，因为网络问题使得zookeeper集群失去master节点是较大概率发生的事件，虽然服务最终能够恢复，但是，漫长的选举时间导致注册长期不可用，是不可容忍的。
 
-**Eureka保证的是AP**
+**Eureka保证的是AP**：
 
  Eureka看明白了这一点，因此在设计时就优先保证可用性。**Eureka各个节点都是平等的**，几个节点挂掉不会影响正常节点的工作，剩余的节点依然可以提供注册和查询服务。而Eureka的客户端在向某个Eureka注册时，如果发现连接失败，则会自动切换至其他节点，只要有一台Eureka还在，就能保住注册服务的可用性，只不过查到的信息可能不是最新的，除此之外，Eureka还有之中自我保护机制，如果在15分钟内超过85%的节点都没有正常的心跳，那么Eureka就认为客户端与注册中心出现了网络故障，此时会出现以下几种情况：
 
@@ -998,9 +1000,9 @@ CAP的三进二：CA、AP、CP
 - Spring Cloud Ribbon 是基于Netflix Ribbon 实现的一套**客户端负载均衡的工具**。
 - 简单的说，Ribbon 是 Netflix 发布的开源项目，主要功能是提供客户端的软件负载均衡算法，将 Netflix 的中间层服务连接在一起。Ribbon 的客户端组件提供一系列完整的配置项，如：连接超时、重试等。简单的说，就是在配置文件中列出 LoadBalancer (简称LB：负载均衡) 后面所有的及其，Ribbon 会自动的帮助你基于某种规则 (如简单轮询，随机连接等等) 去连接这些机器。我们也容易使用 Ribbon 实现自定义的负载均衡算法！
 
-> Ribbon能干嘛？
+> Ribbon能干嘛
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121103107791.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421092144719](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421092144719.png)
 
 - LB，即负载均衡 (LoadBalancer) ，在微服务或分布式集群中经常用的一种应用。
 - 负载均衡简单的说就是将用户的请求平摊的分配到多个服务上，从而达到系统的HA (高用)。
@@ -1008,14 +1010,14 @@ CAP的三进二：CA、AP、CP
 - Dubbo、SpringCloud 中均给我们提供了负载均衡，**SpringCloud 的负载均衡算法可以自定义**。
 - 负载均衡简单分类：
   - 集中式LB
-    - 即在服务的提供方和消费方之间使用独立的LB设施，如**Nginx(反向代理服务器)**，由该设施负责把访问请求通过某种策略转发至服务的提供方！
+    - 即在服务的提供方和消费方之间使用独立的LB设施，如**Nginx(反向代理服务器)**，由该设施负责把访问请求通过某种策略转发至服务的提供方
   - 进程式 LB
     - 将LB逻辑集成到消费方，消费方从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选出一个合适的服务器。
-    - **Ribbon 就属于进程内LB**，它只是一个类库，集成于消费方进程，消费方通过它来获取到服务提供方的地址！
+    - **Ribbon 就属于进程内LB**，它只是一个类库，集成于消费方进程，消费方通过它来获取到服务提供方的地址
 
 ## 6.2 集成Ribbon
 
-**springcloud-consumer-dept-80**向pom.xml中添加Ribbon和Eureka依赖
+`springcloud-consumer-dept-80`向`pom.xml`中添加Ribbon和Eureka依赖
 
 ```xml
 <!--Ribbon-->
@@ -1030,25 +1032,26 @@ CAP的三进二：CA、AP、CP
     <artifactId>spring-cloud-starter-eureka</artifactId>
     <version>1.4.6.RELEASE</version>
 </dependency>
-123456789101112
 ```
 
-在application.yml文件中配置Eureka
+在`application.yml`文件中配置Eureka
 
 ```yml
+server:
+  port: 80
+
 # Eureka配置
 eureka:
   client:
-    register-with-eureka: false # 不向 Eureka注册自己
-    service-url: # 从三个注册中心中随机取一个去访问
+    register-with-eureka: false   # 不往Eureka注册自己(消费者只管从服务者拿服务)
+    service-url:
+      # 从三个注册中心中随机访问1个
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
-123456
 ```
 
-主启动类加上@EnableEurekaClient注解，开启Eureka
+主启动类加上`@EnableEurekaClient`注解，开启Eureka
 
 ```java
-//Ribbon 和 Eureka 整合以后，客户端可以直接调用，不用关心IP地址和端口号
 @SpringBootApplication
 @EnableEurekaClient //开启Eureka 客户端
 public class DeptConsumer_80 {
@@ -1056,123 +1059,124 @@ public class DeptConsumer_80 {
         SpringApplication.run(DeptConsumer_80.class, args);
     }
 }
-12345678
 ```
 
-自定义Spring配置类：ConfigBean.java 配置负载均衡实现RestTemplate
+自定义Spring配置类：`ConfigBean.java` 配置负载均衡实现RestTemplate
 
 ```java
 @Configuration
-public class ConfigBean {//@Configuration -- spring  applicationContext.xml
-
-    @LoadBalanced //配置负载均衡实现RestTemplate
+public class ConfigBean {
     @Bean
+    @LoadBalanced       // 配置负载均衡实现RestTemplate
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
 }
-123456789
 ```
 
-修改conroller：DeptConsumerController.java
+修改conroller：`DeptConsumerController.java`
 
 ```java
-//Ribbon:我们这里的地址，应该是一个变量，通过服务名来访问
-//private static final String REST_URL_PREFIX = "http://localhost:8001";
+// 服务提供者地址前缀
+// private static final String REST_URL_PREFIX = "http://localhost:8001";
+
+// Ribbon：这里的地址应该是一个变量，通过服务名(Application)来访问
+// Ribbon 和 Eureka 整合以后，客户端可以直接调用，不用关心IP地址和端口号
 private static final String REST_URL_PREFIX = "http://SPRINGCLOUD-PROVIDER-DEPT";
-123
 ```
+
+到此Ribbon的集成就配置完了，Ribbon 和 Eureka 整合以后，客户端可以直接调用，**不用关心IP地址和端口号**！
 
 ## 6.3 使用Ribbon实现负载均衡
 
 流程图：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131315626.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421095546335](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421095546335.png)
 
-1.新建两个服务提供者Moudle：springcloud-provider-dept-8003、springcloud-provider-dept-8002
+1、新建两个服务提供者Moudle：`springcloud-provider-dept-8002`、`springcloud-provider-dept-8003`
 
-2.参照springcloud-provider-dept-8001 依次为另外两个Moudle添加pom.xml依赖 、resourece下的mybatis和application.yml配置，Java代码
+2、参照`springcloud-provider-dept-8001` 依次为另外两个Moudle添加`pom.xml`依赖 、resourece下的`mybatis`(注意修改mapper.xml中的数据库名)和`application.yml`(修改相应的db和端口等)配置，Java代码以及数据库(数据库的db_source不同)
 
-3.启动所有服务测试(根据自身电脑配置决定启动服务的个数)，访问http://eureka7001.com:7002/查看结果
+![image-20220421101113997](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421101113997.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131332466.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+
+
+3、启动所有服务测试，访问http://eureka7002.com:7002/查看结果：
+
+![image-20220421102035164](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421102035164.png)
 
 测试访问http://localhost/consumer/dept/list 这时候随机访问的是服务提供者8003
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121115756709.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421103010483](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421103010483.png)
 
 再次访问http://localhost/consumer/dept/list这时候随机的是服务提供者8001
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121115944955.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421103024450](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421103024450.png)
 
 以上这种**每次访问http://localhost/consumer/dept/list随机访问集群中某个服务提供者，这种情况叫做轮询**，轮询算法在SpringCloud中可以自定义。
 
-**如何切换或者自定义规则呢？**
+**如何切换或者自定义规则呢**?
 
-在springcloud-provider-dept-80模块下的ConfigBean中进行配置，切换使用不同的规则
+在`springcloud-provider-dept-80`模块下的`ConfigBean`中新增配置，切换使用不同的规则
 
 ```java
 @Configuration
-public class ConfigBean {//@Configuration -- spring  applicationContext.xml
+public class ConfigBean {
 
     /**
-     * IRule:
-     * RoundRobinRule 轮询策略
-     * RandomRule 随机策略
-     * AvailabilityFilteringRule ： 会先过滤掉，跳闸，访问故障的服务~，对剩下的进行轮询~
-     * RetryRule ： 会先按照轮询获取服务~，如果服务获取失败，则会在指定的时间内进行，重试
+     * IRule中一些规则如下：
+     * RoundRobinRule： 轮询策略(默认)
+     * RandomRule： 随机策略
+     * AvailabilityFilteringRule： 会先过滤掉，跳闸，访问故障的服务~，对剩下的进行轮询~
+     * RetryRule： 会先按照轮询获取服务~，如果服务获取失败，则会在指定的时间内进行，重试
      */
     @Bean
     public IRule myRule() {
-        return new RandomRule();//使用随机策略
-        //return new RoundRobinRule();//使用轮询策略
-        //return new AvailabilityFilteringRule();//使用轮询策略
-        //return new RetryRule();//使用轮询策略
+        return new RandomRule();	//使用随机策略
+        //return new RoundRobinRule();	//使用轮询策略
+        //return new AvailabilityFilteringRule();	//使用轮询策略
+        //return new RetryRule();	//使用轮询策略
     }
 }
-123456789101112131415161718
 ```
 
-也可以自定义规则，在myRule包下自定义一个配置类MyRule.java，注意：**该包不要和主启动类所在的包同级，要跟启动类所在包同级**：
+这样规则就切换成功了！
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131456478.png#pic_center)
+> 自定义规则
 
-MyRule.java
+也可以自定义规则，在myrule包下自定义一个配置类`MyRule.java`，注意：**该包不要和主启动类所在的包同级**：
+
+![image-20220421104048847](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421104048847.png)
+
+`MyRule.java`：
 
 ```java
-/**
- * @Auther: csp1999
- * @Date: 2020/05/19/11:58
- * @Description: 自定义规则
- */
 @Configuration
 public class MyRule {
-
     @Bean
-    public IRule myRule(){
-        return new MyRandomRule();//默认是轮询RandomRule,现在自定义为自己的
+    // 注意：这里的方法名不要和ConfigBean类中的规则名重合
+    public IRule myRandomRule() {
+        return new MyRandomRule();  // 默认是轮询RandomRule, 现在自定义为自己的
     }
 }
-12345678910111213
 ```
 
 主启动类开启负载均衡并指定自定义的MyRule配置类
 
 ```java
-//Ribbon 和 Eureka 整合以后，客户端可以直接调用，不用关心IP地址和端口号
+// Ribbon 和 Eureka 整合以后，客户端可以直接调用，不用关心IP地址和端口号
 @SpringBootApplication
 @EnableEurekaClient
-//在微服务启动的时候就能加载自定义的Ribbon类(自定义的规则会覆盖原有默认的规则)
-@RibbonClient(name = "SPRINGCLOUD-PROVIDER-DEPT",configuration = MyRule.class)//开启负载均衡,并指定自定义的规则
+// 在微服务启动的时候就能加载自定义的Ribbon类(自定义的规则会覆盖原有默认的规则)
+@RibbonClient(name = "SPRINGCLOUD-PROVIDER-DEPT", configuration = MyRule.class)		//开启负载均衡,并指定自定义的规则
 public class DeptConsumer_80 {
     public static void main(String[] args) {
         SpringApplication.run(DeptConsumer_80.class, args);
     }
 }
-12345678910
 ```
 
-自定义的规则(这里我们参考Ribbon中默认的规则代码自己稍微改动)：MyRandomRule.java
+自定义的规则(参考Ribbon中默认的规则代码自己稍微改动)：`MyRandomRule.java`
 
 ```java
 public class MyRandomRule extends AbstractLoadBalancerRule {
@@ -1180,12 +1184,13 @@ public class MyRandomRule extends AbstractLoadBalancerRule {
     /**
      * 每个服务访问5次则换下一个服务(总共3个服务)
      * <p>
-     * total=0,默认=0,如果=5,指向下一个服务节点
-     * index=0,默认=0,如果total=5,index+1
+     * total=0, 默认=0, 如果=5, 指向下一个服务节点
+     * index=0, 默认=0, 如果total=5, index+1(换下一个服务)
      */
-    private int total = 0;//被调用的次数
-    private int currentIndex = 0;//当前是谁在提供服务
+    private int total = 0;		// 被调用的次数
+    private int currentIndex = 0;		// 当前是谁在提供服务
 
+    // 镇压警告注解
     //@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE")
     public Server choose(ILoadBalancer lb, Object key) {
         if (lb == null) {
@@ -1209,21 +1214,23 @@ public class MyRandomRule extends AbstractLoadBalancerRule {
                 return null;
             }
 
-            //int index = chooseRandomInt(serverCount);//生成区间随机数
-            //server = upList.get(index);//从或活着的服务中,随机获取一个
+            // int index = chooseRandomInt(serverCount);	//生成区间随机数
+            // server = upList.get(index);	//从或活着的服务中,随机获取一个
 
             //=====================自定义代码=========================
 
+            // total小于5，则一直使用这个服务
             if (total < 5) {
                 server = upList.get(currentIndex);
                 total++;
-            } else {
+            } else {	// 否则total置为0，当前提供的服务者++，切换下一个服务
                 total = 0;
                 currentIndex++;
-                if (currentIndex > upList.size()) {
+                // 如果当前服务者大于等于存活的服务者数量，则将当前服务者选为0，重新轮回
+                if (currentIndex >= upList.size()) {
                     currentIndex = 0;
                 }
-                server = upList.get(currentIndex);//从活着的服务中,获取指定的服务来进行操作
+                server = upList.get(currentIndex);	// 从活着的服务中, 获取指定的服务来进行操作
             }
             
             //======================================================
@@ -1261,8 +1268,9 @@ public class MyRandomRule extends AbstractLoadBalancerRule {
         // TODO Auto-generated method stub
     }
 }
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586
 ```
+
+重启项目，发现每访问5此切换下一个服务，自定义规则成功。
 
 # 7. Feign 负载均衡(基于服务端)
 
@@ -1272,12 +1280,13 @@ Feign是声明式Web Service客户端，它让微服务之间的调用变得更�
 
 **只需要创建一个接口，然后添加注解即可~**
 
-Feign，主要是社区版，大家都习惯面向接口编程。这个是很多开发人员的规范。调用微服务访问两种方法
+Feign，主要是社区版，大家都习惯面向接口编程。这个是很多开发人员的规范。调用微服务访问两种方法：
 
-1. 微服务名字 【ribbon】
-2. 接口和注解 【feign】
+- 微服务名字 【Ribbon】
 
-**Feign能干什么？**
+- 接口和注解 【Feign】
+
+**Feign能干什么**？
 
 - Feign旨在使编写Java Http客户端变得更容易
 - 前面在使用**Ribbon** + **RestTemplate**时，利用**RestTemplate**对Http请求的封装处理，形成了一套模板化的调用方法。但是在实际开发中，由于对服务依赖的调用可能不止一处，往往一个接口会被多处调用，所以通常都会针对每个微服务自行封装一个客户端类来包装这些依赖服务的调用。所以，**Feign**在此基础上做了进一步的封装，由他来帮助我们定义和实现依赖服务接口的定义，在Feign的实现下，我们只需要创建一个接口并使用注解的方式来配置它 (类似以前Dao接口上标注Mapper注解，现在是一个微服务接口上面标注一个Feign注解)，即可完成对服务提供方的接口绑定，简化了使用Spring Cloud Ribbon 时，自动封装服务调用客户端的开发量。
@@ -1288,11 +1297,7 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
 
 ## 7.2 Feign的使用步骤
 
-1. 创建springcloud-consumer-fdept-feign模块
-
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121123410804.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
-
-   拷贝springcloud-consumer-dept-80模块下的pom.xml，resource，以及java代码到springcloud-consumer-feign模块，并添加feign依赖。
+1. 创建`springcloud-consumer-fdept-feign`模块；拷贝`springcloud-consumer-dept-80`模块下的`pom.xml`，resource，以及java代码到`springcloud-consumer-feign`模块，并添加feign依赖。
 
    ```xml
    <!--Feign的依赖-->
@@ -1301,80 +1306,55 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
        <artifactId>spring-cloud-starter-feign</artifactId>
        <version>1.4.6.RELEASE</version>
    </dependency>
-   123456
    ```
-
-   通过**Ribbon**实现：—原来的controller：**DeptConsumerController.java**
-
+   
+   之前通过**Ribbon**实现：原来的controller：`DeptConsumerController.java`
+   
    ```java
-   /**
-    * @Auther: csp1999
-    * @Date: 2020/05/17/22:44
-    * @Description:
-    */
    @RestController
    public class DeptConsumerController {
-   
        /**
-        * 理解：消费者，不应该有service层~
-        * RestTemplate .... 供我们直接调用就可以了！ 注册到Spring中
-        * (地址：url, 实体：Map ,Class<T> responseType)
-        * <p>
+        * 理解：消费者，不应该有service层
+        *
+        * RestTemplate...  供我们直接调用即可，注册到Spring容器中就可以使用了
+        * 参数：(url, 实体: Map, Class<T> responseType)
         * 提供多种便捷访问远程http服务的方法，简单的Restful服务模板~
         */
+   
        @Autowired
        private RestTemplate restTemplate;
    
-       /**
-        * 服务提供方地址前缀
-        * <p>
-        * Ribbon:我们这里的地址，应该是一个变量，通过服务名来访问
-        */
-   //    private static final String REST_URL_PREFIX = "http://localhost:8001";
+       // 服务提供者地址前缀
+       // private static final String REST_URL_PREFIX = "http://localhost:8001";
+   
+       // Ribbon：这里的地址应该是一个变量，通过服务名(Application)来访问
+       // Ribbon 和 Eureka 整合以后，客户端可以直接调用，不用关心IP地址和端口号
        private static final String REST_URL_PREFIX = "http://SPRINGCLOUD-PROVIDER-DEPT";
    
-       /**
-        * 消费方添加部门信息
-        * @param dept
-        * @return
-        */
        @RequestMapping("/consumer/dept/add")
-       public boolean add(Dept dept) {
-           // postForObject(服务提供方地址(接口),参数实体,返回类型.class)
+       public boolean add(@RequestBody Dept dept) {
+           // postForObject(服务提供者地址(接口), 参数实体, 返回类型.class)
            return restTemplate.postForObject(REST_URL_PREFIX + "/dept/add", dept, Boolean.class);
        }
    
-       /**
-        * 消费方根据id查询部门信息
-        * @param id
-        * @return
-        */
        @RequestMapping("/consumer/dept/get/{id}")
        public Dept get(@PathVariable("id") Long id) {
-           // getForObject(服务提供方地址(接口),返回类型.class)
+           // getForObject(服务提供者地址(接口)， 返回类型.class)
            return restTemplate.getForObject(REST_URL_PREFIX + "/dept/get/" + id, Dept.class);
        }
    
-       /**
-        * 消费方查询部门信息列表
-        * @return
-        */
        @RequestMapping("/consumer/dept/list")
        public List<Dept> list() {
            return restTemplate.getForObject(REST_URL_PREFIX + "/dept/list", List.class);
        }
+   
+   
    }
-   123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657
    ```
-
-   通过**Feign**实现：—改造后controller：**DeptConsumerController.java**
-
+   
+   通过**Feign**实现：改造后controller：`DeptConsumerController.java`
+   
    ```java
-   /**
-    * @Auther: csp1999
-    * @Date: 2020/05/17/22:44
-    * @Description:
-    */
    @RestController
    public class DeptConsumerController {
    
@@ -1387,7 +1367,7 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
         * @return
         */
        @RequestMapping("/consumer/dept/add")
-       public boolean add(Dept dept) {
+       public boolean add(@RequestBody Dept dept) {
            return deptClientService.addDept(dept);
        }
    
@@ -1398,7 +1378,7 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
         */
        @RequestMapping("/consumer/dept/get/{id}")
        public Dept get(@PathVariable("id") Long id) {
-          return deptClientService.queryById(id);
+           return deptClientService.queryById(id);
        }
    
        /**
@@ -1409,37 +1389,33 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
        public List<Dept> list() {
            return deptClientService.queryAll();
        }
+   
    }
-   12345678910111213141516171819202122232425262728293031323334353637383940
    ```
-
-   Feign和Ribbon二者对比，前者显现出面向接口编程特点，代码看起来更清爽，而且Feign调用方式更符合我们之前在做SSM或者SprngBoot项目时，Controller层调用Service层的编程习惯！
-
+   
+   Feign和Ribbon二者对比：前者显现出面向接口编程特点，代码看起来更清爽，而且Feign调用方式更符合我们之前在做SSM或者SprngBoot项目时，Controller层调用Service层的编程习惯。
+   
    **主配置类**：
-
+   
    ```java
-   /**
-    * @Auther: csp1999
-    * @Date: 2020/05/17/22:47
-    * @Description:
-    */
    @SpringBootApplication
-   @EnableEurekaClient
-   // feign客户端注解,并指定要扫描的包以及配置接口DeptClientService
-   @EnableFeignClients(basePackages = {"com.haust.springcloud"})
-   // 切记不要加这个注解，不然会出现404访问不到
-   //@ComponentScan("com.haust.springcloud")
+   @EnableEurekaClient     // 开启Eureka客户端
+   // feign客户端注解, 并指定要扫描的包以及配置接口DeptClientService
+   @EnableFeignClients(basePackages = {"com.run.springcloud"})
+   // 切记不要加这个注解，不然会出现404访问不到；SpringBoo已经自动帮我们扫描了
+   //@ComponentScan("com.run.springcloud")
    public class FeignDeptConsumer_80 {
+   
        public static void main(String[] args) {
            SpringApplication.run(FeignDeptConsumer_80.class, args);
        }
+   
    }
-   12345678910111213141516
    ```
-
+   
 2. 改造springcloud-api模块
 
-   pom.xml添加feign依赖
+   `pom.xml`添加feign依赖
 
    ```xml
    <!--Feign的依赖-->
@@ -1448,37 +1424,37 @@ Feign，主要是社区版，大家都习惯面向接口编程。这个是很多
        <artifactId>spring-cloud-starter-feign</artifactId>
        <version>1.4.6.RELEASE</version>
    </dependency>
-   123456
    ```
-
-   新建service包，并新建DeptClientService.java接口，
-
+   
+   新建service包，并新建`DeptClientService.java`接口
+   
    ```java
    // @FeignClient:微服务客户端注解,value:指定微服务的名字,这样就可以使Feign客户端直接找到对应的微服务
    @FeignClient(value = "SPRINGCLOUD-PROVIDER-DEPT")
+   @Service
    public interface DeptClientService {
    
+       @GetMapping("/dept/add")
+       boolean addDept(@RequestBody Dept dept);
+   
        @GetMapping("/dept/get/{id}")
-       public Dept queryById(@PathVariable("id") Long id);
+       Dept queryById(@PathVariable("id") Long id);
    
        @GetMapping("/dept/list")
-       public Dept queryAll();
+       List<Dept> queryAll();
    
-       @GetMapping("/dept/add")
-       public Dept addDept(Dept dept);
    }
-   12345678910111213
    ```
 
 ## 7.3 Feign和Ribbon如何选择？
 
-**根据个人习惯而定，如果喜欢REST风格使用Ribbon；如果喜欢社区版的面向接口风格使用Feign.**
+**根据个人习惯而定，如果喜欢REST风格使用Ribbon；如果喜欢社区版的面向接口风格使用Feign**
 
 Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，为了满足一些开发者习惯的接口调用习惯！
 
-下面我们关闭springcloud-consumer-dept-80 这个服务消费方，换用springcloud-consumer-dept-feign(端口还是80) 来代替：(依然可以正常访问，就是调用方式相比于Ribbon变化了)
+下面我们关闭`springcloud-consumer-dept-80` 这个服务消费方，换用`springcloud-consumer-dept-feign`(端口还是80) 来代替：(依然可以正常访问，就是调用方式相比于Ribbon变化了)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121141340243.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220421121043246](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421121043246.png)
 
 # 8. Hystrix 服务熔断
 

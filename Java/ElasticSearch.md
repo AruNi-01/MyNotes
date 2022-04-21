@@ -10,8 +10,6 @@
 
 无独有偶，一位名叫Doug Cutting的美国工程师，也迷上了搜索引擎。他做了一个用于文本搜索的函数库（姑且理解为软件的功能组件），命名为[Lucene](https://so.csdn.net/so/search?q=Lucene&spm=1001.2101.3001.7020)。
 
-![image-20210201212452334](https://img-blog.csdnimg.cn/img_convert/b2c0877691440e35dd4f89f08b2074f0.png)
-
 Lucene是用JAVA写成的，目标是为各种中小型应用软件加入[全文检索](https://so.csdn.net/so/search?q=全文检索&spm=1001.2101.3001.7020)功能。因为好用而且开源(代码公开），非常受程序员们的欢迎。
 
 早期的时候，这个项目被发布在Doug Cutting的个人网站和SourceForge (一个开源软件网站)。后来，2001年底，Lucene成为Apache软件基金会jakarta项目的一个子项目。
@@ -277,11 +275,26 @@ TO forever, study every day, good good up 	  # 文档2包含的内容
 
 为了创建倒排索引，我们首先要将每个文档拆分成独立的词(或称为词条或者tokens)，然后创建一个包含所有不重复的词条的排序列表，然后列出每个词条出现在哪个文档：
 
-![image-20220420212452836](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420212452836.png)
+| term    | doc_1 | doc_2 |
+| ------- | ----- | ----- |
+| Study   | √     | x     |
+| To      | x     | x     |
+| every   | √     | √     |
+| forever | √     | √     |
+| day     | √     | √     |
+| study   | x     | √     |
+| good    | √     | √     |
+| every   | √     | √     |
+| to      | √     | x     |
+| up      | √     | √     |
 
 现在，我们试图搜索to forever，只需要查看包含每个词条的文档
 
-![image-20220420212516079](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420212516079.png)
+| term    | doc_1 | doc_2 |
+| ------- | ----- | ----- |
+| to      | √     | x     |
+| forever | √     | √     |
+| total   | 2     | 1     |
 
 两个文档都匹配，但是第一个文档比第二个匹配程度更高。如果没有别的条件，现在，这两个包含关键字的文档都将返回。
 
@@ -301,268 +314,314 @@ elasticsearch的索引和Lucene的索引对比：
 
 > 什么是IK分词器?
 
-分词︰即把一段中文或者别的划分成一个个的关键字，我们在搜索时候会把自己的信息进行分词，会把数据库中或者索引库中的数据进行分词，然后进行一个匹配操作，默认的中文分词是将每个字看成一个词，比如““我爱狂神"会被分为"我”“爱”“狂”"神”，这显然是不符合要求的，所以我们需要安装中文分词器ik来解决这个问题。
+分词︰即把一段中文或者别的划分成一个个的关键字，我们在搜索时候会把自己的信息进行分词，会把数据库中或者索引库中的数据进行分词，然后进行一个匹配操作，默认的中文分词是将每个字看成一个词，比如 "我爱狂神" 会被分为 "我” “爱” “狂” "神”，这显然是不符合要求的，所以我们需要安装中文分词器ik来解决这个问题。
 
-如果要使用中文,建议使用ik分词器
+如果要使用中文，建议使用ik分词器
 
-IK提供了两个分词算法: ik smart和ik_max_word，其中ik_smart为最少切分， ik_max_word为最细粒度划分!一会我们测试!
+IK提供了两个分词算法：
 
-> 1. 安装
+- ik_smart：最少切分
+- ik_max_word：最细粒度划分
+
+> 安装
 
 - 下载https://github.com/medcl/elasticsearch-analysis-ik
 - 下载完毕后,放入我们的ElasticSearch插件中即可
 
-![image-20210202135545804](https://img-blog.csdnimg.cn/img_convert/f116a7fca0e025bd67489a33969a722f.png)
+![image-20220421133609354](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133609354.png)
 
-- 重启观察ES
+重启观察ES
 
-![image-20210202135723462](https://img-blog.csdnimg.cn/img_convert/cb58c640b6988537a7143cdda6a9315e.png)
+![image-20220421133956796](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133956796.png)
 
 可以看到ik分词器被加载
 
-- elasticsearch-plugin可以通过这个命令来查看加载进来的插件
+`elasticsearch-plugin`可以通过这个命令来查看加载进来的插件
 
-![image-20210202135921650](https://img-blog.csdnimg.cn/img_convert/438dd782a4c50b800b481a60ce261d9e.png)
+![image-20220421133917091](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133917091.png)
 
-- 使用Kibana测试
+接下来使用Kibana测试
 
 > 查看不同的分词效果
 
-**ik_smart为最少切分**
+**ik_smart为最少切分**：
 
-![image-20210202140607602](https://img-blog.csdnimg.cn/img_convert/beb14ca976c7566b4c0d7ac98c9cc31f.png)
+![image-20220421135031502](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135031502.png)
 
-**ik_max_word为最细粒度划分**,**穷尽词库的可能**
+**ik_max_word为最细粒度划分**，**穷尽词库的可能**
 
-![image-20210202140734273](https://img-blog.csdnimg.cn/img_convert/7f50eda4e2e45a1d55a57508a5b76a49.png)
+![image-20220421135051190](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135051190.png)
 
-> **问题**
+问题：狂神说 被拆开了
 
-![image-20210202141417855](https://img-blog.csdnimg.cn/img_convert/187a36447e31bc9a2ebecacd9c09db6b.png)
+这种需要的词，需要自己加到我们的分词器的字典中
 
-发现问题: 阿灰被拆开了
+> ik分词器中增加自己的配置
 
-这种需要的词,需要自己加到我们的分词器的字典中
+`IKAnalyzer.cfg.xml`为分词的配置文件；
 
-> ik分词器增加自己的配置
+![image-20220421135546218](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135546218.png)
 
-![image-20210202141345602](https://img-blog.csdnimg.cn/img_convert/44fd664485a4679fa7480576ffa485ad.png)
+在自己的配置文件中添加分词：
+
+![image-20220421135717514](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135717514.png)
 
 重启es
 
-![image-20210202142003622](https://img-blog.csdnimg.cn/img_convert/d67b78f0571564d59114bb554f141937.png)
+![image-20220421135857086](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135857086.png)
 
-重启后再次使用
+重启后再次使用：
 
-![image-20210202142102988](https://img-blog.csdnimg.cn/img_convert/aaa2aba49c1788de2d086d6b0898459e.png)
+![image-20220421135926378](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135926378.png)
 
-以后的话,我们需要自己配置分词就在自己定义的dic文件中进行配置即可
+以后的话，我们需要自己配置分词就在自己定义的dic文件中进行配置即可！
 
 # 6. Rest风格说明
 
-一种软件架构风格,而不是标准,只是提供了一组设计原则和约束条件.它主要是用于客户端和服务器交互类的软件.基于这个风格设计的软件可以更简洁,更有层次,更易于实现缓存等机制
+一种软件架构风格，而不是标准，只是提供了一组设计原则和约束条件。
 
-基本Rest命令说明:
+它主要是用于客户端和服务器交互类的软件，基于这个风格设计的软件可以更简洁，更有层次，更易于实现缓存等机制。
 
-![image-20210202160722418](https://img-blog.csdnimg.cn/img_convert/e7c318298e4f0390472bd40a6d5ad078.png)
+基本Rest命令说明：
+
+| method | url地址                                         | 描述                   |
+| ------ | ----------------------------------------------- | ---------------------- |
+| PUT    | localhost:9200/索引名称/类型名称/文档id         | 创建文档(指定文档id)   |
+| POST   | localhost:9200/索引名称/类型名称                | 创建文档（随机文档id） |
+| POST   | localhost:9200/索引名称/类型名称/文档id/_update | 修改文档               |
+| DELETE | localhost:9200/索引名称/类型名称/文档id         | 删除文档               |
+| GET    | localhost:9200/索引名称/类型名称/文档id         | 通过文档id查询文档     |
+| POST   | localhost:9200/索引名称/类型名称/_search        | 查询所有的数据         |
 
 # 7. 关于索引的基本操作
+
+> 添加PUT，查看GET
 
 1. 创建第一个索引
 
    ```bash
    PUT /索引名/~索引名(未来可能取消不写)~/文档id
    {请求体}
-   12
+   
+   PUT /test1/type1/1
+   {
+     "name": "AruNi",
+     "age": "18"
+   }
    ```
+   
+   ![image-20220421161308521](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161308521.png)
+   
+   完成了自动增加了索引，数据也成功的添加了：
+   
+   ![image-20220421161406591](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161406591.png)
+   
+2. 那么name这个字段用不用指定类型呢。毕竟我们关系型数据库时需要指定类型的
 
-   ![image-20210202161418109](https://img-blog.csdnimg.cn/img_convert/c0c120bb7a95fd9b737ffafa2604f05f.png)
+   - 字符串类型：text, keyword
 
-   完成了自动增加了索引!数据也成功的添加了，这就是我说大家在初期可以把它当做数据库学习的原因
+   - 数值类型：long, integer, short, byte, double, float, half float, scaled fload
 
-   ![image-20210202161807824](https://img-blog.csdnimg.cn/img_convert/50f063178c7a8be7b4ed04c0de8ed2e3.png)
+   - 日期类型：date
 
-2. 那么name这个字段用不用指定类型呢.毕竟我们关系型数据库时需要指定类型的啊
+   - 布尔值类型：boolean
 
-   - 字符串类型
-
-     text, keyword
-
-   - 数值类型
-
-     long, integer, short, byte, double, float, half float, scaled fload
-
-   - 日期类型
-
-     date
-
-   - 布尔值类型
-
-     boolean
-
-   - 二进制类型
-
-     binart
+   - 二进制类型：binart
 
    - 等等…
 
-3. 指定字段的类型 ![image-20210202163130128](https://img-blog.csdnimg.cn/img_convert/dc8d7c4623383587a0a32517af2fd2f9.png)
+3. 定义规则，指定字段的类型：
+
+   ![image-20220421161822063](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161822063.png)
 
 4. 获得这个规则信息, 可以通过GET请求获取具体的信息
 
-   ![image-20210202163237781](https://img-blog.csdnimg.cn/img_convert/f8c910850732350ee87e1c81ccce7add.png)
+   ![image-20220421162202958](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162202958.png)
 
-5. 查看默认的信息
+5. 查看默认的信息：
 
-   ![image-20210202163536686](https://img-blog.csdnimg.cn/img_convert/0b65ba6814d6e638ebd97391ccdaad00.png)
+   先新建一个索引，插入一个数据：
 
-   ![image-20210202163627279](https://img-blog.csdnimg.cn/img_convert/527e3c2f44d527f67365a19da6e40a0e.png)
+   ![image-20220421162508309](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162508309.png)
+
+   查看默认的信息：
+
+   ![image-20220421162824161](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162824161.png)
 
    如果自己的文档字段没有指定，那么es就会给我们默认配置字段类型!
 
    **扩展:**
 
-   通过get _cat/ 可以获得当前的很多信息
+   通过`get _cat/xxx` 可以获得当前的很多信息，例如：`GET _cat/indices?v`查看版本信息
 
-   ![image-20210202164041757](https://img-blog.csdnimg.cn/img_convert/c873899b818ba2fbfcb7affd0b5c9c1c.png)
+   ![image-20220421163044142](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/549bf9be6c75d4e17eb806973812124c.png)
 
-> **修改** 提交还是使用PUT即可,然后覆盖值,或用新办法
+   还有很多命令：
 
-曾经的方法 用PUT覆盖
+   ![image-20220421163236095](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421163236095.png)
 
-![image-20210202164323607](https://img-blog.csdnimg.cn/img_convert/4a05a689efb2ba47a3e5f0e95477af0e.png)
+> 修改
 
-目前的方法
+曾经的方法：用PUT覆盖
 
-![image-20210202164549624](https://img-blog.csdnimg.cn/img_convert/d0a9cf9ec02364a86f5cb412b2dde557.png)
+![image-20220421163612519](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421163612519.png)
+
+目前的方法：用POST修改
+
+![image-20220421164004579](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164004579.png)
 
 > 删除索引
 
-![image-20210202164715701](https://img-blog.csdnimg.cn/img_convert/85d1d2a39d06214cf1652ed85848a241.png)
+![image-20220421164214648](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164214648.png)
 
-通过DELETE命令实现删除, 根据你的请求来判断是删除索引还是删除文档记录,
+通过DELETE命令实现删除, 根据你的请求来判断是删除索引还是删除文档记录
 
-使用RESTFUL风格是我们ES推荐大家使用的
+使用RESTFUL风格是ES推荐大家使用的！
 
-# 8. 关于文档的基本操作 🐼
+# 8. 关于文档的基本操作
 
 > 基本操作
 
-1. 添加数据
+和索引的基本操作一致：
+
+1、添加数据
 
 ```java
-PUT ahui/test/1
+PUT run/user/1
 {
-  "name": "ahui",
-  "age": 21,
-  "desc": "愿你拥有大风与烈酒,也能享受孤独与自由",
-  "tags": ["二次元","宅男","码农"]
+  "name": "AruNi",
+  "age": 20,
+  "desc": "正在开心的学习ES",
+  "tags": ["宅", "码农", "篮球"]
 }
-1234567
 ```
 
-![image-20210203101204724](https://img-blog.csdnimg.cn/img_convert/c086630888a86c6f1ff44293d38e8fe3.png)
+![image-20220421164918479](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164918479.png)
 
-1. 获取数据
+添加成功，再随便添加几条，id不能相同；
 
-![image-20210203150531109](https://img-blog.csdnimg.cn/img_convert/5b164769746dc288572d2d8ed2eb1fc6.png)
+2、获取数据
 
-1. 更新数据 PUT(相当于是覆盖了上一条)
+![image-20220421165422474](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165422474.png)
 
-![image-20210203150728077](https://img-blog.csdnimg.cn/img_convert/fc68596b1d6e9cc4b6d61d119babf6a3.png)
+3、更新数据 PUT(相当于是覆盖了上一条)
 
-1. POST _update,推荐使用这种修改方式
+![image-20220421165616222](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165616222.png)
 
-![image-20210202164549624](https://img-blog.csdnimg.cn/img_convert/d0a9cf9ec02364a86f5cb412b2dde557.png)
-
-简单的搜索
+4、POST _update，推荐使用这种修改方式
 
 ```bash
-GET ahui/user/1
-1
+POST run/user/1/_update
+{
+  "doc": {
+    "name": "AruNi333"
+  }
+}
 ```
 
-简单的条件查询,可以根据默认的映射规则,产生基本的查询
+![image-20220421165942667](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165942667.png)
 
-![image-20210203151433813](https://img-blog.csdnimg.cn/img_convert/346583767cea8bb9f50dc8e4079e71ba.png)
+> 简单的查询搜索
 
-![image-20210203151713936](https://img-blog.csdnimg.cn/img_convert/e614570c14181b82ee0b0a0da378e7d7.png)
+```bash
+GET run/user/1
+```
 
-> 复杂查询搜索 select (排序,分页,高亮,模糊查询,精准查询等)
+简单的条件查询`GET _search?q=`，可以根据默认的映射规则，产生基本的查询
 
-![image-20210203152113369](https://img-blog.csdnimg.cn/img_convert/79b0ab542629731dffd51a1766f8ce82.png)
+![image-20220421170741631](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421170741631.png)
 
-![image-20210203152609744](https://img-blog.csdnimg.cn/img_convert/b1fffd234e10fe3473ed026e3317bf2b.png)
+> 复杂的查询搜索select (排序, 分页, 高亮, 模糊查询, 精准查询等)
 
-![image-20210203153319693](https://img-blog.csdnimg.cn/img_convert/02ff14237c3ef7dce224a23fcde0affc.png)
+![image-20220421171221349](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171221349.png)
 
-我们之后使用Java操作es, 所有的方法和对象就是这里面的key
+添加一个数据后，再次查询：
+
+![image-20220421171657327](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171657327.png)
+
+可以使用`_source`选择查询的结果：
+
+![image-20220421171823034](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171823034.png)
+
+之后使用Java操作es，所有的方法和对象就是这里面的key
 
 > 排序
 
-![image-20210203153603209](https://img-blog.csdnimg.cn/img_convert/1ff84ae4b41ec4fd23c3a0c49668c210.png)
+![image-20220421172620042](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421172620042.png)
 
 > 分页查询
 
-![image-20210203153809932](https://img-blog.csdnimg.cn/img_convert/45b55da3f2c06694be279d4d8be25ba6.png)
+![image-20220421172745654](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421172745654.png)
 
 数据下标还是从0开始
 
 > 布尔值查询
 
-must (and) 所有的条件都要符合 相当于 where id = 1 and name = xxx
+- `must` 所有的条件都要符合，相当于SQL中的 `where id = 1 and name = xxx`
 
-![image-20210203154023860](https://img-blog.csdnimg.cn/img_convert/51769c2a8a8f6a198b2208bb06e3f560.png)
+![image-20220421173127567](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173127567.png)
 
-should (or) 所有的条件符合其一 相当于 where id = 1 or name = xxx
+- `should` 所有的条件符合其一，相当于SQL中的 `where id = 1 or name = xxx`
 
-![image-20210203154138680](https://img-blog.csdnimg.cn/img_convert/306c5f5776d20caf511f944b3c6f011a.png)
+![image-20220421173312097](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173312097.png)
 
-must_not (not) 反向查询
+- `must_not` 反向查询
 
-![image-20210203154237315](https://img-blog.csdnimg.cn/img_convert/3b7f52b00b44791af8ef2a99b2fd82ef.png)
+![image-20220421173504848](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173504848.png)
 
-过滤器 filter
+- `filter` 过滤器：
+  - gt 大于
+  - gte 大于等于
+  - lt 小于
+  - lte 小于等于
 
-![image-20210203154402972](https://img-blog.csdnimg.cn/img_convert/763f5f0c61c0aeb56206b01641a25d74.png)
-
-- gt 大于
-- gte 大于等于
-- lt 小于
-- lte 小于等于
+![image-20220421173836562](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173836562.png)
 
 > 匹配多个条件
 
-![image-20210203154645084](https://img-blog.csdnimg.cn/img_convert/b9146b503760bc2a5d58236b7d9752fd.png)
+多个条件用空格隔开，只要满足其中一个就可以被查出，可以通过分值来反映出匹配的程度：
+
+![image-20220421174402901](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421174402901.png)
 
 > 精确查询
 
-term 查询是直接通过倒排索引指定的词条进程精确的查找的
+`term` 查询是直接通过**倒排索引**指定的词条进程精确的查找的
 
 **关于分词:**
 
-- term, 直接查询精确的
-- match, 会使用分词器解析 (先分析文档,然后通过分析的文档进行查询)
+- `term`：直接查询精确的
+- `match`：会使用分词器解析 (先分析文档，然后通过分析的文档进行查询)
 
-**两个类型 text keyword**
+**两个类型:**
 
-![image-20210203155207040](https://img-blog.csdnimg.cn/img_convert/8d2e7faede3e502c75f853123fc7b91c.png)
+- text：会被分词器解析
+- keyword：不会被分词器解析
 
-![image-20210203155224582](https://img-blog.csdnimg.cn/img_convert/c60b6a8c36b7cae3d5949fa426e1a092.png)
+下面通过`GET _analyze`来分析这两个类型：
 
-![image-20210203155356125](https://img-blog.csdnimg.cn/img_convert/30459543e477d0cf0671a12ae2aeea26.png)
+![image-20220421175520637](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421175520637.png)
+
+![image-20220421175614904](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421175614904.png)
+
+下面通过查询来分析：
+
+![image-20220421180203838](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180203838.png)
+
+![image-20220421180335651](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180335651.png)
 
 > 多个值匹配的精确查询
 
-![image-20210203155527658](https://img-blog.csdnimg.cn/img_convert/4e9a067fdc52936b8e121d7beaef249a.png)
+![image-20220421180916042](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180916042.png)
 
 > 高亮查询
 
-![image-20210203155714355](https://img-blog.csdnimg.cn/img_convert/41a801ed839dc73486b609ab4045f28c.png)
+![image-20220421181221489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181221489.png)
 
-![image-20210203155812809](https://img-blog.csdnimg.cn/img_convert/fdb1b09bb360ec04fbd4ae7e04e7cb8a.png)
+自定义搜索高亮条件：在查询的关键字添加HTML标签前后缀即可
 
-这些其实MySQL也可以做,试试Mysql效率比较低
+![image-20220421181457675](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181457675.png)
+
+这些其实MySQL也可以做，只是MySQL效率比较低：
 
 - 匹配
 - 按条件匹配
@@ -572,15 +631,21 @@ term 查询是直接通过倒排索引指定的词条进程精确的查找的
 - 高亮查询
 - 倒排查询
 
-# 9. 集成Springboot 🐼
+# 9. 集成SpringBoot
 
 > 找文档
 
-![image-20210203170152242](https://img-blog.csdnimg.cn/img_convert/94ce2c2047763d76d358dae0eb7d837d.png)
+进入ElasticSearch官网，找到跟客户端相关的文档：
 
-![image-20210203165627533](https://img-blog.csdnimg.cn/img_convert/5e0a7136ed1b9c15f6c4c31b208212b3.png)
+![image-20220421181909005](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181909005.png)
 
-![image-20210203170135062](https://img-blog.csdnimg.cn/img_convert/5e922dd90a4254db266d4e5e221d74b2.png)
+点击进去，发现有很多客户端：
+
+![image-20220421182104040](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421182104040.png)
+
+
+
+![image-20220421182619170](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421182619170.png)
 
 1. 找到原生的依赖
 
@@ -592,28 +657,41 @@ term 查询是直接通过倒排索引指定的词条进程精确的查找的
            <url>https://snapshots.elastic.co/maven/</url>
        </repository>
    </repositories>
-   1234567
    ```
-
+   
 2. 找对象
 
 ![image-20210203170606532](https://img-blog.csdnimg.cn/img_convert/fa9d7240e99c764c9cde8557ab1e6447.png)
 
-1. 分析这个类中的方法即可
+​		分析这个类中的方法即可
 
 > 配置基本的项目
 
+新建SpringBoot项目，添加ES的支持。
+
 **问题:** 一定要保证我们导入的依赖和我们的es版本一致
 
-![image-20210203192443948](https://img-blog.csdnimg.cn/img_convert/358e38b8d9c451517cf9e04c90ab6f32.png)
+![image-20220421210915602](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421210915602.png)
 
 将本地对应的版本与此保持一致
 
-![image-20210203192800522](https://img-blog.csdnimg.cn/img_convert/f93b90f45ce3832f4e56f4ac939f94b4.png)
+![image-20220421211851056](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421211851056.png)
 
-源码中提供的对象
+> 编写ES客户端配置，注入到Spring中
 
-![image-20210203194341740](https://img-blog.csdnimg.cn/img_convert/ac188832eb26fd2c34d7a45725f83508.png)
+```java
+@Configuration
+public class ElasticSearchClientConfig {
+
+    @Bean
+    public RestHighLevelClient restHighLevelClient() {
+        RestHighLevelClient client = new RestHighLevelClient(
+            RestClient.builder(
+                new HttpHost("127.0.0.1", 9200, "http")));
+        return client;
+    }
+}
+```
 
 > 具体的API测试
 
@@ -623,49 +701,9 @@ term 查询是直接通过倒排索引指定的词条进程精确的查找的
 4. 创建文档
 5. CRUD文档
 
-**测试方法**
+**测试**：
 
 ```java
-package com.onlylmf;
-
-import com.alibaba.fastjson.JSON;
-import com.onlylmf.pojo.User;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.MatchAllQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 @SpringBootTest
 class AhuiEsApiApplicationTests {
 
@@ -674,7 +712,7 @@ class AhuiEsApiApplicationTests {
     private RestHighLevelClient client;
 
 
-    //测试索引的创建 Request PUT ahui_index
+    // 测试索引的创建 Request PUT == ahui_index
     @Test
     void testCreateIndex() throws IOException {
         //1. 创建索引请求
@@ -686,7 +724,7 @@ class AhuiEsApiApplicationTests {
         System.out.println(createIndexResponse);
     }
 
-    //测试获取索引,判断其是否存在
+    // 测试获取索引,判断其是否存在
     @Test
     void testExistIndex() throws IOException {
         GetIndexRequest request = new GetIndexRequest("ahui_index");
@@ -694,7 +732,7 @@ class AhuiEsApiApplicationTests {
         System.out.println(exists);
     }
 
-    //测试删除索引
+    // 测试删除索引
     @Test
     void testDeleteIndex() throws IOException {
         DeleteIndexRequest request = new DeleteIndexRequest("ahui_index");
@@ -702,6 +740,9 @@ class AhuiEsApiApplicationTests {
         AcknowledgedResponse delete = client.indices().delete(request, RequestOptions.DEFAULT);
         System.out.println(delete.isAcknowledged());
     }
+    
+    
+    
 
     @Test
     //测试添加文档
@@ -831,8 +872,6 @@ class AhuiEsApiApplicationTests {
         }
     }
 }
-
-123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149150151152153154155156157158159160161162163164165166167168169170171172173174175176177178179180181182183184185186187188189190191192193194195196197198199200201202203204205206
 ```
 
 # 10. JD实战
