@@ -1,6 +1,8 @@
 # 1. ElasticSearch
 
-**Elaticsearch**，简称为**ES**，**ES**是一个开源的**高扩展的分布式全文检索引擎**，它可以近乎**实时的存储、检索数据**；本身扩展性很好，可以扩展到上百台服务器，处理 PB 级别（[大数据](https://so.csdn.net/so/search?q=大数据&spm=1001.2101.3001.7020)时代）的数据。**ES**由 Java 语言开发并使用 **Lucene** 作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的 RESTFULL [API](https://so.csdn.net/so/search?q=API&spm=1001.2101.3001.7020) 来隐藏 **Lucene** 的复杂性，从而让全文搜索变得简单。据国际权威的数据库产品评测机构 DB Engines 的统计，在2016 年1月，**ElasticSearch** 已超过 **Solr** 等，成为排名第一的搜索引擎类应用。
+**Elaticsearch**，简称为**ES**，**ES**是一个开源的**高扩展的分布式全文检索引擎**，它可以近乎**实时的存储、检索数据**；本身扩展性很好，可以扩展到上百台服务器，处理 PB 级别（[大数据](https://so.csdn.net/so/search?q=大数据&spm=1001.2101.3001.7020)时代）的数据。
+
+**ES**由 Java 语言开发并使用 **Lucene** 作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的 RESTFULL [API](https://so.csdn.net/so/search?q=API&spm=1001.2101.3001.7020) 来隐藏 **Lucene** 的复杂性，从而让全文搜索变得简单。据国际权威的数据库产品评测机构 DB Engines 的统计，在2016 年1月，**ElasticSearch** 已超过 **Solr** 等，成为排名第一的搜索引擎类应用。
 
 ## 1.1 介绍
 
@@ -16,17 +18,35 @@ Lucene是用JAVA写成的，目标是为各种中小型应用软件加入[全文
 
 2004年，Doug Cutting再接再励，在Lucene的基础上，和Apache开源伙伴Mike Cafarella合作，开发了一款可以代替当时的主流搜索的开源搜索引擎，命名为Nutch。
 
-…
+**Lucene和ElasticSearch关系**：
 
-> 回到主题
+- ElasticSearch是基于Lucene做了一些封装和增强(上手简单)
 
-Lucene 是一套信息检索工具包 jar包 不包含搜索引擎系统
+## 1.2 为什么要用ElasticSearch
 
-包含的: 索引结构 读写索引的工具 排序,搜索规则…工具类
+为什么要使用Elasticsearch呢？我们在日常开发中，**数据库**也能做到（实时、存储、搜索、分析）。
 
-**Lucene和ElasticSearch关系**
+相对于数据库，Elasticsearch的强大之处就是可以**模糊查询**
 
-ElasticSearch是基于Lucene做了一些封装和增强(上手简单)
+数据库怎么就不能模糊查询了？如下SQL：
+
+```sql
+select * from user where name like '%公众号Java3y%'
+```
+
+这不就可以把**公众号Java3y**相关的内容搜索出来了吗？
+
+的确，这样做的确可以。但是要明白的是：`name like %Java3y%`这类的查询是不走**索引**的，不走索引意味着：只要数据库的量很大（1亿条），查询肯定会是**秒**级别的。
+
+而且，即便给从数据库根据**模糊匹配**查出相应的记录了，那往往会返回**大量的数据**给你，往往你需要的数据量并没有这么多，可能50条记录就足够了。
+
+还有一个就是：用户输入的内容往往并没有这么的**精确**，比如从Google输入`ElastcSeach`（打错字），但是Google还是能估算我想输入的是`Elasticsearch`。
+
+而Elasticsearch是专门做**搜索**的，就是为了解决上面所讲的问题而生的：
+
+- Elasticsearch对模糊搜索非常擅长（搜索速度很快）
+- 从Elasticsearch搜索到的数据可以根据**评分**过滤掉大部分的，只要返回评分高的给用户就好了（原生就支持排序）
+- 没有那么准确的关键字也能搜出相关的结果（能匹配有相关性的记录）
 
 # 2. ES和Solr的差别
 
@@ -70,17 +90,29 @@ Lucene是一个全文检索引擎的架构。那什么是全文搜索引擎?
 
 ## 2.4 **ElasticSearch和Solr比较**
 
-![image-20210201215917363](https://img-blog.csdnimg.cn/img_convert/2dcdd4002baffe0b4cab89fa228f9bb1.png)
+- 当单纯的对已有数据进行搜索时，Solr更快
 
-![image-20210201215936203](https://img-blog.csdnimg.cn/img_convert/d963eb99df00cf9f33a51162f83b0f6e.png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a0dc8ca9961b84bde81e8d3df5634ff1.webp)
 
-![image-20210201215951444](https://img-blog.csdnimg.cn/img_convert/3117fda9ece535b8987e0672bd81a47d.png)
+- 当实时建立索引时, Solr会产生io阻塞，查询性能较差，Elasticsearch具有明显的优势
 
-![image-20210201220026178](https://img-blog.csdnimg.cn/img_convert/db848cb2094d552d1cdcc15ebf386e02.png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b208dd95ad6aa23520f001a4749aee67.webp)
+
+- 随着数据量的增加，Solr的搜索效率会变得更低，而Elasticsearch却没有明显的变化
+
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/082c44343a48346636a5823da29c2764.webp)
+
+综上所述，Solr的架构不适合实时搜索的应用。
+
+>  实际生产环境测试
+
+- 将搜索引擎从Solr转到Elasticsearch以后的平均查询速度有了50倍的提升
+
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/de472d3421f60d05eab2078b73599f9c.webp)
 
 ## 2.5 **总结**
 
-1、es基本是开箱即用，非常简单。Solr安装略微复杂一丢丢!
+1、es基本是开箱即用，非常简单。Solr安装略微复杂一丢丢
 
 2、Solr利用Zookeeper进行分布式管理，而Elasticsearch自身带有分布式协调管理功能。
 
@@ -88,7 +120,7 @@ Lucene是一个全文检索引擎的架构。那什么是全文搜索引擎?
 
 4、Solr官方提供的功能更多，而Elasticsearch本身更注重于核心功能，高级功能多有第三方插件提供，例如图形化界面需要kibana友好支撑
 
-5、Solr查询快，但更新索引时慢（即插入删除慢），用于电商等查询多的应用﹔
+5、Solr查询快，但更新索引时慢（即插入删除慢），用于电商等查询多的应用；
 
 - ES建立索引快（即查询慢），即实时性查询快，用于facebook新浪等搜索。
 - Solr是传统搜索应用的有力解决方案，但Elasticsearch更适用于新兴的实时搜索应用。
@@ -119,13 +151,13 @@ Lucene是一个全文检索引擎的架构。那什么是全文搜索引擎?
 
 2. `bin/elasticsearch.bat`启动，访问9200
 
-   ![image-20220420151103111](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420151103111.png)
+   ![image-20220420151103111](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c7e1c308977cfbf9d44a0326fde599db.png)
 
    
 
 3. 访问测试
 
-   ![image-20220420145851446](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420145851446.png)
+   ![image-20220420145851446](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e364e43aa306ffe3437394080cd42b7a.png)
 
 ## 3.2 可视化界面es head
 
@@ -133,19 +165,19 @@ Lucene是一个全文检索引擎的架构。那什么是全文搜索引擎?
 
 前提需要npm，在该目录下安装依赖`npm install` 也可以用cnpm
 
-启动`npm run start`：![image-20220420150534073](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420150534073.png)
+启动`npm run start`：![image-20220420150534073](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/11ee6c2b43e106155fee6a1b0a5e11d3.png)
 
 由于**跨域**问题，目前是访问不到我们的ES的，需要配置 `config/elsaticsearch.yml`：
 
-![image-20220420150802020](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420150802020.png)
+![image-20220420150802020](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3b4925659647d00960eb24d5613a42b1.png)
 
 重启ES测试：
 
-![image-20220420151128890](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420151128890.png)
+![image-20220420151128890](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e5cd20e291c3d1b9ca5ab80800db163f.png)
 
 可以新建立一个索引进行学习
 
-![image-20220420151340965](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420151340965.png)
+![image-20220420151340965](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4c90c8bbb292c1ff5219c54801d42e6b.png)
 
 初学时可以把es当做一个数据库(可以建立索引(库)，文档(库中的数据))。
 
@@ -157,7 +189,7 @@ ELK是`Elasticsearch`、`Logstash`、`Kibana`三大开源框架首字母大写�
 
 市面上很多开发只要提到ELK能够一致说出它是一个日志分析架构技术栈总称，但实际上ELK不仅仅适用于日志分析，它还可以支持其它任何数据分析和收集的场景，日志分析和收集只是更具有代表性。并非唯一性。
 
-![image-20220420151737841](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420151737841.png)
+![image-20220420151737841](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/76f3b140bb46b65087749a83fcf3bfb0.png)
 
 ## 3.4 安装Kibana
 
@@ -173,23 +205,23 @@ Kibana 版本要和 ES 一致
 
 1. 解压后的目录
 
-   ![image-20220420152750697](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420152750697.png)
+   ![image-20220420152750697](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/13dde045928bd156605c579e1c5b5560.png)
 
 2. 启动`bin/kibana.bat`，默认端口: 5601，访问测试
 
-   ![image-20220420152948044](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420152948044.png)
+   ![image-20220420152948044](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8097b1ec22b4caf914aa079ad8be5b0c.png)
 
 3. 开发工具 (Post、curl、head、谷歌浏览器插件测试)
 
 左边菜单 Dev Tools
 
-![image-20220420153019284](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420153019284.png)
+![image-20220420153019284](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e1908048801381fd7ec5c9043b1a3b13.png)
 
 我们之后的所有操作都在这里进行编写
 
 汉化：修改kibana配置即可 zh-CN
 
-![image-20220420153115729](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420153115729.png)
+![image-20220420153115729](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/47aa86b88f833c64cb8c008909d99e7e.png)
 
 # 4. ES核心概念
 
@@ -224,7 +256,7 @@ elasticsearch在后台把每个索引划分成多个分片，每分分片可以�
 
 一个人就是一个集群，默认的集群名称就是elasticsearch
 
-![image-20220420211343349](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420211343349.png)
+![image-20220420211343349](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1a9ac3d61b69841b288637b86bbf0f99.png)
 
 **逻辑设计∶**
 
@@ -252,7 +284,7 @@ elasticsearch在后台把每个索引划分成多个分片，每分分片可以�
 
 **物理设计︰节点和分片如何工作**
 
-![image-20220420212145744](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420212145744.png)
+![image-20220420212145744](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fe37dffb4947404453dd1d429d5ec4f6.png)
 
 一个集群至少有一个节点，而一个节点就是一个elasricsearch进程，节点可以有多个索引。
 
@@ -260,7 +292,7 @@ elasticsearch在后台把每个索引划分成多个分片，每分分片可以�
 
 下图是一个有3个节点的集群，可以看到主分片和对应的复制分片都不会在同一个节点内，这样有利于某个节点挂掉了，数据也不至于丢失。实际上，一个分片是一个Lucene索引，一个包含**倒排索引**的文件目录，倒排索引的结构使得elasticsearch在不扫描全部文档的情况下，就能告诉你哪些文档包含特定的关键字。
 
-![image-20220420213031656](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420213031656.png)
+![image-20220420213031656](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9bc02764089f1adbb214e74debe33c8e.png)
 
 > 倒排索引
 
@@ -300,7 +332,7 @@ TO forever, study every day, good good up 	  # 文档2包含的内容
 
 再来看一个示例，比如我们通过博客标签来搜索博客文章。那么倒排索引列表就是这样的一个结构：
 
-![image-20220420213650950](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420213650950.png)
+![image-20220420213650950](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f2e8d5b7febf218bbabd4d73b0e96c1a.png)
 
 如果要搜索含有python标签的文章，那相对于查找所有原始数据而言，查找倒排索引后的数据将会快的多。只需要查看标签这一栏，然后获取相关的文章ID即可。完全过滤掉无关的所有数据，提高效率!
 
@@ -328,17 +360,17 @@ IK提供了两个分词算法：
 - 下载https://github.com/medcl/elasticsearch-analysis-ik
 - 下载完毕后,放入我们的ElasticSearch插件中即可
 
-![image-20220421133609354](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133609354.png)
+![image-20220421133609354](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fda51e122a91ae035f7f567aa0801911.png)
 
 重启观察ES
 
-![image-20220421133956796](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133956796.png)
+![image-20220421133956796](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/18ebcbfacafd6c9c13d77f4b5d82fd68.png)
 
 可以看到ik分词器被加载
 
 `elasticsearch-plugin`可以通过这个命令来查看加载进来的插件
 
-![image-20220421133917091](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421133917091.png)
+![image-20220421133917091](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f6c177edbd057f94563e38ca0e352477.png)
 
 接下来使用Kibana测试
 
@@ -346,11 +378,11 @@ IK提供了两个分词算法：
 
 **ik_smart为最少切分**：
 
-![image-20220421135031502](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135031502.png)
+![image-20220421135031502](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6d02cd5089fbf95342790d0e2bcfc73a.png)
 
 **ik_max_word为最细粒度划分**，**穷尽词库的可能**
 
-![image-20220421135051190](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135051190.png)
+![image-20220421135051190](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4e9df6d091e59a0d81abd0d390fd27d4.png)
 
 问题：狂神说 被拆开了
 
@@ -360,19 +392,19 @@ IK提供了两个分词算法：
 
 `IKAnalyzer.cfg.xml`为分词的配置文件；
 
-![image-20220421135546218](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135546218.png)
+![image-20220421135546218](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e288ef939a5b3e7e52ab0815f5553be5.png)
 
 在自己的配置文件中添加分词：
 
-![image-20220421135717514](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135717514.png)
+![image-20220421135717514](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b3f064e797bb267845da094f7f4d03c6.png)
 
 重启es
 
-![image-20220421135857086](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135857086.png)
+![image-20220421135857086](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/34eb8c006ae82f57ec6c0c55e92a7df3.png)
 
 重启后再次使用：
 
-![image-20220421135926378](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421135926378.png)
+![image-20220421135926378](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a79f4ab728bfaeb2847c758f4d73b9e9.png)
 
 以后的话，我们需要自己配置分词就在自己定义的dic文件中进行配置即可！
 
@@ -410,11 +442,11 @@ IK提供了两个分词算法：
    }
    ```
    
-   ![image-20220421161308521](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161308521.png)
+   ![image-20220421161308521](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f693037af7b0209e1fcf69f27c24bea0.png)
    
    完成了自动增加了索引，数据也成功的添加了：
    
-   ![image-20220421161406591](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161406591.png)
+   ![image-20220421161406591](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ffd0a6c48dce30ee5ccf64e6493ca38f.png)
    
 2. 那么name这个字段用不用指定类型呢。毕竟我们关系型数据库时需要指定类型的
 
@@ -432,21 +464,21 @@ IK提供了两个分词算法：
 
 3. 定义规则，指定字段的类型：
 
-   ![image-20220421161822063](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421161822063.png)
+   ![image-20220421161822063](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c8056bbafb60cedd26bad34eeabeec34.png)
 
 4. 获得这个规则信息, 可以通过GET请求获取具体的信息
 
-   ![image-20220421162202958](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162202958.png)
+   ![image-20220421162202958](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/30d54140e15972abec18426df3b7a2cf.png)
 
 5. 查看默认的信息：
 
    先新建一个索引，插入一个数据：
 
-   ![image-20220421162508309](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162508309.png)
+   ![image-20220421162508309](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/65455038f6c99c79845c6cd320ed01e4.png)
 
    查看默认的信息：
 
-   ![image-20220421162824161](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421162824161.png)
+   ![image-20220421162824161](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6ce7832c773ef57f5a268a50993054d2.png)
 
    如果自己的文档字段没有指定，那么es就会给我们默认配置字段类型!
 
@@ -458,21 +490,21 @@ IK提供了两个分词算法：
 
    还有很多命令：
 
-   ![image-20220421163236095](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421163236095.png)
+   ![image-20220421163236095](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/983e677627407396eca3ca67343e1578.png)
 
 > 修改
 
 曾经的方法：用PUT覆盖
 
-![image-20220421163612519](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421163612519.png)
+![image-20220421163612519](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1c1f88338df1f5a1e20ec333c0ca5d33.png)
 
 目前的方法：用POST修改
 
-![image-20220421164004579](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164004579.png)
+![image-20220421164004579](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d1168643282c4ad5babc802df89c46ae.png)
 
 > 删除索引
 
-![image-20220421164214648](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164214648.png)
+![image-20220421164214648](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6981af6111dcb0b2b2125d708d8bcc1a.png)
 
 通过DELETE命令实现删除, 根据你的请求来判断是删除索引还是删除文档记录
 
@@ -496,17 +528,17 @@ PUT run/user/1
 }
 ```
 
-![image-20220421164918479](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421164918479.png)
+![image-20220421164918479](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b1ea5bdc2126afc3a5d65ca0ed6b15ce.png)
 
 添加成功，再随便添加几条，id不能相同；
 
 2、获取数据
 
-![image-20220421165422474](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165422474.png)
+![image-20220421165422474](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b2cfda740d3e1a7ef12440e2b7305991.png)
 
 3、更新数据 PUT(相当于是覆盖了上一条)
 
-![image-20220421165616222](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165616222.png)
+![image-20220421165616222](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8454d77e8e2f4dc3ae5a1a52947144d9.png)
 
 4、POST _update，推荐使用这种修改方式
 
@@ -519,7 +551,7 @@ POST run/user/1/_update
 }
 ```
 
-![image-20220421165942667](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421165942667.png)
+![image-20220421165942667](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e59ab52e29f51bbe594bcf46df179db8.png)
 
 > 简单的查询搜索
 
@@ -529,29 +561,29 @@ GET run/user/1
 
 简单的条件查询`GET _search?q=`，可以根据默认的映射规则，产生基本的查询
 
-![image-20220421170741631](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421170741631.png)
+![image-20220421170741631](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a6c0b1d36504fdeb4f852800f6d681b9.png)
 
 > 复杂的查询搜索select (排序, 分页, 高亮, 模糊查询, 精准查询等)
 
-![image-20220421171221349](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171221349.png)
+![image-20220421171221349](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3016e16515d26b301b03844bce10f59b.png)
 
 添加一个数据后，再次查询：
 
-![image-20220421171657327](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171657327.png)
+![image-20220421171657327](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dd365777fc5c713ebbf9c2694751c455.png)
 
 可以使用`_source`选择查询的结果：
 
-![image-20220421171823034](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421171823034.png)
+![image-20220421171823034](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c355f6ea981d0e85c9caf10185b35062.png)
 
 之后使用Java操作es，所有的方法和对象就是这里面的key
 
 > 排序
 
-![image-20220421172620042](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421172620042.png)
+![image-20220421172620042](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d19c9cdaab2559f9b63f5acd943de3d8.png)
 
 > 分页查询
 
-![image-20220421172745654](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421172745654.png)
+![image-20220421172745654](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5eaa18e3cb5412e7a958c963c669f50e.png)
 
 数据下标还是从0开始
 
@@ -559,15 +591,15 @@ GET run/user/1
 
 - `must` 所有的条件都要符合，相当于SQL中的 `where id = 1 and name = xxx`
 
-![image-20220421173127567](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173127567.png)
+![image-20220421173127567](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/686b7735c8acaebf7e8106e4fa5ca729.png)
 
 - `should` 所有的条件符合其一，相当于SQL中的 `where id = 1 or name = xxx`
 
-![image-20220421173312097](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173312097.png)
+![image-20220421173312097](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e91f305a05ea4935e6a6f587b1154c4d.png)
 
 - `must_not` 反向查询
 
-![image-20220421173504848](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173504848.png)
+![image-20220421173504848](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7c18718352d1bda960e84963039b8bf9.png)
 
 - `filter` 过滤器：
   - gt 大于
@@ -575,13 +607,13 @@ GET run/user/1
   - lt 小于
   - lte 小于等于
 
-![image-20220421173836562](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421173836562.png)
+![image-20220421173836562](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/91c395613897b8d3819de001ca704505.png)
 
 > 匹配多个条件
 
 多个条件用空格隔开，只要满足其中一个就可以被查出，可以通过分值来反映出匹配的程度：
 
-![image-20220421174402901](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421174402901.png)
+![image-20220421174402901](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fbc240e2a47ae8b702f22c8c66b640ae.png)
 
 > 精确查询
 
@@ -599,27 +631,27 @@ GET run/user/1
 
 下面通过`GET _analyze`来分析这两个类型：
 
-![image-20220421175520637](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421175520637.png)
+![image-20220421175520637](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/02552dde67dbdb07b06d476fa24ae698.png)
 
-![image-20220421175614904](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421175614904.png)
+![image-20220421175614904](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a8755b8a7c7d6e18e267fb7289b516fb.png)
 
 下面通过查询来分析：
 
-![image-20220421180203838](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180203838.png)
+![image-20220421180203838](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/748a6eba26dfbe2dd72292d43033794c.png)
 
-![image-20220421180335651](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180335651.png)
+![image-20220421180335651](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/19ebcbc03c43eb85ad39fc47b8bfc96a.png)
 
 > 多个值匹配的精确查询
 
-![image-20220421180916042](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421180916042.png)
+![image-20220421180916042](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/efd725e17d9390761bd5a3cde408cce3.png)
 
 > 高亮查询
 
-![image-20220421181221489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181221489.png)
+![image-20220421181221489](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bf58a76091350cc28bac7fdb3dc8f2a9.png)
 
 自定义搜索高亮条件：在查询的关键字添加HTML标签前后缀即可
 
-![image-20220421181457675](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181457675.png)
+![image-20220421181457675](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5e5a9e80ff66b4bcd0e4a16bf741b9da.png)
 
 这些其实MySQL也可以做，只是MySQL效率比较低：
 
@@ -637,15 +669,15 @@ GET run/user/1
 
 进入ElasticSearch官网，找到跟客户端相关的文档：
 
-![image-20220421181909005](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421181909005.png)
+![image-20220421181909005](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/73666adc33764609b0e36c1bcf66df57.png)
 
 点击进去，发现有很多客户端：
 
-![image-20220421182104040](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421182104040.png)
+![image-20220421182104040](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/573d6bfcd4a15603388bd42ea1bf3a43.png)
 
 
 
-![image-20220421182619170](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421182619170.png)
+![image-20220421182619170](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9885ff7362a6c79daca991f3821c0f9c.png)
 
 1. 找到原生的依赖
 
@@ -661,9 +693,9 @@ GET run/user/1
    
 2. 找对象
 
-![image-20210203170606532](https://img-blog.csdnimg.cn/img_convert/fa9d7240e99c764c9cde8557ab1e6447.png)
+![image-20220422221230606](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/82dff9b2f7cafcae2512aa8bef2ea5c7.png)
 
-​		分析这个类中的方法即可
+分析这个类中的方法即可
 
 > 配置基本的项目
 
@@ -671,11 +703,11 @@ GET run/user/1
 
 **问题:** 一定要保证我们导入的依赖和我们的es版本一致
 
-![image-20220421210915602](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421210915602.png)
+![image-20220421210915602](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7343d949da18022ba9cef94d4b089c64.png)
 
 将本地对应的版本与此保持一致
 
-![image-20220421211851056](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421211851056.png)
+![image-20220421211851056](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b1a06a93c15f221662d73b19e139064c.png)
 
 > 编写ES客户端配置，注入到Spring中
 
@@ -701,271 +733,300 @@ public class ElasticSearchClientConfig {
 4. 创建文档
 5. CRUD文档
 
-**测试**：
+**示例**：
 
 ```java
 @SpringBootTest
-class AhuiEsApiApplicationTests {
+class EsApiApplicationTests {
 
     @Autowired
-    @Qualifier("restHighLevelClient") //不加也行 但定义的名字要是这个名字
     private RestHighLevelClient client;
 
-
-    // 测试索引的创建 Request PUT == ahui_index
+    // 创建索引 Request == PUT run_index
     @Test
     void testCreateIndex() throws IOException {
-        //1. 创建索引请求
-        CreateIndexRequest request = new CreateIndexRequest("ahui_index");
-        //2. 客户端执行请求
+        // 1.创建索引请求
+        CreateIndexRequest request = new CreateIndexRequest("run_index");
+        // 2.客户端执行请求
         CreateIndexResponse createIndexResponse = client.indices()
                 .create(request, RequestOptions.DEFAULT);
-
         System.out.println(createIndexResponse);
     }
 
-    // 测试获取索引,判断其是否存在
+    // 获取索引，判断其是否存在
     @Test
     void testExistIndex() throws IOException {
-        GetIndexRequest request = new GetIndexRequest("ahui_index");
+        GetIndexRequest request = new GetIndexRequest("run_index");
         boolean exists = client.indices().exists(request, RequestOptions.DEFAULT);
-        System.out.println(exists);
+        System.out.println(exists);     // true
     }
 
-    // 测试删除索引
+    // 删除索引
     @Test
     void testDeleteIndex() throws IOException {
-        DeleteIndexRequest request = new DeleteIndexRequest("ahui_index");
-        //删除
+        DeleteIndexRequest request = new DeleteIndexRequest("run_index");
         AcknowledgedResponse delete = client.indices().delete(request, RequestOptions.DEFAULT);
-        System.out.println(delete.isAcknowledged());
+        System.out.println(delete.isAcknowledged());    // true
     }
-    
-    
-    
 
+    // 添加文档; User实体类中只有name和age两个属性
     @Test
-    //测试添加文档
     void testAddDocument() throws IOException {
-        //创建对象
-        User user = new User("阿灰", 21);
-        //创建请求
-        IndexRequest request = new IndexRequest("ahui_index");
+        // 1.创建对象
+        User user = new User("AruNi", 18);
+        // 2.创建请求
+        IndexRequest request = new IndexRequest("run_index");
 
-        //规则 put ahui_index/_doc/1
+        // 3.规则   PUT run_index/_doc/1
         request.id("1");
-        request.timeout(TimeValue.timeValueSeconds(1));
-        request.timeout("1s");
+        request.timeout(TimeValue.timeValueSeconds(1));     // 过期规则
+        request.timeout("1s");  // 同上
 
-        //将我们的数据放入请求 json (使用fastjson进行转换)
-        IndexRequest source = request.source(JSON.toJSONString(user), XContentType.JSON);
+        // 4.将数据放入请求，先转为json类型(使用fastjson)
+        request.source(JSON.toJSONString(user), XContentType.JSON);
 
-        //客户端发送请求, 获取响应的结果
-        IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
+        // 5.客户端发送请求，获取响应的结果
+        IndexResponse response = client.index(request, RequestOptions.DEFAULT);
 
-        //返回具体的json信息
-        System.out.println(indexResponse.toString());
-        //对应我们命令返回的状态 CREATED
-        System.out.println(indexResponse.status());
+        // 输出具体的json信息
+        System.out.println(response.toString());
+        // IndexResponse[index=run_index,type=_doc,id=1,version=1,result=created,seqNo=0,primaryTerm=1,shards={"total":2,"successful":1,"failed":0}]
+
+        // 输出对应命令返回的状态 CREATED
+        System.out.println(response.status());      // CREATED
     }
 
+    // 获取文档，判断其是否存在，不获取具体信息
     @Test
-    //获取文档
-    void testIsExistes() throws IOException {
-        GetRequest getRequest = new GetRequest("ahui_index", "1");
-        //不获取返回的_source 的上下文了
+    void testIsExists() throws IOException {
+        GetRequest getRequest = new GetRequest("run_index", "1");
+        // 不获取返回的_source的上下文了
         getRequest.fetchSourceContext(new FetchSourceContext(false));
+        // 排序规则，不选择
         getRequest.storedFields("_none_");
 
         boolean exists = client.exists(getRequest, RequestOptions.DEFAULT);
-        System.out.println(exists);
+        System.out.println(exists);     // true
     }
 
+    // 获取文档的信息
     @Test
-    //获取文档的信息
     void testGetDocument() throws IOException {
-        GetRequest getRequest = new GetRequest("ahui_index", "1");
+        GetRequest getRequest = new GetRequest("run_index", "1");
         GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-        //打印文档的内容
+        // 打印文档的内容    {"age":18,"name":"AruNi"}
         System.out.println(getResponse.getSourceAsString());
-        //返回的全部内容和命令是一样的
+        // 返回的全部内容和命令时一样的
         System.out.println(getResponse);
+        // {"_index":"run_index","_type":"_doc","_id":"1","_version":1,"_seq_no":0,"_primary_term":1,"found":true,"_source":{"age":18,"name":"AruNi"}}
     }
 
+    // 更新文档信息
     @Test
-    //获取文档的信息
     void testUpdateRequest() throws IOException {
-        UpdateRequest updateRequest = new UpdateRequest("ahui_index", "1");
+        UpdateRequest updateRequest = new UpdateRequest("run_index", "1");
         updateRequest.timeout("1s");
 
-        User user = new User("阿灰学Java", 22);
-        updateRequest.doc(JSON.toJSONString(user),XContentType.JSON);
+        User user = new User("张三", 23);
+        updateRequest.doc(JSON.toJSONString(user), XContentType.JSON);
 
         UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
+        // 输入更新的结果：OK
         System.out.println(updateResponse.status());
-
     }
 
+    // 删除文档
     @Test
-    //删除文档记录
     void testDeleteRequest() throws IOException {
-        DeleteRequest deleteRequest = new DeleteRequest("ahui_index", "1");
+        DeleteRequest deleteRequest = new DeleteRequest("run_index", "1");
         deleteRequest.timeout("1s");
 
-        DeleteResponse delete = client.delete(deleteRequest, RequestOptions.DEFAULT);
-        System.out.println(delete.status());
-
+        DeleteResponse deleteResponse = client.delete(deleteRequest, RequestOptions.DEFAULT);
+        System.out.println(deleteResponse.status());  // OK
     }
 
+    // 特殊情况：实际项目中一般会批量插入/更新/删除数据
     @Test
-    //特殊的,实际项目中一般都会批量插入数据
-    void testBulkRequest() throws IOException{
+    void testBulkRequest() throws IOException {
         BulkRequest bulkRequest = new BulkRequest();
         bulkRequest.timeout("10s");
 
         ArrayList<User> userList = new ArrayList<>();
-        userList.add(new User("ahui1",18));
-        userList.add(new User("ahui2",18));
-        userList.add(new User("ahui3",18));
-        userList.add(new User("onlylmf1",18));
-        userList.add(new User("onlylmf2",18));
-        userList.add(new User("onlylmf3",18));
+        userList.add(new User("小一", 18));
+        userList.add(new User("小三", 19));
+        userList.add(new User("小六", 20));
+        userList.add(new User("小九", 21));
 
-        //批量处理请求
+        // 批量处理请求
         for (int i = 0; i < userList.size(); i++) {
-            //批量更新和批量修改等, 就在这里修改对应的请求就可以了
-            bulkRequest.add(new IndexRequest("ahui_index")
-            .id("" + (i + 1)) //不加id的话会默认生成随机id
-            .source(JSON.toJSONString(userList.get(i)),XContentType.JSON));
+            // 批量更新/删除类似，修改对应的Request即可，这里只演示插入-IndexRequest
+            bulkRequest.add(new IndexRequest("run_index")
+                    .id("" + (i + 1))   // 不加id会默认生成随机id
+                    .source(JSON.toJSONString(userList.get(i)), XContentType.JSON));
         }
         BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
-        //是够失败, 返回false代表成功
-        System.out.println(bulkResponse.hasFailures());
+        // 是否有失败，返回false表示都没有失败，即全部插入成功了
+        System.out.println(bulkResponse.hasFailures());     // false
     }
 
+    /**
+     * 搜索
+     * SearchRequest 搜索请求
+     * SearchSourceBuilder 条件构造
+     *
+     * xxxQueryBuilder  搜索条件
+     * TermQueryBuilder 精确查询
+     * MatchAllQueryBuilder 匹配所有
+     *
+     * HighLightBuilder 构建高亮
+     * @throws IOException
+     */
     @Test
-    //查询
-    //SearchRequest 搜索请求
-    //SearchSourceBuilder 条件构造
-    //HighLightBuilder 构建高亮
-    //xxx QueryBuilder 对应我们刚才看到的所有命令
     void testSearch() throws IOException {
-        SearchRequest searchRequest = new SearchRequest("ahui_index");
-        //构建搜索条件
+        // 1.创建搜索请求
+        SearchRequest searchRequest = new SearchRequest("run_index");
+        // 2.创建搜索构建器，SearchSourceBuilder中可以选择很多搜索功能(高亮/排序/分页etc)
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
-        //查询条件,我们可以使用QueryBuilders 工具类来实现
-        //QueryBuilders.termQuery  精确匹配
-        //QueryBuilders.matchAllQuery 匹配所有
-        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("name", "ahui1");
-//        MatchAllQueryBuilder matchAllQueryBuilder = QueryBuilders.matchAllQuery();
+        // 3.选择搜索条件，可以使用QueryBuilders 工具类来实现
+        // QueryBuilders.termQuery   精确匹配
+        // QueryBuilders.matchAllQuery   匹配所有
+        // termQuery使用中文会失效，可以使用name.keyword，将中文名字当成一个词，keyword不会被解析
+        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("name.keyword", "小一");
+//      MatchAllQueryBuilder matchAllQueryBuilder = QueryBuilders.matchAllQuery();
+
+        // 4.将搜索条件放入搜索构建器中，进行搜索
         sourceBuilder.query(termQueryBuilder);
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-        
+
+        // 5.将搜索构建器放入请求中
         searchRequest.source(sourceBuilder);
 
+        // 6. 执行请求，获取响应结果
         SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+
+        // 所有的结果都封装在Hits里面
         System.out.println(JSON.toJSONString(searchResponse.getHits()));
-        System.out.println("==========================================");
-        for (SearchHit documentFileds : searchResponse.getHits().getHits()) {
-            System.out.println(documentFileds.getSourceAsMap());
+
+        System.out.println("==================搜索的所有结果=========================");
+        for (SearchHit documentFields : searchResponse.getHits()) {
+            System.out.println(documentFields.getSourceAsMap());
+            // 只有一条结果，输出：{name=小一, age=18}
         }
     }
 }
 ```
 
-# 10. JD实战
+# 10. JD搜索实战
 
-**Jsoup爬取JD数据**
+防京东搜索，先将京东的所有数据爬取下来，然后用ES实现搜索功能！
 
-![image-20210204103051653](https://img-blog.csdnimg.cn/img_convert/ffa7aa6eb2d95249049f4be8734a67aa.png)
+## 10.1 项目搭建
 
-## 爬虫
+1. 新建SpringBoot项目，添加Thymeleaf、ES等相关依赖。
 
-> 数据问题? 数据库获取,消息队列中获取,都可以成为数据源,爬虫
+2. 修改ES默认版本为7.6.1，使之与本地版本一致
 
-1. 上JD进行搜索java 复制链接https://search.jd.com/Search?keyword=java&enc=utf-8
+   ```xml
+   <properties>
+       <java.version>1.8</java.version>
+       <elasticsearch.version>7.6.1</elasticsearch.version>
+   </properties>
+   ```
 
-   ![image-20210205102102403](https://img-blog.csdnimg.cn/img_convert/3ee886ecff5700dd4816026b33a6f591.png)
+3. 导入相关静态资源
 
-2. F12进行查看书籍在那个div下
+   ![image-20220422182834474](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ce668c4b091f7985628333b8a632d712.png)
 
-   ![image-20210205102205642](https://img-blog.csdnimg.cn/img_convert/d10dce1004ab2a46c91bed16bdffaca6.png)
+4. 新建`IndexController.java`，编写跳转到首页的请求：
 
-   已经每本书下个信息
+   ```java
+   @Controller
+   public class IndexController {
+       @GetMapping({"/", "/index"})
+       public String index() {
+           return "index";
+       }
+   }
+   ```
 
-   ![image-20210205102246791](https://img-blog.csdnimg.cn/img_convert/54fda8eb00ed38b690e0528e66657465.png)
+5. 启动项目，访问`9090`端口：
 
-3. 导入jsoup依赖
+   ![image-20220422183251521](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6dcbc2e3c508053a0bd02e767c4a1827.png)
+
+
+
+## 10.2 爬取数据
+
+爬取数据：获取请求返回的页面信息，筛选出我们想要的数据就可以了。
+
+首先需要知道京东的商品列表的存放在哪个div里面：
+
+![image-20220422184655036](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f9ba51bb80b61d7a4fdd7745a91e7e9a.png)
+
+其次查看商品的属性值：
+
+![image-20220422190225855](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f1d1930a6e5adbde530fe6064813efea.png)
+
+1. 导入jsoup依赖，用于解析网页
 
    ```xml
    <!--解析网页jsoup-->
-           <dependency>
-               <groupId>org.jsoup</groupId>
-               <artifactId>jsoup</artifactId>
-               <version>1.13.1</version>
-           </dependency>
-   
-   <!--引入阿里巴巴的fastjson-->
-           <dependency>
-               <groupId>com.alibaba</groupId>
-               <artifactId>fastjson</artifactId>
-               <version>1.2.75</version>
-           </dependency>
-   12345678910111213
+   <dependency>
+       <groupId>org.jsoup</groupId>
+       <artifactId>jsoup</artifactId>
+       <version>1.14.3</version>
+   </dependency>
    ```
 
-4. 创建utils包并建立HtmlParseUtil.java爬取测试
+2. 创建utils包并建立`HtmlParseUtil.java` 爬取测试：
 
    ```java
-   //测试数据
-   public static void main(String[] args) throws IOException, InterruptedException {
-   	//获取请求
-       String url = "https://search.jd.com/Search?keyword=java";
-   	// 解析网页 （Jsou返回的Document就是浏览器的Docuement对象）
-       Document document = Jsoup.parse(new URL(url), 30000);
-       //获取id，所有在js里面使用的方法在这里都可以使用
-       Element element = document.getElementById("J_goodsList");
-       //获取所有的li元素
-       Elements elements = element.getElementsByTag("li");
-       //用来计数
-       int c = 0;
-       //获取元素中的内容  ，这里的el就是每一个li标签
-       for (Element el : elements) {
-           c++;
-           //这里有一点要注意，直接attr使用src是爬不出来的，因为京东使用了img懒加载
-           String img = el.getElementsByTag("img").eq(0).attr("data-lazy-img");
-           //获取商品的价格，并且只获取第一个text文本内容
-           String price = el.getElementsByClass("p-price").eq(0).text();
-           String title = el.getElementsByClass("p-name").eq(0).text();
-           String shopName = el.getElementsByClass("p-shop").eq(0).text();
+   public class HtmlParseUtil {
+       public static void main(String[] args) throws IOException {
+           // 获取请求：https://search.jd.com/Search?keyword=java
+           String url = "https://search.jd.com/Search?keyword=java";
+           // 解析网页（jsoup返回的Document就是浏览器的Document对象）
+           Document document = Jsoup.parse(new URL(url), 30000);
+           // 获取JD商品列表的id，所有在js里面使用的方法在这里都可以使用
+           Element element = document.getElementById("J_goodsList");
+           // 获取所有的li标签
+           Elements elements = element.getElementsByTag("li");
    
-           System.out.println("========================================");
-           System.out.println(img);
-           System.out.println(price);
-           System.out.println(title);
-           System.out.println(shopName);
+           // 遍历所有的li标签，获取标签中的数据
+           int count = 0;  // 统计数量
+           for (Element el : elements) {
+               count++;
+               // 注意: 直接attr("src")爬不出来，因为京东使用了img懒加载
+               String img = el.getElementsByTag("img").eq(0).attr("data-lazy-img");
+               String price = el.getElementsByClass("p-price").eq(0).text();
+               String title = el.getElementsByClass("p-name").eq(0).text();
+               String shopName = el.getElementsByClass("p-shopnum").eq(0).text();
+   
+               System.out.println("==============================");
+               System.out.println(img);
+               System.out.println(price);
+               System.out.println(title);
+               System.out.println(shopName);
+           }
+           System.out.println("共爬取数据条数：" + count);
        }
-       System.out.println(c);
    }
-   123456789101112131415161718192021222324252627282930
    ```
 
-   测试结果
+3. 测试爬取结果：
 
-   ![image-20210205102437867](https://img-blog.csdnimg.cn/img_convert/80980bf73f6a4fa5a84d1996c1338b27.png)
+   ![image-20220422192345354](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/959678f2c94f64fedbf32380d47f8186.png)
 
-   获取结果没有问题后,将此方法封装为一个工具类使用
 
-5. 创建pojo实体类
 
-   Content.java
+
+
+**获取结果没有问题后，将此方法封装为一个工具类使用**：
+
+1. 创建pojo实体类`Content.java`：
 
    ```java
-   import lombok.AllArgsConstructor;
-   import lombok.Data;
-   import lombok.NoArgsConstructor;
-   
    @Data
    @AllArgsConstructor
    @NoArgsConstructor
@@ -973,322 +1034,320 @@ class AhuiEsApiApplicationTests {
        private String title;
        private String img;
        private String price;
-       //可以自行添加属性
+       // 可以自行添加属性
    }
-   12345678910111213
    ```
 
-6. 封装工具类
-
-   HtmlParseUtils.java
+2. 在`HtmlParseUtils.java`类中封装一个`parseJD`方法：
 
    ```java
-   @Component
    public class HtmlParseUtil {
-   //    public static void main(String[] args) throws IOException {
-   //        new HtmlParseUtil().parseJD("Java").forEach(System.out::println);
-   //    }
    
+       // 测试
+       public static void main(String[] args) throws IOException {
+           new HtmlParseUtil().parseJD("数据库").forEach(System.out::println);
+       }
+   
+       /**
+        * 根据关键字查询京东的商品信息
+        * @param keywords
+        * @return
+        * @throws IOException
+        */
        public List<Content> parseJD(String keywords) throws IOException {
-           //获取请求 https://search.jd.com/Search?keyword=java&enc=utf-8
-           //前提需要连网
-           String url = "https://search.jd.com/Search?keyword=" + keywords + "&enc=utf-8";
-           //解析网页 (Jsoup返回Document就是浏览器Document对象)
+           String url = "https://search.jd.com/Search?keyword=" + keywords;
            Document document = Jsoup.parse(new URL(url), 30000);
-           //所有在js中能使用的方法,这里都能用
            Element element = document.getElementById("J_goodsList");
-           //获取所有li元素
            Elements elements = element.getElementsByTag("li");
    
-           ArrayList<Content> goodList = new ArrayList<>();
+           List<Content> goodList = new ArrayList<>();
    
-           //通过元素中的内容,这里el就是每一个li标签了
            for (Element el : elements) {
-               //加if判断是为了 过滤空标签
-               if (el.attr("class").equalsIgnoreCase("gl-item")) {
-                   //关于这种图片特别多的网页,所有的图片都是延迟加载的
-                   //在jd搜索后f12可以看到存放在data-lazy-img中
-                   String img = el.getElementsByTag("img").eq(0).attr("data-lazy-img");
-                   String price = el.getElementsByClass("p-price").eq(0).text();
-                   String title = el.getElementsByClass("p-name").eq(0).text();
+               String img = el.getElementsByTag("img").eq(0).attr("data-lazy-img");
+               String price = el.getElementsByClass("p-price").eq(0).text();
+               String title = el.getElementsByClass("p-name").eq(0).text();
    
-                   Content content = new Content();
-                   content.setImg(img);
-                   content.setPrice(price);
-                   content.setTitle(title);
-                   goodList.add(content);
-               }
-   
+               Content content = new Content();
+               content.setImg(img);
+               content.setPrice(price);
+               content.setTitle(title);
+               goodList.add(content);
            }
            return goodList;
-    }
+       }
+       
    }
-   12345678910111213141516171819202122232425262728293031323334353637383940
    ```
 
-7. 编写业务层代码 (这里就不写接口了)
-
-   ContentService.java
-
-   首先完成一个方法让爬取的数据存入ES中
+3. 编写业务层代码 (这里就不写接口了)`ContentService.java`，首先完成一个方法让爬取的数据存入ES中：
 
    ```java
-   //业务编写
    @Service
    public class ContentService {
-   	
-   	//将客户端注入
+   
        @Autowired
-       @Qualifier("restHighLevelClient")
        private RestHighLevelClient client;
    
-       //1、解析数据放到 es 中
+       /**
+        * 根据关键词搜索京东中的数据，再将数据存入ES中
+        * @param keyword
+        * @return
+        * @throws IOException
+        */
        public boolean parseContent(String keyword) throws IOException {
            List<Content> contents = new HtmlParseUtil().parseJD(keyword);
-           //把查询的数据放入 es 中
-           BulkRequest request = new BulkRequest();
-           request.timeout("2m");
+           // 把查询到的数据放入ES中
+           BulkRequest bulkRequest = new BulkRequest();
+           bulkRequest.timeout("2s");
    
            for (int i = 0; i < contents.size(); i++) {
-               request.add(
-                       new IndexRequest("jd_goods")
-                               .source(JSON.toJSONString(contents.get(i)), XContentType.JSON));
-   
+               bulkRequest.add(new IndexRequest("jd_goods")
+                       .source(JSON.toJSONString(contents.get(i)), XContentType.JSON));
            }
-           BulkResponse bulk = client.bulk(request, RequestOptions.DEFAULT);
-           return !bulk.hasFailures();
+           BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+           return !bulkResponse.hasFailures();
        }
    }
-   1234567891011121314151617181920212223242526
    ```
 
-8. 在Controller包下建立
-
-   ContentController.java
+4. 在Controller包下建立`ContentController.java`：
 
    ```java
-   //请求编写
    @RestController
    public class ContentController {
-   
+       
        @Autowired
        private ContentService contentService;
-   
+       
        @GetMapping("/parse/{keyword}")
        public Boolean parse(@PathVariable("keyword") String keyword) throws IOException {
            return contentService.parseContent(keyword);
        }
    }
-   123456789101112
    ```
 
-9. 启动Springboot项目,访问是否能将数据爬取至ES
+5. 启动Springboot项目，测试访问是否能将数据爬取至ES
 
-   ![image-20210206093547570](https://img-blog.csdnimg.cn/img_convert/16e774225e9d6f52369b443bce78eb60.png)
+   ![image-20220422194645044](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0bd37f392005c18a8dee697311380837.png)
 
-![image-20210206093754269](https://img-blog.csdnimg.cn/img_convert/735d746b3d5e0debff12d531a7c74892.png)
+6. 在ES中查看：
 
-### 实现搜索功能
+   ![image-20220422194807491](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/38e98d648674be22f3ff01e82f5311a2.png)
 
-1. 在ContentService.java中添加
+## 10.3 实现搜索功能
+
+1. 在`ContentService.java`中添加搜索的方法：
 
    ```java
-   //2、获取这些数据实现基本的搜索功能
-   public List<Map<String, Object>> searchPage(String keyword, int pageNo, int pageSize) throws IOException {
-       if (pageNo <= 1) {
-           pageNo = 1;
+       /**
+        * 从ES中获取数据
+        * @param keyword 关键词
+        * @param pageNo 起始位置
+        * @param pageSize 页面大小
+        * @return
+        * @throws IOException
+        */
+       public List<Map<String, Object>> searchPage(String keyword, int pageNo, int pageSize) throws IOException {
+           if (pageNo <= 1) pageNo = 1;
+           if (pageSize <=1 ) pageSize = 1;
+   
+           // 搜索请求
+           SearchRequest searchRequest = new SearchRequest("jd_goods");
+   
+           // 搜索构造器
+           SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+   
+           // 用搜索构造器设置分页
+           sourceBuilder.from(pageNo).size(pageSize);
+   
+           // 搜索条件，精准匹配，
+           TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("title", keyword);
+   
+           // 将搜索条件放入搜索构建器中，进行搜索
+           sourceBuilder.query(termQueryBuilder);
+           sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+   
+           // 将搜索构建器放入搜索请求中
+           searchRequest.source(sourceBuilder);
+   
+           // 执行请求，获取响应的结果
+           SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+   
+           // 解析结果
+           List<Map<String, Object>> list = new ArrayList<>();
+           // searchResponse.getHits()获取搜索的总结果，再.getHits()获取单个结果
+           for (SearchHit documentFields : searchResponse.getHits().getHits()) {
+               list.add(documentFields.getSourceAsMap());
+           }
+   
+           return list;
        }
-       if (pageSize <= 1) {
-           pageSize = 1;
-       }
-   
-       //条件搜索
-       SearchRequest searchRequest = new SearchRequest("jd_goods");
-       SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-   
-       //分页
-       sourceBuilder.from(pageNo).size(pageSize);
-   
-       //精准匹配
-       TermQueryBuilder termQuery = QueryBuilders.termQuery("title", keyword);
-   
-       sourceBuilder.query(termQuery);
-       sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-       //执行搜索
-       SearchRequest source = searchRequest.source(sourceBuilder);
-       SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-       //解析结果
-   
-       List<Map<String, Object>> list = new ArrayList<>();
-       for (SearchHit documentFields : searchResponse.getHits().getHits()) {
-           list.add(documentFields.getSourceAsMap());
-       }
-       return list;
-   }
-   1234567891011121314151617181920212223242526272829303132
    ```
 
-2. 在ContentController.java中添加搜索请求,使用RestFul
+2. 在`ContentController.java`中添加搜索请求，使用Restful风格：
 
    ```java
-   @GetMapping("/search/{keyword}/{pageNo}/{pageSize}")
-   public List<Map<String, Object>> search(@PathVariable("keyword") String keyword,
-                                           @PathVariable("pageNo") int pageNo,
-                                           @PathVariable("pageSize") int pageSize) throws IOException {
-       List<Map<String, Object>> list = contentService.searchPage(keyword, pageNo, pageSize);
-       return list;
-   }
-   1234567
+       @GetMapping("/search/{keyword}/{pageNo}/{pageSize}")
+       public List<Map<String, Object>> search(@PathVariable("keyword") String keyword, @PathVariable("pageNo") int pageNo, @PathVariable("pageSize") int pageSize) throws IOException {
+           return contentService.searchPage(keyword, pageNo, pageSize);
+       }
    ```
+   
+3. 访问http://127.0.0.1:9090/search/java/1/10 (查询Java 并从第一条显示到第十条)
 
-3. 访问访问http://127.0.0.1:9090/search/java/1/10 (查询Java 并从第一条显示到第十条)
+   ![image-20220422205602097](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5d8b421fd5156746254d86d5c33aaea5.png)
 
-   ![image-20210206094051219](https://img-blog.csdnimg.cn/img_convert/b43e8fcb959653baebf28967215cf848.png)
+到此数据的爬取和搜索都没有问题了，下面就要开始前后端的分离工作了
 
-到此数据的爬取和搜索都没有问题了,下面就要开始前后端的分离工作了
+## 10.4 前后端分离
 
-## 前后端分离
-
-首先导入准备好的资源 并把axios,jquery,vue的js包导入
-
-![image-20210206094327869](https://img-blog.csdnimg.cn/img_convert/0c4d88be05fc2ef84b6d0888383651ea.png)
-
-1. 前端需要接受数据
-
-   用vue接受数据
-
-   ![image-20210206094418199](https://img-blog.csdnimg.cn/img_convert/b549c688b0449ab4a18f2ea729916ebb.png)
+1. 前端需要接受数据，用vue接受数据：
 
    ```vue
-   <!--前端使用vue完成前后端分离-->
+<!--前端使用vue完成前后端分离-->
    <script th:src="@{/js/axios.min.js}"></script>
-   <script th:src="@{/js/vue.min.js}"></script>
+<script th:src="@{/js/vue.min.js}"></script>
    
    <script>
        new Vue({
            el: '#app',
            data: {
-               keyword: '',  //搜索的关键字
-               result: []  //搜索的结果
+               keyword: '',  		// 搜索的关键字
+               result: []  		// 搜索的结果
            },
            methods: {
                searchKey() {
                    var keyword = this.keyword
-                   axios.get('search/' + keyword + '/1/210').then(response => {
+                   // 对接后端的接口
+                   axios.get('search/' + keyword + '/1/10').then(response => {
                        //console.log(response);
-                       this.result = response.data;//绑定数据！
+                       this.result = response.data;	// 绑定数据
                    })
                }
            }
-       })
+       });
    </script>
-   12345678910111213141516171819202122
    ```
-
+   
    然后为按钮绑定点击事件
-
-   ![image-20210206094550490](https://img-blog.csdnimg.cn/img_convert/41a6297f8f647dde2311da45ceff07bc.png)
+   
+   ![image-20220422211316938](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3d59b45552f50af2bc75e31a31c63100.png)
 
 2. 用vue给前端传递数据
 
-   ![image-20210206094658559](https://img-blog.csdnimg.cn/img_convert/65f335b61aa466f9c6f0a5f348f04926.png)
+   ![image-20220422212144944](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/29455977b413c31de2c468afefe2d8bf.png)
 
-3. 访问127.0.0.1:8080 搜索java进行尝试
+3. 访问[127.0.0.1:9090]() 搜索java进行测试：
 
-   ![image-20210206094841592](https://img-blog.csdnimg.cn/img_convert/b425899087cc79eecb2d2c7f3a229a62.png)
+   ![image-20220422212308681](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e67a1b77caa9fc247cb0c71d759c5ee4.png)
 
-   由此 基本功能实现完成
 
-## 搜索高亮
+## 10.5 搜索高亮
 
-1. 修改`ContentService.java`中的搜索功能
+1. 在`ContentService.java`中添加一个高亮搜索的方法：
 
    ```java
-   //3、获取这些数据实现基本的搜索高亮功能
-   public List<Map<String, Object>> searchPagehighlighter(String keyword, int pageNo, int pageSize) throws IOException {
-       if (pageNo <= 1) {
-           pageNo = 1;
-       }
-       if (pageSize <= 1) {
-           pageSize = 1;
-       }
+       /**
+        * 从ES中获取数据，并且高亮显示title
+        * @param keyword 关键词
+        * @param pageNo 起始位置
+        * @param pageSize 页面大小
+        * @return
+        * @throws IOException
+        */
+       public List<Map<String, Object>> searchPageHighlight(String keyword, int pageNo, int pageSize) throws IOException {
+           if (pageNo <= 1) pageNo = 1;
+           if (pageSize <=1 ) pageSize = 1;
    
-       //条件搜索
-       SearchRequest searchRequest = new SearchRequest("jd_goods");
-       SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+           // 搜索请求
+           SearchRequest searchRequest = new SearchRequest("jd_goods");
    
-       //分页
-       sourceBuilder.from(pageNo).size(pageSize);
+           // 搜索构造器
+           SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
    
-       //精准匹配
-       TermQueryBuilder termQuery = QueryBuilders.termQuery("title", keyword);
+           // 用搜索构造器设置分页
+           sourceBuilder.from(pageNo).size(pageSize);
    
-       //====================================   高   亮   ==========================================
-       HighlightBuilder highlightBuilder = new HighlightBuilder(); //获取高亮构造器
-       highlightBuilder.field("title"); //需要高亮的字段
-       highlightBuilder.requireFieldMatch(false);//不需要多个字段高亮
-       highlightBuilder.preTags("<span style='color:red'>"); //前缀
-       highlightBuilder.postTags("</span>"); //后缀
-       sourceBuilder.highlighter(highlightBuilder); //把高亮构造器放入sourceBuilder中
-       sourceBuilder.query(termQuery);
-       sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-       //执行搜索
-       SearchRequest source = searchRequest.source(sourceBuilder);
-       SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-       
-       //解析结果
-       List<Map<String, Object>> list = new ArrayList<>();
-       for (SearchHit hit : searchResponse.getHits().getHits()) {
+           // 搜索条件，精准匹配，
+           TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("title", keyword);
    
-           Map<String, HighlightField> highlightFields = hit.getHighlightFields();//获取高亮字段
-           HighlightField title = highlightFields.get("title"); //得到我们需要高亮的字段
-           Map<String, Object> sourceAsMap = hit.getSourceAsMap();//原来的返回的结果
+           // ===============高亮设置==============
+           // 获取高亮构造器
+           HighlightBuilder highlightBuilder = new HighlightBuilder();
    
-           //解析高亮的字段
-           if (title != null) {
-               Text[] fragments = title.fragments();
-               String new_title = "";
-               for (Text text : fragments) {
-                   new_title += text;
+           highlightBuilder.field("title");        // 设置需要高亮的字段
+           highlightBuilder.requireFieldMatch(false);      // 不需要多个字段高亮
+           highlightBuilder.preTags("<span style='color: red'>");      // 前缀
+           highlightBuilder.postTags("</span>");       // 后缀
+   
+           // 将搜索条件放入搜索构建器中，进行搜索
+           sourceBuilder.query(termQueryBuilder);
+           sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+   
+           // 将搜索构建器放入搜索请求中
+           searchRequest.source(sourceBuilder);
+   
+           // 执行请求，获取响应的结果
+           SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+   
+           // 解析结果
+           List<Map<String, Object>> list = new ArrayList<>();
+           // searchResponse.getHits()获取搜索的总结果，再.getHits()获取单个结果
+           for (SearchHit documentFields : searchResponse.getHits().getHits()) {
+   
+               // 获取高亮的字段
+               Map<String, HighlightField> highlightFields = documentFields.getHighlightFields();
+               // 得到需要高亮的字段，我们只设置了title
+               HighlightField title = highlightFields.get("title");
+               // 得到原来的结果
+               Map<String, Object> sourceAsMap = documentFields.getSourceAsMap();
+   
+               // 解析高亮的字段，将原来的title替换成高亮的title
+               if (title != null) {
+                   Text[] fragments = title.fragments();
+                   String new_title = "";
+                   for (Text text : fragments) {
+                       new_title += text;
+                   }
+                   // 用高亮字段替换掉原来的
+                   sourceAsMap.put("title", new_title);
                }
-               sourceAsMap.put("title", new_title);  //高亮字段替换掉原来的内容即可
+               // 再将有高亮title的结果存入集合中
+               list.add(sourceAsMap);
            }
-           list.add(sourceAsMap);
+   
+           return list;
        }
-       return list;
-   }
-   1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253
    ```
 
-2. 改变Controller中的搜索请求后进行尝试
+2. 在`ContentController.java`中添加响应的请求：
 
    ```java
-   @GetMapping("/search/{keyword}/{pageNo}/{pageSize}")
-   public List<Map<String, Object>> search(@PathVariable("keyword") String keyword,
-                                           @PathVariable("pageNo") int pageNo,
-                                           @PathVariable("pageSize") int pageSize) throws IOException {
-       List<Map<String, Object>> list = contentService.searchPagehighlighter(keyword, pageNo, pageSize);
-       return list;
-   }
-   1234567
+       @GetMapping("/searchPageHighlight/{keyword}/{pageNo}/{pageSize}")
+       public List<Map<String, Object>> searchPageHighlight(@PathVariable("keyword") String keyword, @PathVariable("pageNo") int pageNo, @PathVariable("pageSize") int pageSize) throws IOException {
+           return contentService.searchPageHighlight(keyword, pageNo, pageSize);
+       }
+   ```
+   
+3. js中的axios请求也要改成`searchPageHighlight`：
+
+   ```js
+   axios.get('searchPageHighlight/' + keyword + '/0/20').then(response => {
+       console.log(response);
+       this.results = response.data;
+   })
    ```
 
-3. 访问尝试
+4. 访问测试：
 
-   ![image-20210206095537325](https://img-blog.csdnimg.cn/img_convert/df7ef93e8951d0ad09beda9bff245aec.png)
+   ![image-20220422220553205](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dbbd67d63e7908772532c27e5c8a5b86.png)
 
-   发现不是我们需要的红字 而是标签样式显现出来了
+   发现不是我们需要的红色高亮，而是标签样式显现出来了，这是因为前端没有解析HTML；
 
-4. 解决问题
+5. 解决问题，Vue给了很好的解决办法，只需使用`v-html`即可解析HTML：
 
-   Vue给了很好的解决办法
+   ![image-20220422220732597](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e69dc05d45443a8e66842897185535b2.png)
 
-   ![image-20210206095656929](https://img-blog.csdnimg.cn/img_convert/66d014b80db58e1871184015f2de6d56.png)
+6. 再次访问测试：
 
-5. 再次访问尝试
-
-   ![image-20210206095732768](https://img-blog.csdnimg.cn/img_convert/b77eeddb1504e2b63768f71eea968168.png)
-
-文章知识点与官方知识档案匹配，可进一步学习相关知识
-
-[云原生入门技能树](https://bbs.csdn.net/skill/cloud_native/cloud_native-f22bbbe40efb4940914c5ba59021998d)[容器编排(学习环境 k8s)](https://bbs.csdn.net/skill/cloud_native/cloud_native-f22bbbe40efb4940914c5ba59021998d)[安装kubectl](https://bbs.csdn.net/skill/cloud_native/cloud_native-f22bbbe40efb4940914c5ba59021998d)240 人正在系统学习中
+   ![image-20220422220804326](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/44c77a44fc9eb8980c6026a9415e34dd.png)
