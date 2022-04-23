@@ -1460,33 +1460,43 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 > 分布式系统面临的问题
 
-复杂分布式体系结构中的应用程序有数十个依赖关系，每个依赖关系在某些时候将不可避免失败！
+复杂分布式体系结构中的应用程序有数十个依赖关系，每个依赖关系在某些时候会发生不可避免失败！
 
-## 8.1 服务雪崩
+## 8.1 为什么需要熔断器
 
- 多个微服务之间调用的时候，假设微服务A调用微服务B和微服务C，微服务B和微服务C又调用其他的微服务，这就是所谓的“扇出”，如果扇出的链路上**某个微服务的调用响应时间过长，或者不可用**，对微服务A的调用就会占用越来越多的系统资源，进而引起系统崩溃，所谓的“雪崩效应”。
+在微服务架构中，一个应用往往由多个服务组成，这些服务之间相互依赖，依赖关系错综复杂。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121144830148.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+例如一个微服务系统中存在 A、B、C、D、E、F 等多个服务，它们的依赖关系如下图：
 
- 对于高流量的应用来说，单一的后端依赖可能会导致所有服务器上的所有资源都在几十秒内饱和。比失败更糟糕的是，这些应用程序还可能导致服务之间的延迟增加，备份队列，线程和其他系统资源紧张，导致整个系统发生更多的级联故障，**这些都表示需要对故障和延迟进行隔离和管理，以达到单个依赖关系的失败而不影响整个应用程序或系统运行**。
+![img](http://c.biancheng.net/uploads/allimg/211210/101623H11-0.png)通常情况下，一个用户请求往往需要多个服务配合才能完成。如图 1 所示，在所有服务都处于可用状态时，请求 1 需要调用 A、D、E、F  四个服务才能完成，请求 2 需要调用 B、E、D、F 四个服务才能完成，请求 3 需要调用服务 C、F、E、D 四个服务才能完成。
 
- 我们需要，**弃车保帅**！
+当服务 E 发生故障或网络延迟时，会出现以下情况：
 
-## 8.2 什么是Hystrix？
+1. 即使其他所有服务都可用，由于服务 E 的不可用，那么用户请求 1、2、3 都会处于阻塞状态，等待服务 E 的响应。在高并发的场景下，会导致整个服务器的线程资源在短时间内迅速消耗殆尽。
+2. 所有依赖于服务 E 的其他服务，例如服务 B、D 以及 F 也都会处于线程阻塞状态，等待服务 E 的响应，导致这些服务的不可用。
+3. 所有依赖服务B、D 和 F 的服务，例如服务 A 和服务 C 也会处于线程阻塞状态，以等待服务 D 和服务 F 的响应，导致服务 A 和服务 C 也不可用。
 
- **Hystrix**是一个应用于处理分布式系统的延迟和容错的开源库，在分布式系统里，许多依赖不可避免的会调用失败，比如超时，异常等，**Hystrix** 能够保证在一个依赖出问题的情况下，不会导致整个体系服务失败，避免级联故障，以提高分布式系统的弹性。
+从以上过程可以看出，当微服务系统的一个服务出现故障时，故障会沿着服务的调用链路在系统中疯狂蔓延，最终导致整个微服务系统的瘫痪，这就是 **“雪崩效应”** 。为了防止此类事件的发生，微服务架构引入了 **“熔断器”** 的一系列服务容错和保护机制。
 
- “**断路器**”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控 (类似熔断保险丝) ，**向调用方返回一个服务预期的，可处理的备选响应 (FallBack) ，而不是长时间的等待或者抛出调用方法无法处理的异常，这样就可以保证了服务调用方的线程不会被长时间，不必要的占用**，从而避免了故障在分布式系统中的蔓延，乃至雪崩。
+> 熔断器
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020112114554744.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+熔断器（Circuit Breaker）一词来源物理学中的电路知识，它的作用是当线路出现故障时，迅速切断电源以保护电路的安全。
 
-## 8.3 Hystrix能干嘛？
+在微服务领域，熔断器最早是由 Martin Fowler 在他发表的 《[Circuit Breake](https://martinfowler.com/bliki/CircuitBreaker.html)r》一文中提出。与物理学中的熔断器作用相似，微服务架构中的熔断器能够在某个服务发生故障后，**向服务调用方返回一个符合预期的、可处理的降级响应（FallBack），而不是长时间的等待或者抛出调用方无法处理的异常。这样就保证了服务调用方的线程不会被长时间、不必要地占用**，避免故障在微服务系统中的蔓延，防止系统雪崩效应的发生。
 
-- 服务降级
-- 服务熔断
-- 服务限流
-- 接近实时的监控
-- …
+## 8.2 什么是Hystrix
+
+**Hystrix**是一个应用于处理分布式系统的延迟和容错的开源库，在分布式系统里，许多依赖不可避免的会调用失败，比如超时，异常等，**Hystrix** 能够保证在一个依赖出问题的情况下，不会导致整个体系服务失败，避免级联故障，以提高分布式系统的弹性。
+
+## 8.3 Hystrix能干嘛
+
+- **保护线程资源**：防止单个服务的故障耗尽系统中的所有线程资源。
+- **快速失败机制**：当某个服务发生了故障，不让服务调用方一直等待，而是直接返回请求失败。
+- **提供降级（FallBack）方案**：在请求失败后，提供一个设计好的降级方案，通常是一个兜底方法，当请求失败后即调用该方法。
+- **防止故障扩散**：使用熔断机制，防止故障扩散到其他服务。
+- **监控功能**：提供熔断器故障监控组件 Hystrix Dashboard，随时监控熔断器的状态。
+
+> Hystrix解决的问题
 
 当一切正常时，请求流可以如下所示：
 
@@ -1496,36 +1506,36 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRodWIuY29tL05ldGZsaXgvSHlzdHJpeC93aWtpL2ltYWdlcy9zb2EtMi02NDAucG5n?x-oss-process=image/format,png)
 
-随着大容量通信量的增加，单个后端依赖项的潜在性会导致所有服务器上的所有资源在几秒钟内饱和。
-
-应用程序中通过网络或客户端库可能导致网络请求的每个点都是潜在故障的来源。比失败更糟糕的是，这些应用程序还可能导致服务之间的延迟增加，从而备份队列、线程和其他系统资源，从而导致更多跨系统的级联故障。
+在高流量的情况下，一个后端依赖项的延迟可能导致所有服务器上的所有资源在数秒内饱和，意味着后续再有请求将无法立即提供服务。
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRodWIuY29tL05ldGZsaXgvSHlzdHJpeC93aWtpL2ltYWdlcy9zb2EtMy02NDAucG5n?x-oss-process=image/format,png)
 
-当使用**Hystrix**包装每个基础依赖项时，上面的图表中所示的体系结构会发生类似于以下关系图的变化。**每个依赖项是相互隔离的**，限制在延迟发生时它可以填充的资源中，并包含在回退逻辑中，该逻辑决定在依赖项中发生任何类型的故障时要做出什么样的响应：
+当使用**Hystrix**包装每个基础依赖项时，上面的图表中所示的体系结构会发生类似于以下关系图的变化。
+
+**每个依赖项是相互隔离的**，限制在延迟发生时它可以填充的资源中，并包含在回退逻辑中，该逻辑决定在依赖项中发生任何类型的故障时要做出什么样的响应：
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131820586.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
 
-**官网资料**：https://github.com/Netflix/Hystrix/wiki
-
 ## 8.4 服务熔断
 
-### 什么是服务熔断?
+### 8.4.1 什么是服务熔断
 
- **熔断机制是赌赢雪崩效应的一种微服务链路保护机制**。
+**熔断机制是赌赢雪崩效应的一种微服务链路保护机制**。
 
- 当扇出链路的某个微服务不可用或者响应时间太长时，会进行服务的降级，**进而熔断该节点微服务的调用，快速返回错误的响应信息**。检测到该节点微服务调用响应正常后恢复调用链路。在SpringCloud框架里熔断机制通过Hystrix实现。Hystrix会监控微服务间调用的状况，当失败的调用到一定阀值缺省是**5秒内20次调用失败，就会启动熔断机制**。熔断机制的注解是：`@HystrixCommand`。
+当扇出链路的某个微服务不可用或者响应时间太长时，会进行服务的降级，**进而熔断该节点微服务的调用，快速返回错误的响应信息**。检测到该节点微服务调用响应正常后恢复调用链路。
+
+在SpringCloud框架里熔断机制通过Hystrix实现。Hystrix会监控微服务间调用的状况，当失败的调用到一定阀值缺省是**5秒内20次调用失败，就会启动熔断机制**。熔断机制的注解是：`@HystrixCommand`
 
 服务熔断解决如下问题：
 
 - 当所依赖的对象不稳定时，能够起到快速失败的目的；
 - 快速失败后，能够根据一定的算法动态试探所依赖对象是否恢复。
 
-### 入门案例
+### 8.4.2 入门案例
 
-新建springcloud-provider-dept-hystrix-8001模块并拷贝springcloud-provider-dept–8001内的**pom.xml、resource**和Java代码进行初始化并调整。
+新建`springcloud-provider-dept-hystrix-8001`模块并拷贝`springcloud-provider-dept–8001`内的`pom.xml`、resource和Java代码进行初始化并调整。
 
-**导入hystrix依赖**
+1、导入hystrix依赖
 
 ```xml
 <!--导入Hystrix依赖-->
@@ -1534,143 +1544,133 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
     <artifactId>spring-cloud-starter-hystrix</artifactId>
     <version>1.4.6.RELEASE</version>
 </dependency>
-123456
 ```
 
-**调整yml配置文件**
+2、调整yml配置文件
 
-```yml
+```yaml
 server:
   port: 8001
 
-# mybatis配置
+# mybatis
 mybatis:
-  # springcloud-api 模块下的pojo包
-  type-aliases-package: com.haust.springcloud.pojo
-  # 本模块下的mybatis-config.xml核心配置文件类路径
-  config-location: classpath:mybatis/mybatis-config.xml
-  # 本模块下的mapper配置文件类路径
-  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.run.springcloud.pojo
+  config-location: classpath:mybatis/mybatis-config.xml   # mybatis-config配置路径(可用可不用)
+  mapper-locations: classpath:mybatis/mapper/*.xml    # mapper路径
 
-# spring配置
+# spring
 spring:
   application:
-    #项目名
     name: springcloud-provider-dept
   datasource:
-    # 德鲁伊数据源
     type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db01?useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db01?useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: root
+    password: 123456
 
 # Eureka配置：配置服务注册中心地址
 eureka:
   client:
     service-url:
-      # 注册中心地址7001-7003
+      # 注册中心地址为7001~7003
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
   instance:
-    instance-id: springcloud-provider-dept-hystrix-8001 #修改Eureka上的默认描述信息
-    prefer-ip-address: true #改为true后默认显示的是ip地址而不再是localhost
+    instance-id: springcloud-privider-dept-hystrix-8001 # 修改Eureka上面默认的描述信息(status)
+    prefer-ip-address: true		// 为true时显示ip地址，而不是本地主机号
 
-#info配置
+# info配置
 info:
-  app.name: haust-springcloud #项目的名称
-  company.name: com.haust #公司的名称
-123456789101112131415161718192021222324252627282930313233343536373839
+  # 项目名
+  app.name: run-springcloud
+  # 公司名
+  company.name: WIT-CSFaculty
 ```
 
-**prefer-ip-address: false**:
+当**`prefer-ip-address: false`**时，显示的是本地主机号(就是localhost)：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131940911.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423141854542](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423141854542.png)
 
-**prefer-ip-address: true**：
+当**`prefer-ip-address: true`**时，显示的是ip地址：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052113195798.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423142029444](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423142029444.png)
 
-**修改controller**
+3、修改controller：
 
 ```java
-/**
- * @Auther: csp1999
- * @Date: 2020/05/17/22:06
- * @Description: 提供Restful服务
- */
-@RestController
+@RestController     // 提供Restful服务
 public class DeptController {
 
     @Autowired
     private DeptService deptService;
 
+
     /**
      * 根据id查询部门信息
-     * 如果根据id查询出现异常,则走hystrixGet这段备选代码
+     * 若此方法出现异常，则走hystrixGet这个备选方法
      * @param id
      * @return
      */
-    @HystrixCommand(fallbackMethod = "hystrixGet")
-    @RequestMapping("/dept/get/{id}")//根据id查询
-    public Dept get(@PathVariable("id") Long id){
+    @GetMapping("/dept/get/{id}")
+    @HystrixCommand(fallbackMethod = "hystrixGet")  // 此方法失败就调用hystrixGet方法
+    public Dept get(@PathVariable("id") Long id) {
         Dept dept = deptService.queryById(id);
-        if (dept==null){
-            throw new RuntimeException("这个id=>"+id+",不存在该用户，或信息无法找到~");
+        // 有可能传进来的id是数据库中没有的，需要做处理
+        if (dept == null) {
+            throw new RuntimeException("id=>" + id + "，不存在该用户或信息无法找到~");
         }
         return dept;
     }
-
+    
     /**
-     * 根据id查询备选方案(熔断)
+     * 根据id查询部门信息的备选方法
      * @param id
      * @return
      */
-    public Dept hystrixGet(@PathVariable("id") Long id){
-        return new Dept().setDeptno(id)
-                .setDname("这个id=>"+id+",没有对应的信息,null---@Hystrix~")
-                .setDb_source("在MySQL中没有这个数据库");
+    public Dept hystrixGet(@PathVariable("id") Long id) {
+        // 直接new一个dept对象返回，name和db_source为提示信息
+        return new Dept()
+                .setNo(id)
+                .setName("id=>" + id + "没有对应的信息，null--@Hystrix")
+                .setDb_source("no this database in MySQL");
     }
+
 }
-1234567891011121314151617181920212223242526272829303132333435363738
 ```
 
-**为主启动类添加对熔断的支持注解@EnableCircuitBreaker**
+4、为主启动类添加对熔断的支持注解`@EnableCircuitBreaker`
 
 ```java
-/**
- * @Auther: csp1999
- * @Date: 2020/05/17/22:09
- * @Description: 启动类
- */
 @SpringBootApplication
-@EnableEurekaClient // EnableEurekaClient 客户端的启动类，在服务启动后自动向注册中心注册服务
-@EnableDiscoveryClient // 服务发现~
-@EnableCircuitBreaker // 添加对熔断的支持注解
-public class HystrixDeptProvider_8001 {
+// 开启Eureka客户端注解，在服务启动后自动去注册中心(eureka) 注册服务
+@EnableEurekaClient
+// 开启服务发现客户端的注解，可以用来获取一些配置的信息，得到具体的微服务
+@EnableDiscoveryClient      // 服务发现
+@EnableCircuitBreaker       // 开启对熔断器的支持
+public class DeptProviderHystrix_8001 {
     public static void main(String[] args) {
-        SpringApplication.run(HystrixDeptProvider_8001.class,args);
+        SpringApplication.run(DeptProviderHystrix_8001.class, args);
     }
 }
-1234567891011121314
 ```
 
 **测试**：
 
 使用熔断后，当访问一个不存在的id时，前台页展示数据如下:
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/202011211516091.png#pic_center)
+![image-20220423140816873](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423140816873.png)
 
-而不适用熔断的springcloud-provider-dept–8001模块访问相同地址会出现下面状况:
+而不使用熔断的`springcloud-provider-dept–8001`模块访问相同地址会出现下面状况:
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132119757.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423141042422](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423141042422.png)
 
-因此，**为了避免因某个微服务后台出现异常或错误而导致整个应用或网页报错，使用熔断是必要的**
+因此，**为了避免因某个微服务后台出现异常或错误而导致整个应用或网页报错，使用熔断是必要的**。
 
 ## 8.5 服务降级
 
-### 什么是服务降级?
+### 8.5.1 什么是服务降级
 
- 服务降级是指 当服务器压力剧增的情况下，根据实际业务情况及流量，对一些服务和页面有策略的不处理，或换种简单的方式处理，从而释放服务器资源以保证核心业务正常运作或高效运作。说白了，**就是尽可能的把系统资源让给优先级高的服务**。
+服务降级是指 当服务器压力剧增的情况下，根据实际业务情况及流量，对一些服务和页面有策略的不处理，或换种简单的方式处理，从而释放服务器资源以保证核心业务正常运作或高效运作。说白了，**就是尽可能的把系统资源让给优先级高的服务**。
 
 资源有限，而请求是无限的。如果在并发高峰期，不做服务降级处理，一方面肯定会影响整体服务的性能，严重的话可能会导致宕机某些重要的服务不可用。所以，一般在高峰期，为了保证核心功能服务的可用性，都要对某些服务降级处理。比如当双11活动时，把交易无关的服务统统降级，如查看蚂蚁深林，查看历史订单等等。
 
@@ -1682,81 +1682,83 @@ public class HystrixDeptProvider_8001 {
 
 由上图可得，**当某一时间内服务A的访问量暴增，而B和C的访问量较少，为了缓解A服务的压力，这时候需要B和C暂时关闭一些服务功能，去承担A的部分服务，从而为A分担压力，叫做服务降级**。
 
-### 服务降级需要考虑的问题
+### 8.5.2 服务降级需要考虑的问题
 
-- 1）那些服务是核心服务，哪些服务是非核心服务
-- 2）那些服务可以支持降级，那些服务不能支持降级，降级策略是什么
-- 3）除服务降级之外是否存在更复杂的业务放通场景，策略是什么？
+- 那些服务是核心服务，哪些服务是非核心服务
+- 那些服务可以支持降级，那些服务不能支持降级，降级策略是什么
+- 除服务降级之外是否存在更复杂的业务放通场景，策略是什么？
 
-### 自动降级分类
+### 8.5.3 自动降级分类
 
-1）超时降级：主要配置好超时时间和超时重试次数和机制，并使用异步机制探测回复情况
+- 超时降级：主要配置好超时时间和超时重试次数和机制，并使用异步机制探测回复情况
 
-2）失败次数降级：主要是一些不稳定的api，当失败调用次数达到一定阀值自动降级，同样要使用异步机制探测回复情况
+- 失败次数降级：主要是一些不稳定的api，当失败调用次数达到一定阀值自动降级，同样要使用异步机制探测回复情况
 
-3）故障降级：比如要调用的远程服务挂掉了（网络故障、DNS故障、http服务返回错误的状态码、rpc服务抛出异常），则可以直接降级。降级后的处理方案有：默认值（比如库存服务挂了，返回默认现货）、兜底数据（比如广告挂了，返回提前准备好的一些静态页面）、缓存（之前暂存的一些缓存数据）
+- 故障降级：比如要调用的远程服务挂掉了（网络故障、DNS故障、http服务返回错误的状态码、rpc服务抛出异常），则可以直接降级。降级后的处理方案有：默认值（比如库存服务挂了，返回默认现货）、兜底数据（比如广告挂了，返回提前准备好的一些静态页面）、缓存（之前暂存的一些缓存数据）
 
-4）限流降级：秒杀或者抢购一些限购商品时，此时可能会因为访问量太大而导致系统崩溃，此时会使用限流来进行限制访问量，当达到限流阀值，后续请求会被降级；降级后的处理方案可以是：排队页面（将用户导流到排队页面等一会重试）、无货（直接告知用户没货了）、错误页（如活动太火爆了，稍后重试）。
+- 限流降级：秒杀或者抢购一些限购商品时，此时可能会因为访问量太大而导致系统崩溃，此时会使用限流来进行限制访问量，当达到限流阀值，后续请求会被降级；降级后的处理方案可以是：排队页面（将用户导流到排队页面等一会重试）、无货（直接告知用户没货了）、错误页（如活动太火爆了，稍后重试）。
 
-### 入门案例
+### 8.5.4 入门案例
 
-在springcloud-api模块下的service包中新建降级配置类DeptClientServiceFallBackFactory.java
+1、在`springcloud-api`模块下的service包中新建降级配置类`DeptClientServiceFallBackFactory.java`，实现`FallbackFactory`接口：
 
 ```java
-/**
- * @Auther: csp1999
- * @Date: 2020/05/20/9:18
- * @Description: Hystrix服务降级 ~
- */
 @Component
 public class DeptClientServiceFallBackFactory implements FallbackFactory {
 
+    /**
+     * Hystrix服务降级
+     * 返回整个DeptClientService接口中的方法
+     * @param throwable
+     * @return
+     */
     @Override
-    public DeptClientService create(Throwable cause) {
+    public DeptClientService create(Throwable throwable) {
+        // 返回一个DeptClientService，但它是接口，需要实例化再返回，采用匿名内部类的方式
         return new DeptClientService() {
+            @Override
+            public boolean addDept(Dept dept) {
+                return false;
+            }
+
             @Override
             public Dept queryById(Long id) {
                 return new Dept()
-                        .setDeptno(id)
-                        .setDname("id=>" + id + "没有对应的信息，客户端提供了降级的信息，这个服务现在已经被关闭")
+                        .setNo(id)
+                        .setName("id=>" + id + "没有对应的信息，客户端提供了降级的信息，这个服务现在已经被关闭")
                         .setDb_source("没有数据~");
             }
+
             @Override
             public List<Dept> queryAll() {
                 return null;
             }
-
-            @Override
-            public Boolean addDept(Dept dept) {
-                return false;
-            }
         };
     }
 }
-123456789101112131415161718192021222324252627282930
 ```
 
-在DeptClientService中指定降级配置类DeptClientServiceFallBackFactory
+2、在`DeptClientService.java`接口中指定降级配置类`DeptClientServiceFallBackFactory.java`：
 
 ```java
-@Component //注册到spring容器中
-//@FeignClient:微服务客户端注解,value:指定微服务的名字,这样就可以使Feign客户端直接找到对应的微服务
-@FeignClient(value = "SPRINGCLOUD-PROVIDER-DEPT",fallbackFactory = DeptClientServiceFallBackFactory.class)//fallbackFactory指定降级配置类
+// @FeignClient:微服务客户端注解, value: 指定微服务的名字, 这样就可以使Feign客户端直接找到对应的微服务
+@FeignClient(value = "SPRINGCLOUD-PROVIDER-DEPT", fallbackFactory = DeptClientServiceFallBackFactory.class)     // fallbackFactory指定降级配置类
+@Service
 public interface DeptClientService {
 
+    @GetMapping("/dept/add")
+    boolean addDept(@RequestBody Dept dept);
+
     @GetMapping("/dept/get/{id}")
-    public Dept queryById(@PathVariable("id") Long id);
+    Dept queryById(@PathVariable("id") Long id);
 
     @GetMapping("/dept/list")
-    public List<Dept> queryAll();
+    List<Dept> queryAll();
 
-    @GetMapping("/dept/add")
-    public Boolean addDept(Dept dept);
 }
-1234567891011121314
 ```
 
-在**springcloud-consumer-dept-feign**模块中开启降级：
+3、在`springcloud-consumer-dept-feign`模块中开启降级：
 
 ```yml
 server:
@@ -1765,82 +1767,109 @@ server:
 # Eureka配置
 eureka:
   client:
-    register-with-eureka: false # 不向 Eureka注册自己
-    service-url: # 从三个注册中心中随机取一个去访问
+    register-with-eureka: false   # 不往Eureka注册自己(消费者只管从服务者拿服务)
+    service-url:
+      # 从三个注册中心中随机访问1个
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
 
-# 开启降级feign.hystrix
+# 开启服务降级feign.hystrix
 feign:
   hystrix:
     enabled: true
-1234567891011121314
 ```
 
-## 8.6 服务熔断和降级的区别
+现在将服务端全部关掉，模拟某些服务关闭了，让客户访问进行测试：
+
+![image-20220423152606146](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423152606146.png)
+
+## 8.6 熔断和降级的区别
 
 - **服务熔断—>服务端**：某个服务超时或异常，引起熔断~，类似于保险丝(自我熔断)
 - **服务降级—>客户端**：从整体网站请求负载考虑，当某个服务熔断或者关闭之后，服务将不再被调用，此时在客户端，我们可以准备一个 FallBackFactory ，返回一个默认的值(缺省值)。会导致整体的服务下降，但是好歹能用，比直接挂掉强。
-- 触发原因不太一样，服务熔断一般是某个服务（下游服务）故障引起，而服务降级一般是从整体负荷考虑；管理目标的层次不太一样，熔断其实是一个框架级的处理，每个微服务都需要（无层级之分），而降级一般需要对业务有层级之分（比如降级一般是从最外围服务开始）
-- 实现方式不太一样，服务降级具有代码侵入性(由控制器完成/或自动降级)，熔断一般称为**自我熔断**。
+- 触发原因不太一样：服务熔断一般是某个服务（下游服务）故障引起，而服务降级一般是从整体负荷考虑；管理目标的层次不太一样，熔断其实是一个框架级的处理，每个微服务都需要（无层级之分），而降级一般需要对业务有层级之分（比如降级一般是从最外围服务开始）
+- 实现方式不太一样：服务降级具有代码侵入性(由控制器完成/或自动降级)，熔断一般称为**自我熔断**。
 
 **熔断，降级，限流**：
 
-限流：限制并发的请求访问量，超过阈值则拒绝；
+- 限流：限制并发的请求访问量，超过阈值则拒绝；
 
-降级：服务分优先级，牺牲非核心服务（不可用），保证核心服务稳定；从整体负荷考虑；
+- 降级：服务分优先级，牺牲非核心服务（不可用），保证核心服务稳定；从整体负荷考虑；
 
-熔断：依赖的下游服务故障触发熔断，避免引发本系统崩溃；系统自动执行和恢复
+- 熔断：依赖的下游服务故障触发熔断，避免引发本系统崩溃；系统自动执行和恢复
 
 ## 8.7 Dashboard 流监控
 
-新建springcloud-consumer-hystrix-dashboard模块
-
-**添加依赖**
+提示：服务提供端provider的pom文件中必须有完善监控信息的依赖actuator
 
 ```xml
-<!--Hystrix依赖-->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-hystrix</artifactId>
-    <version>1.4.6.RELEASE</version>
-</dependency>
-<!--dashboard依赖-->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
-    <version>1.4.6.RELEASE</version>
-</dependency>
-<!--Ribbon-->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-ribbon</artifactId>
-    <version>1.4.6.RELEASE</version>
-</dependency>
-<!--Eureka-->
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-eureka</artifactId>
-    <version>1.4.6.RELEASE</version>
-</dependency>
-<!--实体类+web-->
-<dependency>
-    <groupId>com.haust</groupId>
-    <artifactId>springcloud-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
+<!--actuator完善监控信息-->
 <dependency>
     <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
 </dependency>
-<!--热部署-->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-devtools</artifactId>
-</dependency>
-123456789101112131415161718192021222324252627282930313233343536373839
 ```
 
-**主启动类**
+我们之前已经全部导入过了。
+
+1、新建`springcloud-consumer-hystrix-dashboard`模块，添加依赖
+
+```xml
+<dependencies>
+    <!--Hystrix依赖-->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-hystrix</artifactId>
+        <version>1.4.6.RELEASE</version>
+    </dependency>
+    <!--dashboard依赖-->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+        <version>1.4.6.RELEASE</version>
+    </dependency>
+    <!--Ribbon-->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-ribbon</artifactId>
+        <version>1.4.6.RELEASE</version>
+    </dependency>
+    <!--Eureka-->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-eureka</artifactId>
+        <version>1.4.6.RELEASE</version>
+    </dependency>
+    <!--实体类+web-->
+    <dependency>
+        <groupId>org.example</groupId>
+        <artifactId>springcloud-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!--热部署-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+    </dependency>
+</dependencies>
+```
+
+2、yaml文件中配置端口，把监控地址加入`proxyStreamAllowList`：
+
+```yaml
+server:
+  port: 9001
+
+hystrix:
+  dashboard:
+    # 允许所有的地址访问监控页面
+    proxy-stream-allow-list: "*"
+```
+
+3、主启动类
 
 ```java
 @SpringBootApplication
@@ -1848,58 +1877,69 @@ feign:
 @EnableHystrixDashboard
 public class DeptConsumerDashboard_9001 {
     public static void main(String[] args) {
-        SpringApplication.run(DeptConsumerDashboard_9001.class,args);
+        SpringApplication.run(DeptConsumerDashboard_9001.class, args);
     }
 }
-12345678
 ```
 
-给springcloud-provider-dept-hystrix-8001模块下的主启动类添加如下代码,添加监控
+4、给`springcloud-provider-dept-hystrix-8001`模块下的主启动类添加如下代码，添加监控
 
 ```java
 @SpringBootApplication
-@EnableEurekaClient //EnableEurekaClient 客户端的启动类，在服务启动后自动向注册中心注册服务
-public class DeptProvider_8001 {
+// 开启Eureka客户端注解，在服务启动后自动去注册中心(eureka) 注册服务
+@EnableEurekaClient
+// 开启服务发现客户端的注解，可以用来获取一些配置的信息，得到具体的微服务
+@EnableDiscoveryClient      // 服务发现
+@EnableCircuitBreaker       // 开启对熔断器的支持
+public class DeptProviderHystrix_8001 {
+
     public static void main(String[] args) {
-        SpringApplication.run(DeptProvider_8001.class,args);
+        SpringApplication.run(DeptProviderHystrix_8001.class, args);
     }
 
-    //增加一个 Servlet
+    // 添加一个Servlet
     @Bean
-    public ServletRegistrationBean hystrixMetricsStreamServlet(){
+    public ServletRegistrationBean hystrixMetricsStreamServlet() {
         ServletRegistrationBean registrationBean = new ServletRegistrationBean(new HystrixMetricsStreamServlet());
-        //访问该页面就是监控页面
+        // 访问该页面就是监控页面
         registrationBean.addUrlMappings("/actuator/hystrix.stream");
-       
         return registrationBean;
     }
+
 }
-1234567891011121314151617
 ```
+
+5、启动相关服务：
+
+![image-20220423155049675](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155049675.png)
 
 访问：http://localhost:9001/hystrix
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121161121357.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423155137293](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155137293.png)
+
+
 
 进入监控页面：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121162143650.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423155508812](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155508812.png)
 
-效果如下图：
+在地址栏不断输入`http://localhost:8001/dept/get/2`进行测试，若请求成功，则监控页面会出现绿色，曲线呈上升趋势；请求失败，如`/get/10`，监控页面就会出现红色，曲线降为0；效果如下图：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121162412970.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423162622030](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423162622030.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201121162612484.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+监控页面的具体信息解释如下：
+
+![image-20220423162935474](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423162935474.png)
 
 # 9. Zull 路由网关
 
 ## 9.1 概述
 
-> 什么是zuul?
+> 什么是Zuul
 
  Zull包含了对请求的**路由**(用来跳转的)和**过滤**两个最主要功能：
 
- 其中**路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础**，而过**滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础**。Zuul和Eureka进行整合，将Zuul自身注册为Eureka服务治理下的应用，同时从Eureka中获得其他服务的消息，也即以后的访问微服务都是通过Zuul跳转后获得。
+其中**路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础**，而过**滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础**。Zuul和Eureka进行整合，将Zuul自身注册为Eureka服务治理下的应用，同时从Eureka中获得其他服务的消息，也即以后的访问微服务都是通过Zuul跳转后获得。
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201122103018821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
 
@@ -1916,7 +1956,7 @@ public class DeptProvider_8001 {
 
 ## 9.2 入门案例
 
-**新建springcloud-zuul模块，并导入依赖**
+1、新建`springcloud-zuul-9527`模块，并导入依赖：
 
 ```xml
 <dependencies>
@@ -1935,7 +1975,7 @@ public class DeptProvider_8001 {
     <!--dashboard依赖-->
     <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-hystrix-dashboar</artifactId>
+        <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
         <version>1.4.6.RELEASE</version>
     </dependency>
     <!--Ribbon-->
@@ -1952,7 +1992,7 @@ public class DeptProvider_8001 {
     </dependency>
     <!--实体类+web-->
     <dependency>
-        <groupId>com.haust</groupId>
+        <groupId>org.example</groupId>
         <artifactId>springcloud-api</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
@@ -1966,10 +2006,13 @@ public class DeptProvider_8001 {
         <artifactId>spring-boot-devtools</artifactId>
     </dependency>
 </dependencies>
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647
 ```
 
-**application.yml**
+2、在host文件里再添加一个虚拟的ip地址域名映射，实际上还是localhost：
+
+![image-20220423205613676](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423205613676.png)
+
+3、配置文件`application.yml`：
 
 ```yml
 server:
@@ -1977,44 +2020,28 @@ server:
 
 spring:
   application:
-    name: springcloud-zuul #微服务名称
+    name: springcloud-zuul 		# 微服务名称
 
 # eureka 注册中心配置
 eureka:
   client:
     service-url:
       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
-  instance: #实例的id
-    instance-id: zuul9527.com
-    prefer-ip-address: true # 显示ip
+  instance: 
+    instance-id: zuul9527.com   # 修改Eureka上面默认的描述信息(status)
+    prefer-ip-address: true 	# 显示ip
 
+# info配置
 info:
-  app.name: haust.springcloud # 项目名称
-  company.name: 河南科技大学西苑校区 # 公司名称
-
-# zull 路由网关配置
-zuul:
-  # 路由相关配置
-  # 原来访问路由 eg:http://www.cspStudy.com:9527/springcloud-provider-dept/dept/get/1
-  # zull路由配置后访问路由 eg:http://www.cspstudy.com:9527/haust/mydept/dept/get/1
-  routes:
-    mydept.serviceId: springcloud-provider-dept # eureka注册中心的服务提供方路由名称
-    mydept.path: /mydept/** # 将eureka注册中心的服务提供方路由名称 改为自定义路由名称
-  # 不能再使用这个路径访问了，*： 忽略,隐藏全部的服务名称~
-  ignored-services: "*"
-  # 设置公共的前缀
-  prefix: /haust
-1234567891011121314151617181920212223242526272829303132
+  # 项目名
+  app.name: run-springcloud
+  # 公司名
+  company.name: WIT-CSFaculty
 ```
 
-**主启动类**
+4、主启动类：
 
 ```java
-/**
- * @Auther: csp1999
- * @Date: 2020/05/20/20:53
- * @Description: Zull路由网关主启动类
- */
 @SpringBootApplication
 @EnableZuulProxy // 开启Zuul
 public class ZuulApplication_9527 {
@@ -2023,26 +2050,40 @@ public class ZuulApplication_9527 {
         SpringApplication.run(ZuulApplication_9527.class,args);
     }
 }
-12345678910111213
 ```
 
-测试：
+5、启动测试：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201122104605641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423210550477](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423210550477.png)
 
 可以看出Zull路由网关被注册到Eureka注册中心中了！
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201122104936500.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+访问服务端中的信息：现在是没有经过Zuul路由网关的配置，服务接口访问的路由，可以看出直接用微服务(服务提供方)名称去访问：
 
-上图是没有经过Zull路由网关配置时，服务接口访问的路由，可以看出直接用微服务(服务提供方)名称去访问，这样不安全，不能将微服务名称暴露！
+![image-20220423210844722](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423210844722.png)
 
-所以经过Zull路由网关配置后，访问的路由为：
+直接使用微服务名称去访问不安全，不能将微服务名称暴露，所以要配置Zuul路由网关，在配置文件中添加Zuul相关配置：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201122111703260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+```yaml
+# zuul 路由网关配置
+zuul:
+  # 路由相关配置
+  # 原来访问路由 eg:http://www.run.com:9527/springcloud-provider-dept/dept/get/1
+  # zuul路由配置后访问路由 eg:http://www.run.com:9527/myzuul/mydept/dept/get/1
+  routes:
+    mydept.serviceId: springcloud-provider-dept 	# eureka注册中心的服务提供方路由名称
+    mydept.path: /mydept/** 	# 将eureka注册中心的服务提供方路由名称 改为自定义路由名称
+  # 不能再使用原路径访问了；   *： 忽略、隐藏全部的服务名称~
+  ignored-services: "*"
+  # 设置公共的前缀
+  prefix: /myzuul
+```
 
-我们看到，微服务名称被替换并隐藏，换成了我们自定义的微服务名称mydept，同时加上了前缀haust，这样就做到了对路由fan访问的加密处理！
+重启项目，使用配置的路由进行访问：
 
-详情参考springcloud中文社区zuul组件 :https://www.springcloud.cc/spring-cloud-greenwich.html#_router_and_filter_zuul
+![image-20220423211721888](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423211721888.png)
+
+我们看到，微服务名称被替换并隐藏，换成了我们自定义的微服务名称mydept，同时加上了前缀myzuul，这样就做到了对路由访问的加密处理
 
 # 10. Spring Cloud Config 分布式配置
 
@@ -2052,39 +2093,43 @@ public class ZuulApplication_9527 {
 
 ## 10.1 概述
 
-**分布式系统面临的–配置文件问题**
+**分布式系统面临的配置文件问题**：
 
-微服务意味着要将单体应用中的业务拆分成一个个子服务，每个服务的粒度相对较小，因此系统中会出现大量的服务，由于每个服务都需要必要的配置信息才能运行，所以一套集中式的，动态的配置管理设施是必不可少的。spring cloud提供了configServer来解决这个问题，我们每一个微服务自己带着一个application.yml，那上百个的配置文件修改起来，令人头疼！
+微服务意味着要将单体应用中的业务拆分成一个个子服务，每个服务的粒度相对较小，因此系统中会出现大量的服务，由于每个服务都需要必要的配置信息才能运行，所以一套集中式的，动态的配置管理设施是必不可少的。spring cloud提供了configServer来解决这个问题，我们每一个微服务自己带着一个`application.yml`，那上百个的配置文件修改起来，令人头疼！
 
-**什么是SpringCloud config分布式配置中心？**
+**什么是SpringCloud config分布式配置中心**？
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/202005211322530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423211814657](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423211814657.png)
 
- spring cloud config 为微服务架构中的微服务提供集中化的外部支持，配置服务器为各个不同微服务应用的所有环节提供了一个**中心化的外部配置**。
+Spring Cloud Config 为微服务架构中的微服务提供集中化的外部支持，配置服务器为各个不同微服务应用的所有环节提供了一个**中心化的外部配置**。
 
- spring cloud config 分为**服务端**和**客户端**两部分。
+Spring Cloud Config 分为**服务端**和**客户端**两部分：
 
- 服务端也称为 **分布式配置中心**，它是一个独立的微服务应用，用来连接配置服务器并为客户端提供获取配置信息，加密，解密信息等访问接口。
+- 服务端也称为 **分布式配置中心**，它是一个独立的微服务应用，用来连接配置服务器并为客户端提供获取配置信息，加密，解密信息等访问接口。
 
- 客户端则是**通过指定的配置中心来管理应用资源，以及与业务相关的配置内容，并在启动的时候从配置中心获取和加载配置信息**。配置服务器默认采用git来存储配置信息，这样就有助于对环境配置进行版本管理。并且可用通过git客户端工具来方便的管理和访问配置内容。
+- 客户端则是**通过指定的配置中心来管理应用资源，以及与业务相关的配置内容，并在启动的时候从配置中心获取和加载配置信息**。配置服务器默认采用git来存储配置信息，这样就有助于对环境配置进行版本管理。并且可用通过git客户端工具来方便的管理和访问配置内容。
 
-**spring cloud config 分布式配置中心能干嘛？**
+**Spring Cloud Config 分布式配置中心能干嘛**？
 
 - 集中式管理配置文件
-- 不同环境，不同配置，动态化的配置更新，分环境部署，比如 /dev /test /prod /beta /release
+- 不同环境，不同配置，动态化的配置更新，分环境部署，比如 `/dev /test /prod /beta /release`
 - 运行期间动态调整配置，不再需要在每个服务部署的机器上编写配置文件，服务会向配置中心统一拉取配置自己的信息
 - 当配置发生变动时，服务不需要重启，即可感知到配置的变化，并应用新的配置
 - 将配置信息以REST接口的形式暴露
 
-**spring cloud config 分布式配置中心与GitHub整合**
+**Spring Cloud Config 分布式配置中心与GitHub整合**
 
- 由于spring cloud config 默认使用git来存储配置文件 (也有其他方式，比如自持SVN 和本地文件)，但是最推荐的还是git ，而且使用的是 http / https 访问的形式。
+- 由于 Spring Cloud Config 默认使用git来存储配置文件 (也有其他方式，比如自持SVN 和本地文件)，但是最推荐的还是git ，而且使用的是 http / https 访问的形式。
 
 ## 10.2 入门案例
 
-### **服务端**
+首先在GitHub创建一个仓库，存放Spring Cloud Config配置，现在先在`application.yml`文件中编写开发环境：
 
-新建springcloud-config-server-3344模块导入pom.xml依赖
+![image-20220423214902286](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423214902286.png)
+
+### 10.2.1 服务端
+
+1、新建`springcloud-config-server-3344`模块导入`pom.xml`依赖：
 
 ```xml
 <dependencies>
@@ -2106,10 +2151,9 @@ public class ZuulApplication_9527 {
         <version>1.4.6.RELEASE</version>
     </dependency>
 </dependencies>
-12345678910111213141516171819
 ```
 
-resource下创建application.yml配置文件，Spring Cloud Config服务器从git存储库（必须提供）为远程客户端提供配置：
+2、resource下创建`application.yml`配置文件，Spring Cloud Config 服务器从git存储库（必须提供）为远程客户端提供配置：
 
 ```yml
 server:
@@ -2124,8 +2168,9 @@ spring:
       server:
         git:
           # 注意是https的而不是ssh
-          uri: https://gitee.com/cao_shi_peng/springcloud-config.git 
-            # 通过 config-server可以连接到git，访问其中的资源以及配置~
+          uri: https://github.com/AruNi-01/springcloud-config-study.git
+          # 通过 config-server可以连接到git，访问其中的资源以及配置~
+          default-label: main			# 访问main分支
 
 # 不加这个配置会报Cannot execute request on any known server 这个错：连接Eureka服务端地址不对
 # 或者直接注释掉eureka依赖 这里暂时用不到eureka
@@ -2133,10 +2178,9 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
-123456789101112131415161718192021
 ```
 
-主启动类
+3、主启动类
 
 ```java
 @EnableConfigServer // 开启spring cloud config server服务
@@ -2146,16 +2190,17 @@ public class Config_server_3344 {
         SpringApplication.run(Config_server_3344.class,args);
     }
 }
-1234567
 ```
 
-将本地git仓库springcloud-config文件夹下新建的application.yml提交到码云仓库：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132326502.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+
+
+
+> 说明
 
 定位资源的默认策略是克隆一个git仓库（在`spring.cloud.config.server.git.uri`），并使用它来初始化一个迷你`SpringApplication`。小应用程序的`Environment`用于枚举属性源并通过JSON端点发布。
 
-HTTP服务具有以下格式的资源：
+HTTP服务具有以下格式的资源，任意一种都可以访问仓库里的配置内容：
 
 ```json
 /{application}/{profile}[/{label}]
@@ -2163,34 +2208,81 @@ HTTP服务具有以下格式的资源：
 /{label}/{application}-{profile}.yml
 /{application}-{profile}.properties
 /{label}/{application}-{profile}.properties
-12345
 ```
 
-其中“应用程序”作为`SpringApplication`中的`spring.config.name`注入（即常规的Spring Boot应用程序中通常是“应用程序”），“配置文件”是活动配置文件（或逗号分隔列表的属性），“label”是可选的git标签（默认为“master”）。
+其中 “应用程序” 作为`SpringApplication`中的`spring.config.name`注入（即常规的Spring Boot应用程序中通常是 “应用程序” ），“配置文件” 是活动配置文件（或逗号分隔列表的属性），“label” 是可选的git标签（默认为“main”）。
+
+
+
+
+
+> 测试
 
 测试访问http://localhost:3344/application-dev.yml
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132350566.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423223537182](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223537182.png)
 
-测试访问 http://localhost:3344/application/test/master
+测试访问 http://localhost:3344/application/test/main
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132406474.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423223743449](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223743449.png)
 
-测试访问 http://localhost:3344/master/application-dev.yml
+测试访问 http://localhost:3344/main/application-dev.yml
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132423447.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423223903833](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223903833.png)
 
-如果测试访问不存在的配置则不显示 如：http://localhost:3344/master/application-aaa.yml
+测试访问不存在的配置则不显示 如：http://localhost:3344/main/application-aaa.yml
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132439404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220423223938534](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223938534.png)
 
-### **客户端**
+### 10.2.2 客户端
 
-将本地git仓库springcloud-config文件夹下新建的config-client.yml提交到码云仓库：
+1、在本地git仓库文件夹下新建的`config-client.yml`提交到仓库：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132503261.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+```yaml
+spring:
+  profiles:
+    active: dev
+    
+---
+server:
+  port: 8201
+# spring
+spring:
+  # dev环境
+  profiles: dev
+  application:
+    name: springcloud-provider-dept
 
-新建一个springcloud-config-client-3355模块，并导入依赖
+
+# Eureka配置：配置服务注册中心地址
+eureka:
+  client:
+    service-url:
+      # 注册中心地址为7001
+      defaultZone: http://eureka7001.com:7001/eureka/
+
+---
+server:
+  port: 8202
+# spring
+spring:
+  # test环境
+  profiles: test
+  application:
+    name: springcloud-provider-dept
+
+
+# Eureka配置：配置服务注册中心地址
+eureka:
+  client:
+    service-url:
+      # 注册中心地址为7001
+      defaultZone: http://eureka7001.com:7001/eureka/
+```
+
+![image-20220423233457617](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423233457617.png)
+
+2、新建一个`springcloud-config-client-3355`模块，并导入依赖
 
 ```xml
 <!--config-->
@@ -2208,107 +2300,241 @@ HTTP服务具有以下格式的资源：
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
 </dependency>
-123456789101112131415
 ```
 
-resources下创建application.yml和bootstrap.yml配置文件
+3、resources下创建`application.yml`和`bootstrap.yml`配置文件
 
-**bootstrap.yml** 是系统级别的配置
+- **bootstrap.yml** 是系统级别的配置：
 
-```yml
-# 系统级别的配置
-spring:
-  cloud:
-    config:
-      name: config-client # 需要从git上读取的资源名称，不要后缀
-      profile: dev
-      label: master
-      uri: http://localhost:3344
-12345678
-```
+  ```yaml
+  # 系统级别的配置
+  spring:
+    cloud:
+      config:
+        name: config-client 		# 需要从git上读取的资源名称，不要后缀
+        # 生产环境
+        profile: dev
+        # 分支
+        label: main
+        # 地址
+        uri: http://localhost:3344
+  ```
 
-**application.yml** 是用户级别的配置
+- **application.yml** 是用户级别的配置
 
-```yml
-# 用户级别的配置
-spring:
-  application:
-    name: springcloud-config-client
-1234
-```
+  ```yaml
+  # 用户级别的配置
+  spring:
+    application:
+      name: springcloud-config-client-3355
+  ```
 
-创建controller包下的**ConfigClientController.java** 用于测试
+4、创建controller包下的`ConfigClientController.java` 用于测试
 
 ```java
 @RestController
 public class ConfigClientController {
 
-    @Value("${spring.application.name}")
-    private String applicationName; //获取微服务名称
+    // 信息全都从配置文件中获取，若输入正确，说明配置文件读取到了远程仓库中的内容
+    @Value("${spring.application.name")
+    private String applicationName;     // 获取微服务名称
 
     @Value("${eureka.client.service-url.defaultZone}")
-    private String eurekaServer; //获取Eureka服务
+    private String eurekaServer;        // 获取Eureka服务
 
     @Value("${server.port}")
-    private String port; //获取服务端的端口号
-
+    private String port;        // 获取服务端的端口号
 
     @RequestMapping("/config")
-    public String getConfig(){
-        return "applicationName:"+applicationName +
-         "eurekaServer:"+eurekaServer +
-         "port:"+port;
+    public String getConfig() {
+        return "applicationName：" + applicationName +
+                "eurekaServer：" + eurekaServer +
+                "port：" + port;
     }
 }
-1234567891011121314151617181920
 ```
 
-主启动类
+5、主启动类
 
 ```java
 @SpringBootApplication
-public class ConfigClient {
+public class Config_Client {
     public static void main(String[] args) {
-        SpringApplication.run(ConfigClient.class,args);
+        SpringApplication.run(Config_Client.class, args);
     }
 }
-123456
 ```
 
-测试：
+6、启动服务端`Config_Server_3344` 再启动客户端`Config_Client`
 
-启动服务端Config_server_3344 再启动客户端ConfigClient
+访问：http://localhost:8201/config/，整个获取远程仓库的数据
 
-访问：http://localhost:8201/config/
+![image-20220423233617489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423233617489.png)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132534867.png#pic_center)
+7、现在将`bootstrap.yaml`中的生产环境切换成test：`profile: test`，重启项目
 
-**小案例**
+可以发现，http://localhost:8201/config/访问失败，http://localhost:8202/config/才能访问成功；
 
-本地新建config-dept.yml和config-eureka.yml并提交到码云仓库
+> 结论
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132550150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+以后的配置文件可以全部放到远程仓库里，我们开发需要什么配置就直接切换到哪个配置去，再也不用在本地编写一大堆配置信息了！！！
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132601463.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
 
-这里配置文件内容不再列举直接到代码中看把。
 
-新建springcloud-config-eureka-7001模块，并将原来的springcloud-eureka-7001模块下的内容拷贝的该模块。
 
-1.清空该模块的application.yml配置，并新建bootstrap.yml连接远程配置
 
-```yml
+## 10.3 远程配置实战
+
+1、本地新建`config-dept.yml`和`config-eureka.yml`并提交到远程仓库，里面的内容和原来的一样，只是增加了环境配置：
+
+`config-eureka.yml`：
+
+```yaml
 spring:
-  cloud:
-    config:
-      name: config-eureka # 仓库中的配置文件名称
-      label: master
-      profile: dev
-      uri: http://localhost:3344
-1234567
+  profiles:
+    # 当前dev环境
+    active: dev
+
+---
+server:
+  port: 7001
+  
+# dev环境的配置
+spring:
+  profiles: dev
+  application:
+    name: springcloud-config-eureka
+
+# Eureka配置
+eureka:
+  instance:
+    # Eureka服务端的示例名字
+    hostname: eureka7001.com
+  client:
+    # 是否向Eureka注册中心注册自己（这个模块本身就是服务器，选择false）
+    register-with-eureka: false
+    # 表示自己为注册中心，客户端的fetch-registry改为true
+    fetch-registry: false
+    service-url:    # 监控页面，重写Eureka的默认端口和访问路径
+      # 单机：defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      # 集群：7001关联7002和7003
+      defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+      
+      
+---
+server:
+  port: 7001
+  
+# test环境的配置
+spring:
+  profiles: test
+  application:
+    name: springcloud-config-eureka
+
+# Eureka配置
+eureka:
+  instance:
+    # Eureka服务端的示例名字
+    hostname: eureka7001.com
+  client:
+    # 是否向Eureka注册中心注册自己（这个模块本身就是服务器，选择false）
+    register-with-eureka: false
+    # 表示自己为注册中心，客户端的fetch-registry改为true
+    fetch-registry: false
+    service-url:    # 监控页面，重写Eureka的默认端口和访问路径
+      # 单机：defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      # 集群：7001关联7002和7003
+      defaultZone: http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
 ```
 
-2.在pom.xml中添加spring cloud config依赖
+`config-dept.yml`，将test环境的数据库切换成了db02，与dev环境的不同，模拟一下集群：
+
+```yaml
+spring:
+  profiles:
+    active: dev
+
+---
+server:
+  port: 8001
+
+# mybatis
+mybatis:
+  type-aliases-package: com.run.springcloud.pojo
+  config-location: classpath:mybatis/mybatis-config.xml   # mybatis-config配置路径(可用可不用)
+  mapper-locations: classpath:mybatis/mapper/*.xml    # mapper路径
+
+# spring
+spring:
+  profiles: dev
+  application:
+    name: springcloud-config-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db01?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123456
+
+# Eureka配置：配置服务注册中心地址
+eureka:
+  client:
+    service-url:
+      # 注册中心地址为7001~7003
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    instance-id: springcloud-privider-dept-8001 # 修改Eureka上面默认的描述信息(status)
+
+# info配置
+info:
+  # 项目名
+  app.name: run-springcloud
+  # 公司名
+  company.name: WIT-CSFaculty
+  
+  
+---
+server:
+  port: 8001
+
+# mybatis
+mybatis:
+  type-aliases-package: com.run.springcloud.pojo
+  config-location: classpath:mybatis/mybatis-config.xml   # mybatis-config配置路径(可用可不用)
+  mapper-locations: classpath:mybatis/mapper/*.xml    # mapper路径
+
+# spring
+spring:
+  profiles: test
+  application:
+    name: springcloud-config-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db02?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123456
+
+# Eureka配置：配置服务注册中心地址
+eureka:
+  client:
+    service-url:
+      # 注册中心地址为7001~7003
+      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    instance-id: springcloud-privider-dept-8001 # 修改Eureka上面默认的描述信息(status)
+
+# info配置
+info:
+  # 项目名
+  app.name: run-springcloud
+  # 公司名
+  company.name: WIT-CSFaculty
+```
+
+
+
+2、新建`springcloud-config-eureka-7001`模块，并将原来的`springcloud-eureka-7001`模块下的内容拷贝的该模块，添加Spring Cloud Config 依赖：
 
 ```xml
 <!--config-->
@@ -2318,54 +2544,73 @@ spring:
     <artifactId>spring-cloud-starter-config</artifactId>
     <version>2.1.1.RELEASE</version>
 </dependency>
-1234567
 ```
 
-3.主启动类
+3、该模块的`application.yml`配置只编写application name，并新建`bootstrap.yml`连接远程配置：
+
+`application.yaml`：
+
+```yaml
+spring:
+  application:
+    name: springcloud-config-eureka-7001
+```
+
+`bootstrap.yaml`：
+
+```yml
+spring:
+  cloud:
+    config:
+      name: config-eureka
+      label: main
+      profile: dev
+      uri: http://localhost:3344
+```
+
+4、主启动类不变
 
 ```java
 @SpringBootApplication
-@EnableEurekaServer //EnableEurekaServer 服务端的启动类，可以接受别人注册进来~
+@EnableEurekaServer 	//EnableEurekaServer 服务端的启动类，可以接受别人注册进来~
 public class ConfigEurekaServer_7001 {
     public static void main(String[] args) {
         SpringApplication.run(ConfigEurekaServer_7001.class,args);
     }
 }
-1234567
 ```
 
-4.测试
+5、启动测试
 
-第一步：启动 Config_Server_3344，并访问 http://localhost:3344/master/config-eureka-dev.yml 测试
+第一步：启动 `Config_Server_3344`，并访问 http://localhost:3344/main/config-eureka-dev.yml ，成功访问远程仓库的配置文件：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052113262082.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
-第二部：启动ConfigEurekaServer_7001，访问 http://localhost:7001/ 测试
+![image-20220424000626868](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424000626868.png)
+第二步：启动`ConfigEurekaServer_7001`，访问 http://localhost:7001/ ：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132633925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
-显示上图则成功
+![image-20220424000802122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424000802122.png)
+显示上图说明通过http://localhost:3344成功访问到了远程仓库的配置。
 
-新建springcloud-config-dept-8001模块并拷贝springcloud-provider-dept-8001的内容
+6、新建`springcloud-config-dept-8001`模块并拷贝`springcloud-provider-dept-8001`的内容
 
-同理导入spring cloud config依赖、清空application.yml 、新建bootstrap.yml配置文件并配置
+同理导入spring cloud config依赖、`application.yml`配置只编写application name，并新建`bootstrap.yml`连接远程配置：
 
 ```yml
 spring:
   cloud:
     config:
       name: config-dept
-      label: master
+      label: main
       profile: dev
       uri: http://localhost:3344
-1234567
 ```
 
-主启动类
+7、主启动类
 
 ```java
 @SpringBootApplication
 @EnableEurekaClient //在服务启动后自动注册到Eureka中！
 @EnableDiscoveryClient //服务发现~
-@EnableCircuitBreaker //
+@EnableCircuitBreaker
 public class ConfigDeptProvider_8001 {
     public static void main(String[] args) {
         SpringApplication.run(ConfigDeptProvider_8001.class,args);
@@ -2379,7 +2624,8 @@ public class ConfigDeptProvider_8001 {
         return registrationBean;
     }
 }
-1234567891011121314151617
 ```
 
-测试 (略)
+8、测试，访问http://localhost:8001/dept/get/1，成功获取到数据：
+
+![image-20220424003004507](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424003004507.png)
