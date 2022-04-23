@@ -1208,24 +1208,24 @@ class EsApiApplicationTests {
    <script th:src="@{/js/axios.min.js}"></script>
    <script th:src="@{/js/vue.min.js}"></script>
    <script>
-          new Vue({
-              el: '#app',
-              data: {
-                  keyword: '',  		// 搜索的关键字
-                  result: []  		// 搜索的结果
-              },
-              methods: {
-                  searchKey() {
-                      var keyword = this.keyword
-                      // 对接后端的接口
-                      axios.get('search/' + keyword + '/1/10').then(response => {
-                          //console.log(response);
-                          this.result = response.data;	// 绑定数据
-                      })
-                  }
-              }
-          });
-      </script>
+       new Vue({
+           el: '#app',
+           data: {
+               keyword: '',  		// 搜索的关键字
+               result: []  		// 搜索的结果
+           },
+           methods: {
+               searchKey() {
+                   var keyword = this.keyword
+                   // 对接后端的接口
+                   axios.get('search/' + keyword + '/1/10').then(response => {
+                       //console.log(response);
+                       this.result = response.data;	// 绑定数据
+                   })
+               }
+           }
+       });
+   </script>
    ```
    
 2. 然后为按钮绑定点击事件
