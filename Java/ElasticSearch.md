@@ -1204,40 +1204,39 @@ class EsApiApplicationTests {
 1. 前端需要接受数据，用vue接受数据：
 
    ```vue
-<!--前端使用vue完成前后端分离-->
+   <!--前端使用vue完成前后端分离-->
    <script th:src="@{/js/axios.min.js}"></script>
-<script th:src="@{/js/vue.min.js}"></script>
-   
+   <script th:src="@{/js/vue.min.js}"></script>
    <script>
-       new Vue({
-           el: '#app',
-           data: {
-               keyword: '',  		// 搜索的关键字
-               result: []  		// 搜索的结果
-           },
-           methods: {
-               searchKey() {
-                   var keyword = this.keyword
-                   // 对接后端的接口
-                   axios.get('search/' + keyword + '/1/10').then(response => {
-                       //console.log(response);
-                       this.result = response.data;	// 绑定数据
-                   })
-               }
-           }
-       });
-   </script>
+          new Vue({
+              el: '#app',
+              data: {
+                  keyword: '',  		// 搜索的关键字
+                  result: []  		// 搜索的结果
+              },
+              methods: {
+                  searchKey() {
+                      var keyword = this.keyword
+                      // 对接后端的接口
+                      axios.get('search/' + keyword + '/1/10').then(response => {
+                          //console.log(response);
+                          this.result = response.data;	// 绑定数据
+                      })
+                  }
+              }
+          });
+      </script>
    ```
    
-   然后为按钮绑定点击事件
-   
+2. 然后为按钮绑定点击事件
+
    ![image-20220422211316938](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3d59b45552f50af2bc75e31a31c63100.png)
 
-2. 用vue给前端传递数据
+3. 用vue给前端传递数据
 
    ![image-20220422212144944](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/29455977b413c31de2c468afefe2d8bf.png)
 
-3. 访问[127.0.0.1:9090]() 搜索java进行测试：
+4. 访问[127.0.0.1:9090]() 搜索java进行测试：
 
    ![image-20220422212308681](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e67a1b77caa9fc247cb0c71d759c5ee4.png)
 
@@ -1318,7 +1317,6 @@ class EsApiApplicationTests {
    
            return list;
        }
-   ```
 
 2. 在`ContentController.java`中添加响应的请求：
 
