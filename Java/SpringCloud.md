@@ -250,7 +250,7 @@ SpringCloud没有采用数字编号的方式命名版本号，而是采用了伦
 - 回顾Spring，SpringMVC，Mybatis等以往学习的知识。
 - Maven的分包分模块架构复习。
 
-```json
+```text
 一个简单的Maven模块结构是这样的：
 
 -- app-parent: 一个父项目(app-parent)聚合了很多子项目(app-util\app-dao\app-web...)
@@ -1466,7 +1466,9 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 例如一个微服务系统中存在 A、B、C、D、E、F 等多个服务，它们的依赖关系如下图：
 
-![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/05fe99d80b13fdb65f94d947b29f83ac.png)通常情况下，一个用户请求往往需要多个服务配合才能完成。如图 1 所示，在所有服务都处于可用状态时，请求 1 需要调用 A、D、E、F  四个服务才能完成，请求 2 需要调用 B、E、D、F 四个服务才能完成，请求 3 需要调用服务 C、F、E、D 四个服务才能完成。
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/05fe99d80b13fdb65f94d947b29f83ac.png)
+
+通常情况下，一个用户请求往往需要多个服务配合才能完成。如图所示，在所有服务都处于可用状态时，请求 1 需要调用 A、D、E、F  四个服务才能完成，请求 2 需要调用 B、E、D、F 四个服务才能完成，请求 3 需要调用服务 C、F、E、D 四个服务才能完成。
 
 当服务 E 发生故障或网络延迟时，会出现以下情况：
 
@@ -2200,7 +2202,7 @@ public class Config_server_3344 {
 
 HTTP服务具有以下格式的资源，任意一种都可以访问仓库里的配置内容：
 
-```json
+```text
 /{application}/{profile}[/{label}]
 /{application}-{profile}.yml
 /{label}/{application}-{profile}.yml
