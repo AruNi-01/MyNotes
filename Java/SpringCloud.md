@@ -548,11 +548,11 @@ public class DeptConsumerController {
 
 - 而系统中的其他微服务，使用Eureka的客户端连接到EurekaServer并维持心跳连接。这样系统的维护人员就可以通过EurekaServer来监控系统中各个微服务是否正常运行，SpringCloud的一些其他模块 (比如Zuul) 就可以通过EurekaServer来发现系统中的其他微服务，并执行相关的逻辑
 
-  ![image-20220420215155286](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420215155286.png)
+  ![image-20220420215155286](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/67bafb4bf4cc694d5d718f4afe968efb.png)
 
 - 和Dubbo架构对比.
 
-  ![image-20220420220052532](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420220052532.png)
+  ![image-20220420220052532](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0073ce1184b33d52e8b0d8ebddad8211.png)
 
 
 
@@ -615,7 +615,7 @@ Eureka 包含两个组件：**Eureka Server** 和 **Eureka Client**
    
    源码中Eureka的默认端口以及访问路径：
 
-   ![image-20220420222405129](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420222405129.png)
+   ![image-20220420222405129](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/10321145b8b5555e8b8ff075e3fb9aa7.png)
 
 1. 主启动类
 
@@ -631,7 +631,7 @@ Eureka 包含两个组件：**Eureka Server** 和 **Eureka Client**
    
 2. 启动成功后访问 http://localhost:7001/ 得到以下页面
 
-   ![image-20220420223608177](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420223608177.png)
+   ![image-20220420223608177](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/64b94c8e85c5216ed728a376c8d4591e.png)
 
 ### 2. eureka-client
 
@@ -674,7 +674,7 @@ Eureka 包含两个组件：**Eureka Server** 和 **Eureka Client**
    
 4. 先启动7001服务端后启动8001客户端进行测试，然后访问监控页http://localhost:7001/ 产看结果如图：
 
-   ![image-20220420224538434](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420224538434.png)
+   ![image-20220420224538434](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/05f914804f9d6c13ef30673c82e853e8.png)
 
 5. 修改Eureka上的默认描述信息
 
@@ -689,14 +689,14 @@ eureka:
 ```
 
 结果如图：
-![image-20220420224916934](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420224916934.png)
+![image-20220420224916934](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fb800035896af0ef439bddafce1aec6c.png)
 
 如果此时停掉`springcloud-provider-dept-8001` 等**30s**后 监控会开启保护机制：
-![image-20220420225050320](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420225050320.png)
+![image-20220420225050320](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6c1ea38de164d2312671bf98bc64f987.png)
 
 配置关于服务加载的监控信息
 
-![image-20220420225222784](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420225222784.png)
+![image-20220420225222784](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f2fb748351cb375520611fb7798120df.png)
 
 `pom.xml`中添加依赖
 
@@ -719,9 +719,9 @@ info:
   company.name: WIT-CSFaculty
 ```
 
-此时刷新监控页，点击进入![image-20220420225725651](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420225725651.png)跳转新页面显示如下内容：
+此时刷新监控页，点击进入![image-20220420225725651](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/597080e985eb6331e424e67e04692500.png)跳转新页面显示如下内容：
 
-![image-20220420225747632](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220420225747632.png)
+![image-20220420225747632](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/349f8d6aadc7d5a2f754e71d53696b52.png)
 
 ### 3. Eureka自我保护机制：好死不如赖活着
 
@@ -766,8 +766,6 @@ public Object discovery() {
 }
 ```
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521130913485.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
-
 主启动类中加入`@EnableDiscoveryClient` 注解
 
 ```java
@@ -783,15 +781,15 @@ public class DeptProvider_8001 {
 
 启动项目，访问`/dept/discovery`结果如图：
 
-![image-20220421082004744](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421082004744.png)
+![image-20220421082004744](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/58dea6270c5038d71d1145afe5e9419b.png)
 
 控制台输出的信息：
 
-![image-20220421082040469](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421082040469.png)
+![image-20220421082040469](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/862c9b7b12ca0578cd10c41e89fd377a.png)
 
 ## 5.4 Eureka：集群环境配置
 
-![image-20220421083055071](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421083055071.png)
+![image-20220421083055071](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1dc71b704a6ca80068f7b54bab60104e.png)
 
 ### 1.初始化
 
@@ -856,17 +854,17 @@ public class EurekaServer_7002 {
 
 配置一些自定义本机名字，找到本机hosts文件并打开
 
-![image-20220421093923033](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421093923033.png)
+![image-20220421093923033](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/32898d9c39f6208f05efe18022f0c909.png)
 
 在hosts文件最后加上，要访问的本机名称，默认是localhost；无论访问`eureka7001.com`还是7002/ 7003，实际上都是访问localhost，这里只是做个演示。
 
 若保存时无权限，可以拖到桌面修改好后再拖回该文件夹
 
-![image-20220421083801069](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421083801069.png)
+![image-20220421083801069](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/28652d2651eac8ccea3a3488fb129b50.png)
 
 修改`application.yml`的配置，如图为`springcloud-eureka-7001`配置，`springcloud-eureka-7002/springcloud-eureka-7003`同样分别修改为其对应的名称即可：
 
-![image-20220421084119088](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421084119088.png)
+![image-20220421084119088](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5c40127b02e25c92eb91a559de35bf36.png)
 
 在集群中使`springcloud-eureka-7001`关联`springcloud-eureka-7002`和`springcloud-eureka-7003`
 
@@ -937,7 +935,7 @@ eureka:
 
 访问以下7002，可以看到其关联了7001和7003：
 
-![image-20220421090157089](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421090157089.png)
+![image-20220421090157089](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7d2073046e413ff72f6193011ca1a028.png)
 
 ## 5.5 对比和Zookeeper区别
 
@@ -1002,7 +1000,7 @@ CAP的三进二：CA、AP、CP；不可能三则兼得！
 
 > Ribbon能干嘛
 
-![image-20220421092144719](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421092144719.png)
+![image-20220421092144719](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7c965109257fa838744eb4d010ff8934.png)
 
 - LB，即负载均衡 (LoadBalancer) ，在微服务或分布式集群中经常用的一种应用。
 - 负载均衡简单的说就是将用户的请求平摊的分配到多个服务上，从而达到系统的HA (高用)。
@@ -1091,27 +1089,27 @@ private static final String REST_URL_PREFIX = "http://SPRINGCLOUD-PROVIDER-DEPT"
 
 流程图：
 
-![image-20220421095546335](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421095546335.png)
+![image-20220421095546335](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5edc136148a538d97f1f583a986dd6b3.png)
 
 1、新建两个服务提供者Moudle：`springcloud-provider-dept-8002`、`springcloud-provider-dept-8003`
 
 2、参照`springcloud-provider-dept-8001` 依次为另外两个Moudle添加`pom.xml`依赖 、resourece下的`mybatis`(注意修改mapper.xml中的数据库名)和`application.yml`(修改相应的db和端口等)配置，Java代码以及数据库(数据库的db_source不同)
 
-![image-20220421101113997](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421101113997.png)
+![image-20220421101113997](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a99e48d7bbdbc37c903d517aa84bb513.png)
 
 
 
 3、启动所有服务测试，访问http://eureka7002.com:7002/查看结果：
 
-![image-20220421102035164](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421102035164.png)
+![image-20220421102035164](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7266cbd977e0e37678deb1d8d12f0ad2.png)
 
 测试访问http://localhost/consumer/dept/list 这时候随机访问的是服务提供者8003
 
-![image-20220421103010483](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421103010483.png)
+![image-20220421103010483](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fc31bdf9d0a46a10c621c5fb5147e936.png)
 
 再次访问http://localhost/consumer/dept/list这时候随机的是服务提供者8001
 
-![image-20220421103024450](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421103024450.png)
+![image-20220421103024450](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e2507dbd548538a495ae61128d162ea4.png)
 
 以上这种**每次访问http://localhost/consumer/dept/list随机访问集群中某个服务提供者，这种情况叫做轮询**，轮询算法在SpringCloud中可以自定义。
 
@@ -1146,7 +1144,7 @@ public class ConfigBean {
 
 也可以自定义规则，在myrule包下自定义一个配置类`MyRule.java`，注意：**该包不要和主启动类所在的包同级**：
 
-![image-20220421104048847](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421104048847.png)
+![image-20220421104048847](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a52ea284d960b70f995ebe5935f496b4.png)
 
 `MyRule.java`：
 
@@ -1454,7 +1452,7 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 下面我们关闭`springcloud-consumer-dept-80` 这个服务消费方，换用`springcloud-consumer-dept-feign`(端口还是80) 来代替：(依然可以正常访问，就是调用方式相比于Ribbon变化了)
 
-![image-20220421121043246](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220421121043246.png)
+![image-20220421121043246](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/580192e433491c4e36019e62f75f6fb1.png)
 
 # 8. Hystrix 服务熔断
 
@@ -1468,7 +1466,7 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 例如一个微服务系统中存在 A、B、C、D、E、F 等多个服务，它们的依赖关系如下图：
 
-![img](http://c.biancheng.net/uploads/allimg/211210/101623H11-0.png)通常情况下，一个用户请求往往需要多个服务配合才能完成。如图 1 所示，在所有服务都处于可用状态时，请求 1 需要调用 A、D、E、F  四个服务才能完成，请求 2 需要调用 B、E、D、F 四个服务才能完成，请求 3 需要调用服务 C、F、E、D 四个服务才能完成。
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/05fe99d80b13fdb65f94d947b29f83ac.png)通常情况下，一个用户请求往往需要多个服务配合才能完成。如图 1 所示，在所有服务都处于可用状态时，请求 1 需要调用 A、D、E、F  四个服务才能完成，请求 2 需要调用 B、E、D、F 四个服务才能完成，请求 3 需要调用服务 C、F、E、D 四个服务才能完成。
 
 当服务 E 发生故障或网络延迟时，会出现以下情况：
 
@@ -1500,21 +1498,21 @@ Feign 本质上也是实现了 Ribbon，只不过后者是在调用方式上，�
 
 当一切正常时，请求流可以如下所示：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRodWIuY29tL05ldGZsaXgvSHlzdHJpeC93aWtpL2ltYWdlcy9zb2EtMS02NDAucG5n?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ba8881139d8694d4945de003bdef4065.png)
 
 当许多后端系统中有一个潜在阻塞服务时，它可以阻止整个用户请求：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRodWIuY29tL05ldGZsaXgvSHlzdHJpeC93aWtpL2ltYWdlcy9zb2EtMi02NDAucG5n?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b6d74e3db2536ca3a91fa4b6b638794c.png)
 
 在高流量的情况下，一个后端依赖项的延迟可能导致所有服务器上的所有资源在数秒内饱和，意味着后续再有请求将无法立即提供服务。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRodWIuY29tL05ldGZsaXgvSHlzdHJpeC93aWtpL2ltYWdlcy9zb2EtMy02NDAucG5n?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a476e895e5b4aca2eb6f0523ec33b3ec.png)
 
 当使用**Hystrix**包装每个基础依赖项时，上面的图表中所示的体系结构会发生类似于以下关系图的变化。
 
 **每个依赖项是相互隔离的**，限制在延迟发生时它可以填充的资源中，并包含在回退逻辑中，该逻辑决定在依赖项中发生任何类型的故障时要做出什么样的响应：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521131820586.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/649bfaa43303893e65b5f9136070ea64.png)
 
 ## 8.4 服务熔断
 
@@ -1589,11 +1587,11 @@ info:
 
 当**`prefer-ip-address: false`**时，显示的是本地主机号(就是localhost)：
 
-![image-20220423141854542](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423141854542.png)
+![image-20220423141854542](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ffcf6c2d56f4020febb7fc5490b5de36.png)
 
 当**`prefer-ip-address: true`**时，显示的是ip地址：
 
-![image-20220423142029444](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423142029444.png)
+![image-20220423142029444](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/42db375b1a160a6476b1027ee030ec30.png)
 
 3、修改controller：
 
@@ -1658,11 +1656,11 @@ public class DeptProviderHystrix_8001 {
 
 使用熔断后，当访问一个不存在的id时，前台页展示数据如下:
 
-![image-20220423140816873](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423140816873.png)
+![image-20220423140816873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/520c00e7eca9ecdcdb88e6dbb7c44167.png)
 
 而不使用熔断的`springcloud-provider-dept–8001`模块访问相同地址会出现下面状况:
 
-![image-20220423141042422](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423141042422.png)
+![image-20220423141042422](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f54629cf3ee5716af430631302cbbb1f.png)
 
 因此，**为了避免因某个微服务后台出现异常或错误而导致整个应用或网页报错，使用熔断是必要的**。
 
@@ -1678,7 +1676,7 @@ public class DeptProviderHystrix_8001 {
 
 降级的方式可以根据业务来，可以延迟服务，比如延迟给用户增加积分，只是放到一个缓存中，等服务平稳之后再执行 ；或者在粒度范围内关闭服务，比如关闭相关文章的推荐。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200521132141732.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fa8fcf91af962c2b2249c4b12e47ac0d.png)
 
 由上图可得，**当某一时间内服务A的访问量暴增，而B和C的访问量较少，为了缓解A服务的压力，这时候需要B和C暂时关闭一些服务功能，去承担A的部分服务，从而为A分担压力，叫做服务降级**。
 
@@ -1780,7 +1778,7 @@ feign:
 
 现在将服务端全部关掉，模拟某些服务关闭了，让客户访问进行测试：
 
-![image-20220423152606146](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423152606146.png)
+![image-20220423152606146](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c2829a89822d2947fb8cce90b84d7b77.png)
 
 ## 8.6 熔断和降级的区别
 
@@ -1911,25 +1909,25 @@ public class DeptProviderHystrix_8001 {
 
 5、启动相关服务：
 
-![image-20220423155049675](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155049675.png)
+![image-20220423155049675](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b844df9240cf5199a6e0c09d2548c9a7.png)
 
 访问：http://localhost:9001/hystrix
 
-![image-20220423155137293](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155137293.png)
+![image-20220423155137293](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4565636ae5f676f1a3b2e883aeed45b3.png)
 
 
 
 进入监控页面：
 
-![image-20220423155508812](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423155508812.png)
+![image-20220423155508812](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0fb43d931c62142fcc053f8b60b6f36b.png)
 
 在地址栏不断输入`http://localhost:8001/dept/get/2`进行测试，若请求成功，则监控页面会出现绿色，曲线呈上升趋势；请求失败，如`/get/10`，监控页面就会出现红色，曲线降为0；效果如下图：
 
-![image-20220423162622030](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423162622030.png)
+![image-20220423162622030](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/52e2f6a74b27eaeea61c166b6c167366.png)
 
 监控页面的具体信息解释如下：
 
-![image-20220423162935474](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423162935474.png)
+![image-20220423162935474](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a09c50088dd6601e985e3db0c87b7fd5.png)
 
 # 9. Zull 路由网关
 
@@ -1941,7 +1939,7 @@ public class DeptProviderHystrix_8001 {
 
 其中**路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础**，而过**滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础**。Zuul和Eureka进行整合，将Zuul自身注册为Eureka服务治理下的应用，同时从Eureka中获得其他服务的消息，也即以后的访问微服务都是通过Zuul跳转后获得。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201122103018821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220424140534317](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/99bb2d4daf9267e69b9f119a43bde3b9.png)
 
 **注意**：Zuul 服务最终还是会注册进 Eureka
 
@@ -2010,7 +2008,7 @@ public class DeptProviderHystrix_8001 {
 
 2、在host文件里再添加一个虚拟的ip地址域名映射，实际上还是localhost：
 
-![image-20220423205613676](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423205613676.png)
+![image-20220423205613676](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a5ecd738d94b25605f79ef0baac80187.png)
 
 3、配置文件`application.yml`：
 
@@ -2054,13 +2052,13 @@ public class ZuulApplication_9527 {
 
 5、启动测试：
 
-![image-20220423210550477](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423210550477.png)
+![image-20220423210550477](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5a9e1b2f4bf56595372dbaaca5c5ab29.png)
 
 可以看出Zull路由网关被注册到Eureka注册中心中了！
 
 访问服务端中的信息：现在是没有经过Zuul路由网关的配置，服务接口访问的路由，可以看出直接用微服务(服务提供方)名称去访问：
 
-![image-20220423210844722](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423210844722.png)
+![image-20220423210844722](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9aa78928978e9274f8fd8711e8a6ad6d.png)
 
 直接使用微服务名称去访问不安全，不能将微服务名称暴露，所以要配置Zuul路由网关，在配置文件中添加Zuul相关配置：
 
@@ -2081,7 +2079,7 @@ zuul:
 
 重启项目，使用配置的路由进行访问：
 
-![image-20220423211721888](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423211721888.png)
+![image-20220423211721888](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0182552662a5a514e5b1e57a087c0a12.png)
 
 我们看到，微服务名称被替换并隐藏，换成了我们自定义的微服务名称mydept，同时加上了前缀myzuul，这样就做到了对路由访问的加密处理
 
@@ -2099,7 +2097,7 @@ zuul:
 
 **什么是SpringCloud config分布式配置中心**？
 
-![image-20220423211814657](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423211814657.png)
+![image-20220423211814657](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dde496813facf994aaeaaed4bf742ad9.png)
 
 Spring Cloud Config 为微服务架构中的微服务提供集中化的外部支持，配置服务器为各个不同微服务应用的所有环节提供了一个**中心化的外部配置**。
 
@@ -2125,7 +2123,7 @@ Spring Cloud Config 分为**服务端**和**客户端**两部分：
 
 首先在GitHub创建一个仓库，存放Spring Cloud Config配置，现在先在`application.yml`文件中编写开发环境：
 
-![image-20220423214902286](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423214902286.png)
+![image-20220423214902286](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4e6fc7393037791c5bd774ca7bb0fe60.png)
 
 ### 10.2.1 服务端
 
@@ -2220,19 +2218,19 @@ HTTP服务具有以下格式的资源，任意一种都可以访问仓库里的�
 
 测试访问http://localhost:3344/application-dev.yml
 
-![image-20220423223537182](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223537182.png)
+![image-20220423223537182](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fb021bb8c46b54151089c64683d73690.png)
 
 测试访问 http://localhost:3344/application/test/main
 
-![image-20220423223743449](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223743449.png)
+![image-20220423223743449](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/501322424f3f63e0193b4c5331b83baa.png)
 
 测试访问 http://localhost:3344/main/application-dev.yml
 
-![image-20220423223903833](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223903833.png)
+![image-20220423223903833](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e92f0483f260ff05df7071e5dee124bb.png)
 
 测试访问不存在的配置则不显示 如：http://localhost:3344/main/application-aaa.yml
 
-![image-20220423223938534](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423223938534.png)
+![image-20220423223938534](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cc88b6b776934ad79d81bddaa27bcdd8.png)
 
 ### 10.2.2 客户端
 
@@ -2280,7 +2278,7 @@ eureka:
       defaultZone: http://eureka7001.com:7001/eureka/
 ```
 
-![image-20220423233457617](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423233457617.png)
+![image-20220423233457617](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8c38659a07b1bfe8ca2fe7096a9d1097.png)
 
 2、新建一个`springcloud-config-client-3355`模块，并导入依赖
 
@@ -2369,7 +2367,7 @@ public class Config_Client {
 
 访问：http://localhost:8201/config/，整个获取远程仓库的数据
 
-![image-20220423233617489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220423233617489.png)
+![image-20220423233617489](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ac70597f98c7371dadfd821b151fda4d.png)
 
 7、现在将`bootstrap.yaml`中的生产环境切换成test：`profile: test`，重启项目
 
@@ -2534,6 +2532,10 @@ info:
 
 
 
+
+
+> eur
+
 2、新建`springcloud-config-eureka-7001`模块，并将原来的`springcloud-eureka-7001`模块下的内容拷贝的该模块，添加Spring Cloud Config 依赖：
 
 ```xml
@@ -2584,11 +2586,17 @@ public class ConfigEurekaServer_7001 {
 
 第一步：启动 `Config_Server_3344`，并访问 http://localhost:3344/main/config-eureka-dev.yml ，成功访问远程仓库的配置文件：
 
-![image-20220424000626868](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424000626868.png)
+![image-20220424000626868](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d36a155557024e1e362b274a72152383.png)
 第二步：启动`ConfigEurekaServer_7001`，访问 http://localhost:7001/ ：
 
-![image-20220424000802122](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424000802122.png)
+![image-20220424000802122](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fef242856692a8945d7c41a251d81272.png)
 显示上图说明通过http://localhost:3344成功访问到了远程仓库的配置。
+
+
+
+
+
+> provider相关
 
 6、新建`springcloud-config-dept-8001`模块并拷贝`springcloud-provider-dept-8001`的内容
 
@@ -2628,4 +2636,4 @@ public class ConfigDeptProvider_8001 {
 
 8、测试，访问http://localhost:8001/dept/get/1，成功获取到数据：
 
-![image-20220424003004507](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220424003004507.png)
+![image-20220424003004507](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/79b80600fa02746af9f60260c2e290fa.png)
