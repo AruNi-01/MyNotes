@@ -1144,6 +1144,7 @@ public class GCTest {
 
 ```java
 public class Test {
+    
     private static final int _8MB = 8 * 1024 * 1024;
 
     // -Xms20m -Xmx20m -Xmn10m -XX:+UseSerialGC -XX:+PrintGCDetails -verbose:gc
@@ -1169,13 +1170,31 @@ public class Test {
 - 但是实际情况中（线上）大多数都是该线程创建的对象无法被全部释放（存在可达的GC链），导致其余线程申请堆内存失败，发生Full GC，直到内存溢出。这也就是为什么一般情况下，发生OOM，进程基本就凉凉了，是一种链式恶性反应
 - 因为发生OOM之前要进行gc，就算其他线程能够正常工作，也会因为频繁gc产生较大的影响
 
-## 4、垃圾回收器
+## 3.4 垃圾回收器
 
-**相关概念：**
+> 垃圾回收器发展史
 
-- 并行收集：指多条垃圾收集线程并行工作，但此时用户线程仍处于等待状态。
-- 并发收集：指用户线程与垃圾收集线程同时工作（不一定是并行的可能会交替执行）。用户程序在继续运行，而垃圾收集程序运行在另一个 CPU 上
-- 吞吐量：即 CPU 用于运行用户代码的时间与 CPU 总消耗时间的比值（吞吐量 = 运行用户代码时间 / ( 运行用户代码时间 + 垃圾收集时间 )），也就是。例如：虚拟机共运行 100 分钟，垃圾收集器花掉 1 分钟，那么吞吐量就是 99% 。
+![image-20220429163917019](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429163917019.png)
+
+
+
+
+
+> 垃圾回收器的组合关系
+
+![img](http://cdn.processon.com/5ee964e87d9c0844201d6db6?e=1592357625&token=trhI0BY8QfVrIGn9nENop6JAc6l5nZuxhjQ62UfM:SpCgLUODyVHetkCInegZsbAZbao=?s=100_100)
+
+![image-20220429164408417](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429164408417.png)
+
+
+
+
+
+**相关概念**：
+
+- **并行收集**：指**多条垃圾收集线程并行工作**，但此时**用户线程**仍处于**等待状态**。
+- **并发收集**：指**用户线程与垃圾收集线程同时工作**（不一定是并行的可能会交替执行）。**用户程序在继续运行**，而**垃圾收集程序运行在另一个 CPU 上**
+- **吞吐量**：即 **CPU 用于运行用户代码的时间与 CPU 总消耗时间的比值**（吞吐量 = 运行用户代码时间 / ( 运行用户代码时间 + 垃圾收集时间 )）。例如：虚拟机共运行 100 分钟，垃圾收集器花掉 1 分钟，那么吞吐量就是 99 / (99 + 1) = 99% 
 
 ### 1）串行
 
@@ -1186,66 +1205,59 @@ public class Test {
 
 ```java
 -XX:+UseSerialGC=serial + serialOld
-1
 ```
 
 **安全点**：让其他线程都在这个点停下来，以免垃圾回收时移动对象地址，使得其他线程找不到被移动的对象
- 因为是串行的，所以只有一个垃圾回收线程。且在该线程执行回收工作时，其他线程进入阻塞状态
 
-**Serial 收集器**
- Serial 收集器是最基本的、发展历史最悠久的收集器
- **特点**：单线程、简单高效（与其他收集器的单线程相比），采用复制算法。对于限定单个 CPU 的环境来说，Serial  收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。收集器进行垃圾回收时，必须暂停其他所有的工作线程，直到它结束（Stop The World）！
+因为是串行的，所以只有一个垃圾回收线程。且在该线程执行回收工作时，其他线程进入阻塞状态。
 
-**ParNew 收集器**
- ParNew 收集器其实就是 Serial 收集器的多线程版本
- **特点**：多线程、ParNew 收集器默认开启的收集线程数与CPU的数量相同，在 CPU 非常多的环境中，可以使用 -XX:ParallelGCThreads 参数来限制垃圾收集的线程数。和 Serial 收集器一样存在 Stop The World 问题
+**Serial 收集器**：Serial 收集器是最基本的、发展历史最悠久的收集器
+**特点**：单线程、简单高效（与其他收集器的单线程相比），采用复制算法。对于限定单个 CPU 的环境来说，Serial  收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。收集器进行垃圾回收时，必须暂停其他所有的工作线程，直到它结束（Stop The World）
 
-**Serial Old 收集器**
- Serial Old 是 Serial 收集器的老年代版本
- **特点**：同样是单线程收集器，采用标记-整理算法
+**ParNew 收集器**：ParNew 收集器其实就是 Serial 收集器的多线程版本
+**特点**：多线程、ParNew 收集器默认开启的收集线程数与CPU的数量相同，在 CPU 非常多的环境中，可以使用 `-XX:ParallelGCThreads 参数`来限制垃圾收集的线程数。和 Serial 收集器一样存在 Stop The World 问题
+
+**Serial Old 收集器**：Serial Old 是 Serial 收集器的老年代版本
+**特点**：同样是单线程收集器，采用标记 - 整理算法
 
 ### 2）吞吐量优先
 
 - 多线程
 - 堆内存较大，多核 cpu
-- 让单位时间内，STW 的时间最短 0.2 0.2 = 0.4
+- 让**单位时间**内，STW 的时间最短，例如 0.2 0.2 = 0.4
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210094915306.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
 ```java
 -XX:+UseParallelGC ~ -XX:+UsePrallerOldGC
 -XX:+UseAdaptiveSizePolicy
--XX:GCTimeRatio=ratio // 1/(1+radio)
--XX:MaxGCPauseMillis=ms // 200ms
+-XX:GCTimeRatio=ratio	      // 1/(1+radio)
+-XX:MaxGCPauseMillis=ms	    // 200ms
 -XX:ParallelGCThreads=n
-12345
 ```
 
-**Parallel Scavenge 收集器**
- 与吞吐量关系密切，故也称为吞吐量优先收集器
- **特点**：属于新生代收集器也是采用复制算法的收集器（用到了新生代的幸存区），又是并行的多线程收集器（与 ParNew 收集器类似）
+**Parallel Scavenge 收集器**：与吞吐量关系密切，故也称为吞吐量优先收集器
+**特点**：属于新生代收集器也是采用复制算法的收集器（用到了新生代的幸存区），又是并行的多线程收集器（与 ParNew 收集器类似）
 
 该收集器的目标是达到一个可控制的吞吐量。还有一个值得关注的点是：GC自适应调节策略（与 ParNew 收集器最重要的一个区别）
 
 GC自适应调节策略：
- Parallel Scavenge 收集器可设置 -XX:+UseAdptiveSizePolicy 参数。
- 当开关打开时不需要手动指定新生代的大小（-Xmn）、Eden 与 Survivor 区的比例（-XX:SurvivorRation）、
- 晋升老年代的对象年龄（-XX:PretenureSizeThreshold）等，虚拟机会根据系统的运行状况收集性能监控信息，动态设置这些参数以提供最优的停顿时间和最高的吞吐量，这种调节方式称为 GC 的自适应调节策略。
+Parallel Scavenge 收集器可设置 `-XX:+UseAdptiveSizePolicy 参数`。
+当开关打开时不需要手动指定新生代的大小（`-Xmn`）、Eden 与 Survivor 区的比例（`-XX:SurvivorRation`）、晋升老年代的对象年龄（`-XX:PretenureSizeThreshold`）等，虚拟机会根据系统的运行状况收集性能监控信息，动态设置这些参数以提供最优的停顿时间和最高的吞吐量，这种调节方式称为 GC 的自适应调节策略。
 
 Parallel Scavenge 收集器使用两个参数控制吞吐量：
 
-- XX:MaxGCPauseMillis=ms 控制最大的垃圾收集停顿时间（默认200ms）
-- XX:GCTimeRatio=rario 直接设置吞吐量的大小
+- `XX:MaxGCPauseMillis=ms` 控制最大的垃圾收集停顿时间（默认200ms）
+- `XX:GCTimeRatio=rario` 直接设置吞吐量的大小
 
-**Parallel Old 收集器**
- 是 Parallel Scavenge 收集器的老年代版本
- **特点**：多线程，采用标记-整理算法（老年代没有幸存区）
+**Parallel Old 收集器**：是 Parallel Scavenge 收集器的老年代版本
+**特点**：多线程，采用标记 - 整理算法（老年代没有幸存区）
 
 ### 3）响应时间优先
 
 - 多线程
 - 堆内存较大，多核 cpu
-- 尽可能让 STW 的单次时间最短 0.1 0.1 0.1 0.1 0.1 = 0.5
+- 尽可能让 **STW 的单次时间最短**，例如 0.1 0.1 0.1 0.1 0.1 = 0.5
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210104030390.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
@@ -1254,173 +1266,324 @@ Parallel Scavenge 收集器使用两个参数控制吞吐量：
 -XX:ParallelGCThreads=n ~ -XX:ConcGCThreads=threads
 -XX:CMSInitiatingOccupancyFraction=percent
 -XX:+CMSScavengeBeforeRemark
-1234
 ```
 
-**CMS 收集器**
- Concurrent Mark Sweep，一种以获取最短回收停顿时间为目标的**老年代收集器**
- **特点**：基于标记-清除算法实现。并发收集、低停顿，但是会产生内存碎片
- **应用场景**：适用于注重服务的响应速度，希望系统停顿时间最短，给用户带来更好的体验等场景下。如 web 程序、b/s 服务
- **CMS 收集器的运行过程分为下列4步：**
- **初始标记**：标记 GC Roots 能直接到的对象。速度很快但是仍存在 Stop The World 问题。
- **并发标记**：进行 GC Roots Tracing 的过程，找出存活对象且用户线程可并发执行。
- **重新标记**：为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录。仍然存在 Stop The World 问题
- **并发清除**：对标记的对象进行清除回收，清除的过程中，可能任然会有新的垃圾产生，这些垃圾就叫浮动垃圾，如果当用户需要存入一个很大的对象时，新生代放不下去，老年代由于浮动垃圾过多，就会退化为 serial Old 收集器，将老年代垃圾进行标记-整理，当然这也是很耗费时间的！
+**CMS 收集器**：Concurrent Mark Sweep，一种以获取最短回收停顿时间为目标的**老年代收集器**
+**特点**：基于标记-清除算法实现。并发收集、低停顿，但是会产生内存碎片
+**应用场景**：适用于注重服务的响应速度，希望系统停顿时间最短，给用户带来更好的体验等场景下。如 web 程序、b/s 服务
 
-CMS 收集器的内存回收过程是与用户线程一起并发执行的，可以搭配 ParNew 收集器（多线程，新生代，复制算法）与 Serial Old 收集器（单线程，老年代，标记-整理算法）使用。
+**CMS 收集器的运行过程分为下列4步**：
+
+1. **初始标记**：标记 GC Roots 能直接到的对象。速度很快但是仍存在 Stop The World 问题。
+2. **并发标记**：进行 GC Roots Tracing 的过程，找出存活对象且用户线程可并发执行。
+3. **重新标记**：为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录。仍然存在 Stop The World 问题。
+4. **并发清除**：对标记的对象进行清除回收，清除的过程中，可能任然会有新的垃圾产生，这些垃圾就叫浮动垃圾，如果当用户需要存入一个很大的对象时，新生代放不下去，老年代由于浮动垃圾过多，就会退化为 serial Old 收集器，将老年代垃圾进行标记 - 整理，当然这也是很耗费时间的。
+
+CMS 收集器的内存回收过程是与用户线程一起并发执行的，可以搭配 ParNew 收集器（多线程，新生代，复制算法）与 Serial Old 收集器（单线程，老年代，标记 - 整理算法）使用。
 
 ### 4）G1 收集器
 
-**定义：** Garbage First
- **适用场景：**
+**定义**： Garbage First
+ **适用场景**：
 
 - 同时注重吞吐量和低延迟（响应时间）
 - 超大堆内存（内存大的），会将堆内存划分为多个大小相等的区域
 - 整体上是标记-整理算法，两个区域之间是复制算法
 
-**相关参数：**
+**相关参数**：
  JDK8 并不是默认开启的，所需要参数开启
 
 ```java
 -XX:+UseG1GC
 -XX:G1HeapRegionSize=size
 -XX:MaxGCPauseMillis=time
-123
 ```
+
+> G1 收集器运行示意图
+
+![image-20220429230521829](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429230521829.png)
 
 #### G1 垃圾回收阶段
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210114932887.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
- Young Collection：对新生代垃圾收集
- Young Collection + Concurrent Mark：如果老年代内存到达一定的阈值了，新生代垃圾收集同时会执行一些并发的标记。
- Mixed Collection：会对新生代 + 老年代 + 幸存区等进行混合收集，然后收集结束，会重新进入新生代收集。
+
+- **Young Collection**：对新生代垃圾收集
+- **Young Collection + Concurrent Mark**：如果老年代内存到达一定的阈值了，新生代垃圾收集同时会执行一些并发的标记。
+- **Mixed Collection**：会对新生代 + 老年代 + 幸存区等进行混合收集，然后收集结束，会重新进入新生代收集。
 
 #### Young Collection
 
-**新生代存在 STW：**
- 分代是按对象的生命周期划分，分区则是将堆空间划分连续几个不同小区间，每一个小区间独立回收，可以控制一次回收多少个小区间，方便控制 GC 产生的停顿时间！
- E：eden，S：幸存区，O：老年代
- 新生代收集会产生 STW ！
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210122339138.gif)
+**分区算法 region**（会触发STW）：
+
+分代是按对象的生命周期划分，分区则是将堆空间划分连续几个不同小区间，每一个小区间独立回收，可以控制一次回收多少个小区间，方便控制 GC 产生的停顿时间。
+
+E：eden，S：幸存区，O：老年代
+
+> 过程
+
+新创建的对象存放在 E 区：
+
+![image-20220429231117878](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231117878.png)
+
+垃圾回收时，会把 E 区中幸存对象复制到 S 区：
+
+![image-20220429231235358](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231235358.png)
+
+当 S 区中的对象也比较多触发GC，S 区对象寿命超过阈值时，S 区中的一部分对象(寿命达到阈值)会晋升到 O，寿命未达到阈值的会被再次复制到另一个 S 区：
+
+![image-20220429231430947](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231430947.png)
 
 #### Young Collection + CM
 
 在 Young GC 时会进行 GC Root 的初始化标记
- 老年代占用堆空间比例达到阈值时，进行并发标记（不会STW），由下面的 JVM 参数决定 -XX:InitiatingHeapOccupancyPercent=percent （默认45%）
+老年代占用堆空间比例达到阈值时，进行**并发标记**（不会STW），由下面的 JVM 参数决定 `-XX:InitiatingHeapOccupancyPercent=percent` （默认45%）
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210122601873.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
 #### Mixed Collection
 
 会对 E S O 进行**全面的回收**
 
-- 最终标记会 STW
-- 拷贝存活会 STW
+- 最终标记 (会STW)
+- 拷贝存活 (会STW)
 
--XX:MaxGCPauseMills=xxms 用于指定最长的停顿时间！
- 问：为什么有的老年代被拷贝了，有的没拷贝？
- 因为指定了最大停顿时间，如果对所有老年代都进行回收，耗时可能过高。为了保证时间不超过设定的停顿时间，会回收最有价值的老年代（回收后，能够得到更多内存）
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210144216170.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+`-XX:MaxGCPauseMills=xxms` 用于指定最长的停顿时间。
+
+为什么有的老年代被拷贝了，有的没拷贝？
+因为指定了**最大停顿时间**，如果对所有老年代都进行回收，耗时可能过高。为了保证时间不超过设定的停顿时间，**只会先回收最有价值的老年代**（回收后，能够得到更多内存）
+
+例如下图，橙色的两个老年代更有回收的价值，因为它们收回后能获得更多的内存，所以先回收这两个中没有被标记的对象(被标记的是有用的)，被标记的会继续存活在老年区![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210144216170.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
 #### Full GC
 
-G1 在老年代内存不足时（老年代所占内存超过阈值）
- 如果垃圾产生速度慢于垃圾回收速度，不会触发 Full GC，还是并发地进行清理
- 如果垃圾产生速度快于垃圾回收速度，便会触发 Full GC，然后退化成 serial Old 收集器串行的收集，就会导致停顿的时候长。
+- SerialGC
+  - 新生代内存不足发生的垃圾收集 - minor gc
+  - 老年代内存不足发生的垃圾收集 - full gc
+
+- ParallelGC
+  - 新生代内存不足发生的垃圾收集 - minor gc
+  - 老年代内存不足发生的垃圾收集 - full gc
+
+- CMS
+  - 新生代内存不足发生的垃圾收集 - minor gc
+  - 老年代内存不足发生的垃圾收集，需要分2种情况
+
+- G1
+  - 新生代内存不足发生的垃圾收集 - minor gc
+  - 老年代内存不足发生的垃圾收集，需要分2种情况
+
+
+
+G1 老年代内存不足时（老年代所占内存超过阈值）：
+
+- 如果**垃圾产生速度慢于垃圾回收速度**，**不会触发 Full GC**，还是**并发地进行清理**
+- 如果**垃圾产生速度快于垃圾回收速度**，便会**触发 Full GC**，然后退化成 serial Old 收集器串行的收集，就会导致**停顿的时间长**。
 
 #### Young Collection 跨代引用
 
 - 新生代回收的跨代引用（老年代引用新生代）问题
    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210154730275.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 - 卡表 与 Remembered Set   
-  - Remembered Set 存在于E中，用于保存新生代对象对应的脏卡     
-    - 脏卡：O 被划分为多个区域（一个区域512K），如果该区域引用了新生代对象，则该区域被称为脏卡
-- 在引用变更时通过 post-write barried + dirty card queue
+  - Remembered Set 存在于E中，用于**保存新生代对象对应的脏卡**     
+    - 脏卡：O 被划分为多个区域（一个区域512K），如果**该区域引用了新生代对象**，则该区域被称为**脏卡**
+- 在引用变更时通过 `post-write barried + dirty card queue`
 - concurrent refinement threads 更新 Remembered Set
    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210154940579.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
 #### Remark
 
-重新标记阶段
- 在垃圾回收时，收集器处理对象的过程中
+重新标记阶段，在垃圾回收时，收集器处理对象的过程中
 
 - 黑色：已被处理，需要保留的
 - 灰色：正在处理中的
-- 白色：还未处理的
+- 白色：还未处理的，最后被回收
    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161204728.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
-但是在并发标记过程中，有可能 A 被处理了以后未引用 C ，但该处理过程还未结束，在处理过程结束之前 A 引用了 C ，这时就会用到 remark 。
- 过程如下
 
-- 之前 C 未被引用，这时 A 引用了 C ，就会给 C 加一个写屏障，写屏障的指令会被执行，将 C 放入一个队列当中，并将 C 变为 处理中状态
-- 在并发标记阶段结束以后，重新标记阶段会 STW ，然后将放在该队列中的对象重新处理，发现有强引用引用它，就会处理它，由灰色变成黑色。
+
+
+
+> Remark 使用时机
+
+在并发标记过程中，有可能 A 被处理了以后未引用 C ，但该处理过程还未结束，在处理 B 之后， A 又引用了 C ，这样当整个标记过程结束以后，C 仍然是白色的，会被错误的当成垃圾回收掉，但这时 A 正强引用着 C ，回收就会出故障；这时就会用到 remark 。
+
+过程如下：
+
+- 之前 C 未被引用，这时 A 引用了 C ，就会给 C 加一个**写屏障**，写屏障的指令会被执行，将 C **放入一个队列**当中，并将 C 变为 **处理中**状态
+- 在**并发标记阶段结束以后**，**重新标记阶段**会 STW ，然后将**放在该队列中的对象重新处理**，发现**有强引用引用它**，就会处理它，由灰色变成黑色
+- pre-write barrier + satb_mark_queue
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161559793.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161527103.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
 #### JDK 8u20 字符串去重
 
-过程
+字符串去重开启指令：`-XX:+UseStringDeduplication`
 
-- 将所有新分配的字符串（底层是 char[] ）放入一个队列
-- 当新生代回收时，G1 并发检查是否有重复的字符串
-- 如果字符串的值一样，就让他们引用同一个字符串对象
-- 注意，其与 String.intern() 的区别   
-  - String.intern() 关注的是字符串对象
-  - 字符串去重关注的是 char[]
+过程：
+
+```java
+String s1 = new String("hello");	// 底层存储为：char[]{'h','e','l','l','o'}
+String s2 = new String("hello");	// 底层存储为：char[]{'h','e','l','l','o'}
+```
+
+- 将所有新分配的字符串（底层是 `char[]` ）放入一个队列
+- 当**新生代回收**时，G1 **并发**检查是否有重复的字符串
+- 如果字符串的值一样，就让他们**引用同一个char[]对象**
+- 注意，其与 `String.intern()` 的区别   
+  - `String.intern()` 关注的是 字符串对象
+  - 字符串去重关注的是 `char[]`
   - 在 JVM 内部，使用了不同的字符串标
 
-优点与缺点
+优点与缺点：
 
 - 节省了大量内存
 - 新生代回收时间略微增加，导致略微多占用 CPU
 
-```java
--XX:+UseStringDeduplication
-1
-```
+
+
+
+
+> 具体实现方式
+
+垃圾收集器会在访问String对象时对其字符数组进行标记，并将String的哈希值以及弱引用保存到一个数组中。当垃圾收集器发现另一个具有相同哈希值的String对象时，它就会逐字符比对这两个对象。如果他们完全匹配，那其中一个String就会被修改指向到另一个String的字符数组。由于第一个字符数组已经不再被引用，所以它也就可以被回收了。垃圾收集器会尽量减少整个操作的开销，比如某个String对象扫描未发现有重复，那接下来的一段时间内它不会再被检查。
 
 #### JDK 8u40 并发标记类卸载
 
 在并发标记阶段结束以后，就能知道哪些类不再被使用。如果一个类加载器的所有类都不在使用，则卸载它所加载的所有类
 
+并发标记类卸载开启指令：`-XX:+ClassUnloadingWithConcurrentMark`  -- 默认启用
+
 #### JDK 8u60 回收巨型对象
 
-- 一个对象大于region的一半时，就称为巨型对象
+- H表示巨型对象，当一个对象大于region的一半时，就称为巨型对象
 - G1不会对巨型对象进行拷贝
 - 回收时被优先考虑
-- G1会跟踪老年代所有incoming引用，如果老年代incoming引用为0的巨型对象就可以在新生代垃圾回收时处理掉
+- G1会跟踪老年代所有 incoming 引用，如果老年代 incoming 引用为0的巨型对象就可以在新生代垃圾回收时处理掉
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210165555732.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210428074913263.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70)
+
+巨型对象越早回收越好，最好是在新生代的垃圾回收就回收掉！
 
 #### JDK 9 并发标记起始时间的调整
 
 - 并发标记必须在堆空间占满前完成，否则退化为 FulGC
-- JDK 9 之前需要使用 -XX:InitiatingHeapOccupancyPercent
+- JDK 9 之前需要使用 `-XX:InitiatingHeapOccupancyPercent`
 - JDK 9 可以动态调整   
-  - -XX:InitiatingHeapOccupancyPercent 用来设置初始值
+  - `-XX:InitiatingHeapOccupancyPercent` 用来设置初始值
   - 进行数据采样并动态调整
   - 总会添加一个安全的空挡空间
 
-## 5、垃圾回收调优
 
-查看虚拟机参数命令
 
-```java
-D:\JavaJDK1.8\bin\java  -XX:+PrintFlagsFinal -version | findstr "GC"
-1
+#### JDK 9 更高效的回收
+
+- JDK 9 对垃圾回收进行了 250+ 项的增强，180+ 项的bug修复。
+- 参考文章：[Oracle 官方的虚拟机调优指南](https://docs.oracle.com/en/java/javase/12/gctuning/)
+
+## 3.5 垃圾回收调优
+
+预备知识：
+
+- GC相关的VM参数：[官方文档](https://docs.oracle.com/en/java/javase/11/tools/java.html)
+
+- 查看虚拟机参数命令：
+
+```bash
+"C:\Program Files\Java\jdk1.8.0_201\bin\java" -XX:+PrintFlagsFinal -version | findstr "GC"
 ```
 
-可以根据参数去查询具体的信息
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210428122743203.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70)
 
-### 1）调优领域
+```bash
+D:\Note\笔记\JDK源码学习\IDEA-workspace\jdk8>"C:\Program Files\Java\jdk1.8.0_201\bin\java" -XX:+PrintFlagsFinal -version | findstr "GC"
+    uintx AdaptiveSizeMajorGCDecayTimeScale         = 10                                  {product}
+    uintx AutoGCSelectPauseMillis                   = 5000                                {product}
+     bool BindGCTaskThreadsToCPUs                   = false                               {product}
+    uintx CMSFullGCsBeforeCompaction                = 0                                   {product}
+    uintx ConcGCThreads                             = 0                                   {product}
+     bool DisableExplicitGC                         = false                               {product}
+     bool ExplicitGCInvokesConcurrent               = false                               {product}
+     bool ExplicitGCInvokesConcurrentAndUnloadsClasses  = false                               {product}
+    uintx G1MixedGCCountTarget                      = 8                                   {product}
+    uintx GCDrainStackTargetSize                    = 64                                  {product}
+    uintx GCHeapFreeLimit                           = 2                                   {product}
+    uintx GCLockerEdenExpansionPercent              = 5                                   {product}
+     bool GCLockerInvokesConcurrent                 = false                               {product}
+    uintx GCLogFileSize                             = 8192                                {product}
+    uintx GCPauseIntervalMillis                     = 0                                   {product}
+    uintx GCTaskTimeStampEntries                    = 200                                 {product}
+    uintx GCTimeLimit                               = 98                                  {product}
+    uintx GCTimeRatio                               = 99                                  {product}
+     bool HeapDumpAfterFullGC                       = false                               {manageable}
+     bool HeapDumpBeforeFullGC                      = false                               {manageable}
+    uintx HeapSizePerGCThread                       = 87241520                            {product}
+    uintx MaxGCMinorPauseMillis                     = 4294967295                          {product}
+    uintx MaxGCPauseMillis                          = 4294967295                          {product}
+    uintx NumberOfGCLogFiles                        = 0                                   {product}
+     intx ParGCArrayScanChunk                       = 50                                  {product}
+    uintx ParGCDesiredObjsFromOverflowList          = 20                                  {product}
+     bool ParGCTrimOverflow                         = true                                {product}
+     bool ParGCUseLocalOverflow                     = false                               {product}
+    uintx ParallelGCBufferWastePct                  = 10                                  {product}
+    uintx ParallelGCThreads                         = 8                                   {product}
+     bool ParallelGCVerbose                         = false                               {product}
+     bool PrintClassHistogramAfterFullGC            = false                               {manageable}
+     bool PrintClassHistogramBeforeFullGC           = false                               {manageable}
+     bool PrintGC                                   = false                               {manageable}
+     bool PrintGCApplicationConcurrentTime          = false                               {product}
+     bool PrintGCApplicationStoppedTime             = false                               {product}
+     bool PrintGCCause                              = true                                {product}
+     bool PrintGCDateStamps                         = false                               {manageable}
+     bool PrintGCDetails                            = false                               {manageable}
+     bool PrintGCID                                 = false                               {manageable}
+     bool PrintGCTaskTimeStamps                     = false                               {product}
+     bool PrintGCTimeStamps                         = false                               {manageable}
+     bool PrintHeapAtGC                             = false                               {product rw}
+     bool PrintHeapAtGCExtended                     = false                               {product rw}
+     bool PrintJNIGCStalls                          = false                               {product}
+     bool PrintParallelOldGCPhaseTimes              = false                               {product}
+     bool PrintReferenceGC                          = false                               {product}
+     bool ScavengeBeforeFullGC                      = true                                {product}
+     bool TraceDynamicGCThreads                     = false                               {product}
+     bool TraceParallelOldGCTasks                   = false                               {product}
+     bool UseAdaptiveGCBoundary                     = false                               {product}
+     bool UseAdaptiveSizeDecayMajorGCCost           = true                                {product}
+     bool UseAdaptiveSizePolicyWithSystemGC         = false                               {product}
+     bool UseAutoGCSelectPolicy                     = false                               {product}
+     bool UseConcMarkSweepGC                        = false                               {product}
+     bool UseDynamicNumberOfGCThreads               = false                               {product}
+     bool UseG1GC                                   = false                               {product}
+     bool UseGCLogFileRotation                      = false                               {product}
+     bool UseGCOverheadLimit                        = true                                {product}
+     bool UseGCTaskAffinity                         = false                               {product}
+     bool UseMaximumCompactionOnSystemGC            = true                                {product}
+     bool UseParNewGC                               = false                               {product}
+     bool UseParallelGC                            := true                                {product}
+     bool UseParallelOldGC                          = true                                {product}
+java version "1.8.0_201"
+Java(TM) SE Runtime Environment (build 1.8.0_201-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
+     bool UseSerialGC                               = false                               {product}
+
+```
+
+- 可以根据参数去查询具体的信息：
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2021042812332472.png)
+
+
+
+#### 1. 调优领域
 
 - 内存
 - 锁竞争
-- cpu 占用
-- io
-- gc
+- CPU占用
+- IO
+- GC
 
-### 2）确定目标
+
+
+#### 2. 确定目标
 
 低延迟/高吞吐量？ 选择合适的GC
 
@@ -1428,62 +1591,92 @@ D:\JavaJDK1.8\bin\java  -XX:+PrintFlagsFinal -version | findstr "GC"
 - ParallelGC
 - Zing
 
-### 3）最快的 GC
 
-首先排除减少因为自身编写的代码而引发的内存问题
 
-- 查看 Full GC 前后的内存占用，考虑以下几个问题   
+#### 3. 最快的GC是不发生GC
+
+首先排除减少因为自身编写的代码而引发的内存问题：
+
+- 查看Full GC前后的内存占用，考虑以下几个问题：   
   - 数据是不是太多？     
-    - resultSet = statement.executeQuery(“select * from 大表 limit n”)
-  - 数据表示是否太臃肿     
+    - `resultSet = statement.executeQuery("select * from 大表");`
+  - 数据表示是否太臃肿？     
     - 对象图
-    - 对象大小 16 Integer 24 int 4
-  - 是否存在内存泄漏     
-    - static Map map …
-    - 软
-    - 弱
-    - 第三方缓存实现
+    - 对象大小，Java中**new**一个Object或者包装类型对象，至少16字节。
+  - 是否存在内存泄漏？     
+    - `static Map map = HashMap()`，当我们不断的向静态的map中新增对象且不移除，就可能造成内存吃紧。
+    - 可以使用软引用，弱引用来解决上面的问题，因为它们可以在内存吃紧时，被定期回收。也可以使用第三方的缓存中间件来存储上面的map中的数据。
 
-### 4）新生代调优
 
-- 新生代的特点
-  - 所有的 new 操作分配内存都是非常廉价的     
-    - TLAB thread-lcoal allocation buffer
-  - 死亡对象回收零代价
+
+#### 4. 新生代调优
+
+- 新生代的特点：   
+
+  - 当我们
+
+    ```
+    new
+    ```
+
+    一个对象时，会先在伊甸园中进行分配，所有的
+
+    ```
+    new
+    ```
+
+    操作分配内存都是非常廉价且速度极快的     
+
+    - TLAB(Thread-Location Allocation Buffer)：当我们`new`一个对象时，会先检查TLAB缓冲区中是否有可用内存，如果有则优先在TLAB中进行对象分配。
+
+  - 死亡对象回收的代价为零
+
   - 大部分对象用过即死（朝生夕死）
-  - Minor GC 所用时间远小于 Full GC
-- 新生代内存越大越好么？
-  - 不是     
-    - 新生代内存太小：频繁触发 Minor GC ，会 STW ，会使得吞吐量下降
-    - 新生代内存太大：老年代内存占比有所降低，会更频繁地触发 Full GC。而且触发 Minor GC 时，清理新生代所花费的时间会更长
-  - 新生代内存设置为内容纳[并发量*(请求-响应)]的数据为宜
-- 幸存区需要能够保存 当前活跃对象+需要晋升的对象
-- 晋升阈值配置得当，让长时间存活的对象尽快晋升
 
-```java
--XX:MaxTenuringThreshold=threshold
--XX:+PrintTenuringDistrubution
-12
-```
+  - MInor GC 所用时间远小于Full GC
 
-### 5）老年代调优
+- 新生代内存越大越好么？   
 
-以 CMS 为例：
+  - 不是：     
+    - 新生代内存太小：频繁触发Minor GC，会 STW，会使得吞吐量下降。
+    - 新生代内存太大：老年代内存占比有所降低，会更频繁地触发Full GC。而且触发Minor GC时，清理新生代所花费的时间会更长。
+  - 新生代内存设置为能容纳 `并发量*(请求-响应)` 的数据为宜。
 
-- CMS 的老年代内存越大越好
-- 先尝试不做调优，如果没有 Full GC 那么已经，否者先尝试调优新生代。
-- 观察发现 Full GC 时老年代内存占用，将老年代内存预设调大 1/4 ~ 1/3
-
-```java
--XX:CMSInitiatingOccupancyFraction=percent
-1
-```
-
-### 6）案例
-
-案例1：Full GC 和 Minor GC 频繁
- 案例2：请求高峰期发生 Full GC，单次暂停时间特别长（CMS）
- 案例3：老年代充裕情况下，发生 Full GC（jdk1.7）
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210428130824953.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70)
 
 
 
+#### 5. 幸存区调优
+
+- 幸存区最大能够保存 **当前活跃对象**+**需要晋升的对象**。
+- 晋升阈值配置得当，让长时间存活的对象尽快晋升。
+
+
+
+#### 6. 老年代调优
+
+以CMS为例：
+
+- CMS的老年代内存越大越好。
+
+- 先尝试不做调优，如果没有 Full GC 那么说明当前系统暂时不需要优化，否则，就先尝试调优新生代。
+
+- 观察发生Full GC 时老年代的内存占用，将老年代内存预设调大 
+
+  ```
+  1/4 ~ 1/3
+  ```
+
+  。   
+
+  - `-XX:CMSInitiatingOccupancyFraction=percent`
+
+
+
+#### 7. 案例
+
+- 当Full GC 和 Minor GC 调用频繁。
+- 当请求高峰期发生Full GC，单次暂停时间特别长(CMS)
+- 在老年代充裕的情况下，发生Full GC (1.7)
+
+上面集中情况都是需要调优的！
