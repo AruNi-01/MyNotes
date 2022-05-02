@@ -385,6 +385,78 @@ Tom Jay
 Tom 30
 ```
 
+### iota
+
+`iota`是`go`语言的常量计数器，只能在常量的表达式中使用。 `iota`在`const`关键字出现时将被重置为`0`。`const`中每新增一行常量声明将使`iota`计数一次(`iota`可理解为`const`语句块中的行索引)。 使用`iota`能简化定义，在定义枚举时很有用。
+
+举个例子：
+
+```go
+const (
+    n1 = iota //0
+    n2        //1
+    n3        //2
+    n4        //3
+)
+```
+
+
+
+
+
+> 几个常见的iota示例
+
+使用`_`跳过某些值：
+
+```go
+const (
+    n1 = iota // 0
+    n2        // 1
+    _
+    n4        // 3
+)
+```
+
+`iota`声明中间插队：
+
+```go
+const (
+    n1 = iota // 0
+    n2 = 100  // 独立值100，iota += 1
+    n3		// 100，iota +=1
+    n4 = iota // 3
+    n5        // 4
+)
+const n6 = iota //0
+```
+
+定义数量级： （这里的`<<`表示左移操作，`1<<10`表示将`1`的二进制表示向左移`10`位，也就是由`1`变成了`10000000000`，也就是十进制的`1024`。同理`2<<2`表示将`2`的二进制表示向左移`2`位，也就是由`10`变成了`1000`，也就是十进制的`8`。）
+
+注：`x << n == x*(2^n)`
+
+```go
+const (
+    _  = iota
+    KB = 1 << (10 * iota)
+    MB = 1 << (10 * iota)
+    GB = 1 << (10 * iota)
+    TB = 1 << (10 * iota)
+    PB = 1 << (10 * iota)
+)
+```
+
+多个`iota`定义在一行：
+
+```go
+const (
+    a, b = iota + 1, iota + 2  // 1,2
+    c, d                      // 2,3
+    e, f                      // 3,4
+)
+```
+
+
+
 ### 变量声明
 
 **单个变量声明**：
@@ -443,7 +515,7 @@ Tom 30
 Jay true 180.3
 ```
 
-## 输出方法
+### 输出方法
 
 **fmt.Print**：输出到控制台（仅只是输出）。
 
@@ -949,7 +1021,136 @@ Go语言中的函数传参都是值拷贝，当我们想要修改某个变量的
 - `ptr := &T`
 - T 为类型，可以是结构体、整型、字符串等。
 - ptr：用于接收地址的变量，ptr的类型就为`*T`，称做T的指针类型。`*`代表指针。
-- 
+
+举个例子：
+
+```go
+func main() {
+    a := 10
+    b := &a
+    fmt.Printf("a:%d ptr:%p\n", a, &a) 	// a:10 ptr:0xc00001a078
+    fmt.Printf("b:%p type:%T\n", b, b) 	// b:0xc00001a078 type:*int
+    fmt.Println(&b)                    // 0xc00000e018
+}
+```
+
+`b := &a`的图示：
+
+![image-20220502192740753](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220502192740753.png)
+
+### 指针取值
+
+在对普通变量使用`&`操作符取地址后会获得这个变量的指针，然后可以对指针使用`*`操作，也就是指针取值，代码如下：
+
+```go
+// demo_22
+package main
+
+import "fmt"
+
+func main() {
+	a := 10
+	b := &a // 取变量a的地址，将指针保存到b中
+	fmt.Printf("type of b: %T\n", b)
+	c := *b // 指针取值（根据指针去内存取值）
+	fmt.Printf("type of c: %T\n", c)
+	fmt.Printf("value of c: %v\n", c)
+}
+```
+
+输出：
+
+```text
+type of b: *int
+type of c: int
+value of c: 10
+```
+
+总结： 
+
+取地址操作符&和取值操作符`*`是一对互补操作符，`&`取出地址，`*`根据地址取出地址指向的值。
+
+变量、指针地址、指针变量、取地址、取值的相互关系和特性如下：
+
+1. 对变量进行取地址（&）操作，可以获得这个变量的指针变量。
+2. 指针变量的值是指针地址。
+3. 对指针变量进行取值（*）操作，可以获得指针变量指向的原变量的值。
+
+> 当一个指针被定义后没有分配到任何变量时，它的值为 nil
+
+
+
+### new 和 make
+
+在Go语言中对于**引用类型**的变量，我们在使用的时候**不仅要声明它**，还要为它**分配内存空间**，否则我们的值就没办法存储。
+
+而对于值类型的声明不需要分配内存空间，是因为它们在声明的时候已经默认分配好了内存空间。
+
+要分配内存，就要使用`new`和`make`这两个内建函数，主要用来分配内存。
+
+#### new
+
+new是一个内置的函数，它的函数签名如下：
+
+- `func new(Type) *Type`
+
+- `Type`表示类型，new函数只接受一个参数，这个参数是一个类型
+- `*Type`表示类型指针，new函数返回一个指向该类型内存地址的指针
+
+new函数不太常用，使用new函数得到的是一个**类型的指针**，并且该指针对应的值为该类型的零值。举个例子：
+
+```go
+func main() {
+    // 只是声明了一个指针变量a但是没有初始化
+    var a *int
+    // 指针作为引用类型需要初始化后才会拥有内存空间，才可以给它赋值
+    a = new(int)
+    *a = 10
+    fmt.Println(*a)	// 10
+    
+    a := new(int)
+    b := new(bool)
+    fmt.Printf("%T\n", a) // *int
+    fmt.Printf("%T\n", b) // *bool
+    fmt.Println(*a)       // 0
+    fmt.Println(*b)       // false
+}
+```
+
+
+
+#### make
+
+make也是用于内存分配的，区别于new，它只用于slice、map以及chan的内存创建，而且它**返回的类型**就是这三个**类型本身**，而不是他们的指针类型，因为这三种类型就是引用类型，所以就没有必要返回他们的指针了。
+
+make函数的函数签名如下：
+
+- `func make(t Type, size ...IntegerType) Type`
+
+make函数是无可替代的，我们在使用slice、map以及channel的时候，都需要使用make进行初始化，然后才可以对它们进行操作。
+
+```go
+func main() {
+    // 只是声明变量b是一个map类型的变量
+    var b map[string]int
+    // 使用make函数进行初始化操作之后，才能对其进行键值对赋值
+    b = make(map[string]int, 10)
+    b["测试"] = 100
+    fmt.Println(b)	// map[测试:100]
+}
+```
+
+### new 和 make 的区别
+
+1. 二者都是用来做内存分配的
+2. make只用于slice、map以及channel的初始化，返回的还是这三个引用类型本身
+3. 而new用于类型的内存分配，并且内存对应的值为类型零值，返回的是指向类型的指针
+
+
+
+
+
+
 
 # Struct 结构体
 
@@ -1650,13 +1851,586 @@ map[中国:[北京 上海]]
 
 
 
+# 流程控制
+
+## if
+
+Go 语言中 if 语句由一种特殊的写法，可以在 if 表达式之前添加一个语句，再根据变量值进行判断，语句作用范围被限制在 if、else 语句组合中。
+
+示例：
+
+```go
+func main() {
+	x := 0
+	// 在if表达式之前添加一个执行语句，x > 0 才是真正的判断语句
+	if n := "abc"; x > 0 {
+		println(n[2])
+	} else if x < 0 {
+		println(n[1])
+	} else {
+		println(n[0])
+	}
+	// 输出：97
+}
+```
+
+注意：
+
+- `{` 必须在条件表达式尾部，不能在单独的一行
+- 不支持三元操作符(三目运算符) `"a > b ? a : b"`
+
+
+
+## switch
+
+Golang switch 分支表达式可以是任意类型，不限于常量。可省略 break，默认自动终止。
+
+示例：
+
+```go
+demo_24
+package main
+
+import "fmt"
+
+func main() {
+	/* 定义局部变量 */
+	var grade string = "B"
+	var marks int = 90
+
+	switch marks {
+	case 90:
+		grade = "A"
+	case 80:
+		grade = "B"
+	case 50, 60, 70:
+		grade = "C"
+	default:
+		grade = "D"
+	}
+
+	switch {
+	case grade == "A":
+		fmt.Printf("优秀!\n")
+	case grade == "B", grade == "C":
+		fmt.Printf("良好\n")
+	case grade == "D":
+		fmt.Printf("及格\n")
+	case grade == "F":
+		fmt.Printf("不及格\n")
+	default:
+		fmt.Printf("差\n")
+	}
+	fmt.Printf("你的等级是 %s\n", grade)
+}
+```
+
+输出：
+
+```text
+优秀!
+你的等级是 A
+```
+
+
+
+### Type Switch
+
+switch 语句还可以被用于 type-switch 来判断某个 interface 变量中实际存储的变量类型。
+
+Type Switch 语法格式如下：
+
+```go
+switch x.(type){
+    case type:
+       statement(s)      
+    case type:
+       statement(s)
+    /* 你可以定义任意个数的case */
+    default:	 /* 可选 */
+       statement(s)
+}
+```
+
+示例：
+
+```go
+// demo_25
+package main
+
+import "fmt"
+
+func main() {
+	var x interface{}
+
+	//写法一：
+	switch i := x.(type) { // 带初始化语句
+	case nil:
+		fmt.Printf(" x 的类型 :%T\r\n", i)
+	case int:
+		fmt.Printf("x 是 int 型")
+	case float64:
+		fmt.Printf("x 是 float64 型")
+	case func(int) float64:
+		fmt.Printf("x 是 func(int) 型")
+	case bool, string:
+		fmt.Printf("x 是 bool 或 string 型")
+	default:
+		fmt.Printf("未知型")
+	}
+	// 输出：x 的类型 :<nil>
+
+	//写法二
+	var j = 0
+	switch j {
+	case 0:
+	case 1:
+		fmt.Println("1")
+	case 2:
+		fmt.Println("2")
+	default:
+		fmt.Println("def")
+	}
+	// 没有输出
+
+	//写法三
+	var k = 0
+	switch k {
+	case 0:
+		println("fallthrough")
+		fallthrough
+		/*
+		   Go的switch非常灵活，表达式不必是常量或整数，执行的过程从上至下，直到找到匹配项；
+		   而如果switch没有表达式，它会匹配true。
+		   Go里面switch默认相当于每个case最后带有break，
+		   匹配成功后不会自动向下执行其他case，而是跳出整个switch,
+		   但是可以使用fallthrough强制执行后面的case代码。
+		*/
+	case 1:
+		fmt.Println("1")
+	case 2:
+		fmt.Println("2")
+	default:
+		fmt.Println("def")
+	}
+	// 输出：fallthrough
+        //	       1
+
+	//写法三
+	var m = 0
+	switch m {
+	case 0, 1:
+		fmt.Println("1")
+	case 2:
+		fmt.Println("2")
+	default:
+		fmt.Println("def")
+	}
+	// 输出：1
+
+	//写法四
+	var n = 0
+	switch { //省略条件表达式，可当 if...else if...else
+	case n > 0 && n < 10:
+		fmt.Println("i > 0 and i < 10")
+	case n > 10 && n < 20:
+		fmt.Println("i > 10 and i < 20")
+	default:
+		fmt.Println("def")
+	}
+	// 输出：def
+}
+```
+
+
+
+## select
+
+select 语句类似于 switch 语句，每个case必须是一个**通信操作**，要么是发送要么是接收。 select 随机执行一个可运行的case。**如果没有case可运行，它将阻塞，直到有case可运行**。一个默认的子句应该总是可运行的。
+
+语法：
+
+```sql
+select {
+    case communication clause  :
+       statement(s);      
+    case communication clause  :
+       statement(s);
+    /* 你可以定义任意数量的 case */
+    default :	 /* 可选 */
+       statement(s);
+}
+```
+
+select 语句的语法：
+
+- 每个 case 都必须是一个通信
+- 所有 channel 表达式都会被求值
+- 所有被发送的表达式都会被求值
+- 如果任意某个通信可以进行，它就执行；其他被忽略
+- 如果有多个 case 都可以运行，Select 会随机公平地选出一个执行。其他不会执行
+- 否则：
+  - 如果有 default 子句，则执行该语句
+  - 如果没有 default 字句，select 将阻塞，直到某个通信可以运行；Go不会重新对channel 或值进行求值
+
+
+
+示例：
+
+```go
+// demo_26
+package main
+
+import "fmt"
+
+func main() {
+	var c1, c2, c3 chan int // channel为int类型
+	var i1, i2 int
+        // channel 中没有数据读写，下面只会触发default
+	select {
+	// // 从Channel c1中接收数据，并将数据赋值给i1
+	case i1 = <-c1:
+		fmt.Println("received ", i1, " from c1\n")
+	case c2 <- i2:
+		fmt.Println("sent ", i2, " to c2\n")
+	case i3, ok := <-c3:
+		if ok {
+			fmt.Println("received ", i3, " from c3\n")
+		} else {
+			fmt.Println("c3 is closed\n")
+		}
+	default:
+		fmt.Println("no communication\n")
+	}
+}
+```
+
+输出：
+
+```text
+no communication
+```
+
+select可以监听channel的数据流动
+
+select的用法与switch语法非常类似，由select开始的一个新的选择块，每个选择条件由case语句来描述
+
+与switch语句可以选择任何使用相等比较的条件相比，select由比较多的限制，其中最大的一条限制就是**每个case语句里必须是一个IO操作**
+
+```go
+    select { //不停的在这里检测
+    case <-chanl : //检测有没有数据可以读
+    //如果chanl成功读取到数据，则进行该case处理语句
+    case chan2 <- 1 : //检测有没有可以写
+    //如果成功向chan2写入数据，则进行该case处理语句
+
+
+    //假如没有default，那么在以上两个条件都不成立的情况下，就会在此阻塞
+    //一般default会不写在里面，select中的default子句总是可运行的，因为会很消耗CPU资源
+    default:
+    //如果以上都没有符合条件，那么则进行default处理流程
+    }
+```
+
+在一个select语句中，Go会按顺序从头到尾评估每一个发送和接收的语句。
+
+如果其中的任意一个语句可以继续执行（即没有被阻塞），那么就从那些可以执行的语句中任意选择一条来使用。 如果没有任意一条语句可以执行（即所有的通道都被阻塞），那么有两种可能的情况： ①如果给出了default语句，那么就会执行default的流程，同时程序的执行会从select语句后的语句中恢复。 ②如果没有default语句，那么select语句将被阻塞，直到至少有一个case可以进行下去。
+
+
+
+#### 典型用法
+
+1、超时判断
+
+```go
+// 比如在下面的场景中，使用全局resChan来接受response，如果时间超过3S, resChan中还没有数据返回，则第二条case将执行
+var resChan = make(chan int)
+// do request
+func test() {
+    select {
+    case data := <-resChan:
+        doData(data)
+    case <-time.After(time.Second * 3):
+        fmt.Println("request time out")
+    }
+}
+
+func doData(data int) {
+    // ...
+}
+```
+
+2、退出
+
+```go
+// 主线程（协程）中如下：
+var shouldQuit=make(chan struct{})
+fun main(){
+    {
+        // loop循环
+    }
+    // ...out of the loop循环
+    select {
+        case <-c.shouldQuit:
+            cleanUp()
+            return
+        default:
+        }
+    // ...
+}
+
+// 再另外一个协程中，如果运行遇到非法操作或不可处理的错误，就向shouldQuit发送数据通知程序停止运行
+close(shouldQuit)
+```
+
+3、判断 channel 是否阻塞
+
+```go
+// 在某些情况下是存在不希望channel缓存满了的需求的，可以用如下方法判断
+ch := make (chan int, 5)
+//...
+data：=0
+select {
+case ch <- data:
+default:
+    // 做相应操作，比如丢弃data。视需求而定
+}
+```
+
+
+
+## for
+
+Golang for支持三种循环方式，包括类似 while 的语法。
+
+**语法**：
+
+Go语言的For循环有3中形式，只有其中的一种使用分号。
+
+```go
+for init; condition; post { }
+for condition { }
+for { }
+```
+
+- init： 一般为赋值表达式，给控制变量赋初值
+- condition： 关系表达式或逻辑表达式，循环控制条件
+- post： 一般为赋值表达式，给控制变量增量或减量
+
+与C++一致。
+
+示例：
+
+```go
+package main
+
+func main() {
+	s := "abc"
+	// 常见的 for 循环，支持初始化语句。
+	for i, n := 0, len(s); i < n; i++ {
+		println(s[i])
+	}
+
+	n := len(s)
+	// 代替 while (n > 0) {}
+	for n > 0 {
+		println(s[n-1])
+		n--
+	}
+
+	// 代替 while (true) {}
+	for {
+        	// 无线循环
+		println(s)
+	}
+}
+```
+
+输出：
+
+```text
+97
+98
+99
+99
+98
+97
+abc
+abc
+abc
+......
+```
+
+
+
+## range
+
+Golang range 类似迭代器操作，返回 (索引, 值) 或 (键, 值)。
+
+for 循环的 range 格式可以对 slice、map、数组、字符串等进行迭代循环。格式如下：
+
+```go
+for key, value := range oldMap {
+    newMap[key] = value
+}
+```
+
+|             | 1st value | 2nd value |               |
+| ----------- | --------- | --------- | ------------- |
+| string      | index     | s[index]  | unicode, rune |
+| array/slice | index     | s[index]  |               |
+| map         | key       | m[key]    |               |
+| channel     | element   |           |               |
+
+可忽略不想要的返回值，或 `"_"` 这个特殊变量。
+
+示例：
+
+```go
+// demo_28
+package main
+
+func main() {
+	s := "abc"
+	// 忽略 2nd value
+	for i := range s {
+		println(s[i])
+	}
+
+	// 忽略 index
+	for _, c := range s {
+		println(c)
+	}
+
+	// 忽略全部返回值，仅迭代
+	for range s {
+
+	}
+
+	m := map[string]int{"a": 1, "b": 2}
+	// 返回（key, value）
+	for k, v := range m {
+		println(k, v)
+	}
+}
+```
+
+输出：
+
+```text
+97
+98
+99
+97
+98
+99
+a 1
+b 2
+```
 
 
 
 
 
+> range 会**复制对象**
+
+对于非引用类型，range 会复制对象，而不是不是直接在原对象上操作：
+
+```go
+// demo_29
+package main
+
+import "fmt"
+
+func main() {
+	a := [3]int{0, 1, 2}
+
+	for i, v := range a { // index、value 都是从复制品中取出
+		// 先修改原数组
+		if i == 0 {
+			a[1], a[2] = 999, 999
+			fmt.Println(a) // 修改有效，原数组的a[1], a[2]都为999，输出：[0, 999, 999]
+		}
+		// 使用复制品中取出的 value 修改原数组
+		a[i] = v + 100
+	}
+	fmt.Println(a) // 输出：[100, 101, 102]；发现并没有使用原数组的value
+}
+```
+
+建议改用引用类型，其底层数据不会被复制：
+
+```go
+// demo_30
+package main
+
+import "fmt"
+
+func main() {
+	s := []int{1, 2, 3} // 改成slice
+	for i, v := range s {
+		if i == 0 {
+			s[1], s[2] = 200, 300
+			fmt.Println(s) // [1 200 300]
+		}
+		s[i] = v + 100
+	}
+	fmt.Println(s) // [101 300 400]
+}
+```
+
+for range 的k, v变量在整个遍历过程中共用，不能直接进行引用传递，即地址传递
+
+```go
+package main
+
+import "fmt"
+
+func main(){
+	a := []int {1, 2, 3} 	//改成slice
+	for i, v := range a{
+		if i == 0{
+			a[1], a[2] = 200, 300
+			fmt.Println(a)	 //[1 200 300]
+		}
+		fmt.Printf("i:{addr: %p; value: %v}, v:{addr: %p; value: %v}\n", &i, i, &v, v)
+		a[i] = v + 100
+	}
+	fmt.Println(a)
+}
+// 注意，循环中i, v的地址是一样的，也就是说这个变量是被复用的！禁止直接使用i或者v的地址！！！
+/* result: 
+[1 200 300]
+i:{addr: 0xc0000aa058; value: 0}, v:{addr: 0xc0000aa070; value: 1}
+i:{addr: 0xc0000aa058; value: 1}, v:{addr: 0xc0000aa070; value: 200}
+i:{addr: 0xc0000aa058; value: 2}, v:{addr: 0xc0000aa070; value: 300}
+[101 300 400]
+ */
+```
+
+注意：循环中i, v的地址是一样的，也就是说这个变量是被复用的，禁止直接使用i或者v的地址！！！
 
 
+
+`for` 和 `for range` 的区别：
+
+- for：
+
+  - 遍历array和slice
+
+  - 遍历key为整型递增的map
+
+  - 遍历string
+
+- for range 能完成所有for能做的事情，也能做到for不能做的，包括：
+
+  - 遍历key为string类型的map并同时获取key和value
+
+  - 遍历channel
+
+
+
+# 函数
 
 
 
