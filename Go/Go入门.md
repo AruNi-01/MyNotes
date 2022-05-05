@@ -1,4 +1,4 @@
-# 初识Go
+# 初识 Go
 
 ![img](https://www.runoob.com/wp-content/uploads/2015/06/go128.png)
 
@@ -1320,7 +1320,175 @@ tank =  &{YaSe 100 70}
 
 
 
-# JSON and Go
+### 构造函数
+
+Go语言的结构体没有构造函数，我们可以自己实现。 例如，下方的代码就实现了一个`person`的构造函数。 
+
+因为`struct`是值类型，如果结构体比较复杂的话，值拷贝性能开销会比较大，所以该构造函数返回的是结构体指针类型。
+
+```go
+func newPlayer(name string, healthPoint, magicPoint int) *Player {
+	return &person{
+		Name: name,
+        	HealthPoint: healthPoint,
+        	MagicPoint: magicPoint,
+	}
+}
+```
+
+调用构造函数
+
+```go
+p9 := newPlayer("张三", 100, 90)
+fmt.Printf("%#v\n", p9) 	//&main.person{Name:"张三", HealthPoint:100, MagicPoint:90}
+```
+
+
+
+### 嵌套结构体
+
+一个结构体中可以嵌套包含另一个结构体或结构体指针，就像下面的示例代码那样。
+
+```go
+//Address 地址结构体
+type Address struct {
+	Province string
+	City     string
+}
+
+//User 用户结构体
+type User struct {
+	Name    string
+	Gender  string
+	Address Address
+}
+
+func main() {
+	user1 := User{
+		Name:   "小王子",
+		Gender: "男",
+		Address: Address{
+			Province: "山东",
+			City:     "威海",
+		},
+	}
+	fmt.Printf("user1=%#v\n", user1)
+        //user1=main.User{Name:"小王子", Gender:"男", Address:main.Address{Province:"山东", City:"威海"}}
+}
+```
+
+### 嵌套匿名字段
+
+上面user结构体中嵌套的`Address`结构体也可以采用匿名字段的方式，例如：
+
+```go
+//Address 地址结构体
+type Address struct {
+	Province string
+	City     string
+}
+
+//User 用户结构体
+type User struct {
+	Name    string
+	Gender  string
+	Address //匿名字段
+}
+
+func main() {
+	var user2 User
+	user2.Name = "小王子"
+	user2.Gender = "男"
+	user2.Address.Province = "山东"    // 匿名字段默认使用类型名作为字段名
+	user2.City = "威海"                // 匿名字段可以省略
+	fmt.Printf("user2=%#v\n", user2) 
+        //user2=main.User{Name:"小王子", Gender:"男", Address:main.Address{Province:"山东", City:"威海"}}
+}
+```
+
+当访问结构体成员时会先在结构体中查找该字段，找不到再去嵌套的匿名字段中查找。
+
+### 嵌套结构体的字段名冲突
+
+嵌套结构体内部可能存在相同的字段名。在这种情况下为了避免歧义需要通过指定具体的内嵌结构体字段名。
+
+```go
+//Address 地址结构体
+type Address struct {
+	Province   string
+	City       string
+	CreateTime string
+}
+
+//Email 邮箱结构体
+type Email struct {
+	Account    string
+	CreateTime string
+}
+
+//User 用户结构体
+type User struct {
+	Name   string
+	Gender string
+	Address
+	Email
+}
+
+func main() {
+	var user3 User
+	user3.Name = "沙河娜扎"
+	user3.Gender = "男"
+	// user3.CreateTime = "2019" //ambiguous selector user3.CreateTime
+	user3.Address.CreateTime = "2000" //指定Address结构体中的CreateTime
+	user3.Email.CreateTime = "2000"   //指定Email结构体中的CreateTime
+}
+```
+
+
+
+### 结构体的 “继承”
+
+Go语言中使用结构体也可以实现其他编程语言中面向对象的继承。
+
+```go
+//Animal 动物
+type Animal struct {
+	name string
+}
+
+func (a *Animal) move() {
+	fmt.Printf("%s会动！\n", a.name)
+}
+
+//Dog 狗
+type Dog struct {
+	Feet    int8
+	*Animal //通过嵌套匿名结构体实现继承
+}
+
+func (d *Dog) wang() {
+	fmt.Printf("%s会汪汪汪~\n", d.name)
+}
+
+func main() {
+	d1 := &Dog{
+		Feet: 4,
+		Animal: &Animal{ //注意嵌套的是结构体指针
+			name: "乐乐",
+		},
+	}
+	d1.wang() //乐乐会汪汪汪~
+	d1.move() //乐乐会动！
+}
+```
+
+
+
+### 结构体字段的可见性
+
+结构体中字段**大写开头**表示可**公开访问**，**小写**表示**私有**（仅在定义当前结构体的包中可访问）。
+
+# JSON 序列化
 
 ### 概述
 
@@ -4040,13 +4208,923 @@ func ExampleSplit() {
 
 # 方法
 
+Go语言中的`方法（Method）`是一种作用于特定类型变量的函数。这种特定类型变量叫做`接收者（Receiver）`。接收者的概念就类似于其他语言中的`this`或者 `self`。
+
+法的定义格式如下：
+
+```go
+func (接收者变量 接收者类型) 方法名(参数列表) (返回参数) {
+    函数体
+}
+```
+
+其中：
+
+- 接收者变量：接收者中的参数变量名在命名时，官方建议使用**接收者类型名称首字母的小写**，而不是`self`、`this`之类的命名。例如，`Person`类型的接收者变量应该命名为 `p`，`Connector`类型的接收者变量应该命名为`c`等。
+- 接收者类型：接收者类型和参数类似，可以是指针类型和非指针类型。
+- 方法名、参数列表、返回参数：具体格式与函数定义相同。
+
+方法与函数的区别是，函数不属于任何类型，**方法属于特定的类型**。
+
+例子：
+
+```go
+// demo_46
+package main
+
+import "fmt"
+
+type Person struct {
+	name string
+	age  int8
+}
+
+// NewPerson 构造函数
+func NewPerson(name string, age int8) *Person {
+	return &Person{
+		name: name,
+		age:  age,
+	}
+}
+
+// Dream Person的方法
+func (p Person) Dream() {
+	fmt.Printf("%s的梦想是学好Golang!\n", p.name)
+}
+
+func main() {
+	p1 := NewPerson("张三", 18)
+	p1.Dream()
+    
+        // 输出：张三的梦想是学好Golang!
+}
+```
+
+
+
+## 指针类型的接收者
+
+指针类型的接收者由一个结构体的指针组成，由于指针的特性，调用方法时修改接收者指针的任意成员变量，在方法结束后，修改都是有效的。这种方式就十分接近于其他语言中面向对象中的`this`或者`self`。 
+
+例如我们为`Person`添加一个`SetAge`方法，来修改实例变量的年龄。
+
+```go
+// SetAge 设置p的年龄
+func (p *Person) SetAge(newAge int8) {
+	p.age = newAge
+}
+```
+
+调用该方法：
+
+```go
+func main() {
+	p1 := NewPerson("张三", 18)
+	//p1.Dream()
+	fmt.Println(p1.age)	// 18
+	p1.SetAge(28)
+	fmt.Println(p1.age)	// 28
+}
+```
+
+
+
+## 值类型的接收者
+
+当方法作用于值类型接收者时，Go语言会在代码运行时将**接收者的值复制一份**。在值类型接收者的方法中可以获取接收者的成员值，但修改操作只是针对副本，无法修改接收者变量本身。
+
+示例：
+
+```go
+// SetAge2 设置p的年龄
+// 使用值接收者
+func (p Person) SetAge2(newAge int8) {
+	p.age = newAge
+}
+
+func main() {
+	p1 := NewPerson("小王子", 18)
+	p1.Dream()
+	fmt.Println(p1.age) 	// 18
+	p1.SetAge2(30) 	// (*p1).SetAge2(30)
+	fmt.Println(p1.age) 	// 18
+}
+```
+
+
+
+## 什么时候应该使用指针类型接收者
+
+1. 需要修改接收者中的值
+2. 接收者是拷贝代价比较大的大对象
+3. 保证一致性，如果有某个方法使用了指针接收者，那么其他的方法也应该使用指针接收者。
 
 
 
 
 
+## 任意类型添加方法
+
+在Go语言中，接收者的类型可以是任何类型，不仅仅是结构体，任何类型都可以拥有方法。 举个例子，我们基于内置的`int`类型使用type关键字可以定义新的自定义类型，然后为我们的自定义类型添加方法。
+
+```go
+//MyInt 将int定义为自定义MyInt类型
+type MyInt int
+
+//SayHello 为MyInt添加一个SayHello的方法
+func (m MyInt) SayHello() {
+	fmt.Println("Hello, 我是一个int。")
+}
+func main() {
+	var m1 MyInt
+	m1.SayHello() //Hello, 我是一个int。
+	m1 = 100
+	fmt.Printf("%#v  %T\n", m1, m1) //100  main.MyInt
+}
+```
+
+**注意事项**：
+
+- 非本地类型不能定义方法，也就是说我们不能给别的包的类型定义方法。
 
 
+
+# 包与依赖管理
+
+在工程化的Go语言开发项目中，Go语言的源码复用是建立在包（package）基础之上的。
+
+接下来学习Go语言中如何定义包、如何导出包的内容及如何引入其他包。同时也将介绍如何在项目中使用go module管理依赖。
+
+
+
+## package 包
+
+### 包介绍
+
+Go语言中支持模块化的开发理念，在Go语言中使用`包（package）`来支持代码模块化和代码复用。
+
+一个包是由一个或多个Go源码文件（.go结尾的文件）组成，是一种高级的代码复用方案，Go语言为我们提供了很多内置包，如`fmt`、`os`、`io`等。
+
+例如，在之前的章节中我们频繁使用了`fmt`这个内置包。
+
+```go
+package main
+
+import "fmt"
+
+func main(){
+  fmt.Println("Hello world!")
+}
+```
+
+上面短短的几行代码就涉及到了如何定义包以及如何引入其它包两个内容。
+
+
+
+### 定义包
+
+我们可以根据自己的需要创建自定义包。一个包可以简单理解为一个存放`.go`文件的文件夹。该文件夹下面的所有`.go`文件都要在非注释的第一行添加如下声明，声明该文件归属的包。
+
+```go
+package packagename
+```
+
+其中：
+
+- package：声明包的关键字
+- packagename：包名，可以不与文件夹的名称一致，不能包含 `-` 符号，最好与其实现的功能相对应。
+
+注意：
+
+- 一**个文件夹下面直接包含的文件只能归属一个包**，同一个包的文件不能在多个文件夹下。
+- 包名为`main`的包是应用程序的**入口包**，这种包编译后会得到一个可执行文件，而编译不包含`main`包的源代码则不会得到可执行文件。
+
+
+
+### 标识符可见性
+
+在同一个包内部声明的标识符都位于同一个命名空间下，在不同的包内部声明的标识符就属于不同的命名空间。想要在包的外部使用包内部的标识符就需要添加包名前缀，例如`fmt.Println("Hello world!")`，就是指调用`fmt`包中的`Println`函数。
+
+如果想让一个包中的标识符（如变量、常量、类型、函数等）能被外部的包使用，那么标识符必须是对外可见的（public）。在Go语言中是通过标识符的首字母大/小写来控制标识符的对外可见（public）/不可见（private）的。在一个包内部只有首字母大写的标识符才是对外可见的。
+
+例如我们定义一个名为`demo`的包，在其中定义了若干标识符。在另外一个包中并不是所有的标识符都能通过`demo.`前缀访问到，因为只有那些首字母是大写的标识符才是对外可见的。
+
+```go
+package demo
+
+import "fmt"
+
+// 包级别标识符的可见性
+
+// num 定义一个全局整型变量
+// 首字母小写，对外不可见(只能在当前包内使用)
+var num = 100
+
+// Mode 定义一个常量
+// 首字母大写，对外可见(可在其它包中使用)
+const Mode = 1
+
+// person 定义一个代表人的结构体
+// 首字母小写，对外不可见(只能在当前包内使用)
+type person struct {
+	name string
+	Age  int
+}
+
+// Add 返回两个整数和的函数
+// 首字母大写，对外可见(可在其它包中使用)
+func Add(x, y int) int {
+	return x + y
+}
+
+// sayHi 打招呼的函数
+// 首字母小写，对外不可见(只能在当前包内使用)
+func sayHi() {
+	var myName = "七米" // 函数局部变量，只能在当前函数内使用
+	fmt.Println(myName)
+}
+
+```
+
+同样的规则也适用于结构体，结构体中可导出字段的字段名称必须首字母大写。
+
+```go
+type Student struct {
+	Name  string // 可在包外访问的方法
+	class string // 仅限包内访问的字段
+}
+```
+
+
+
+### 包的引入
+
+要在当前包中使用另外一个包的内容就需要使用`import`关键字引入这个包，并且import语句通常放在文件的开头，`package`声明语句的下方。完整的引入声明语句格式如下：
+
+```go
+import importname "path/to/package"
+```
+
+其中：
+
+- importname：引入的包名，通常都省略。默认值为引入包的包名。
+- path/to/package：引入包的路径名称，必须使用双引号包裹起来。
+- Go语言中禁止循环导入包。
+
+
+
+一个Go源码文件中可以同时引入多个包，例如：
+
+```go
+import "fmt"
+import "net/http"
+import "os"
+```
+
+当然可以使用批量引入的方式。
+
+```go
+import (
+    "fmt"
+  	"net/http"
+    "os"
+)
+```
+
+当引入的多个包中存在相同的包名或者想自行为某个引入的包设置一个新包名时，都需要通过`importname`指定一个在当前文件中使用的新包名。例如，在引入`fmt`包时为其指定一个新包名`f`。
+
+```go
+import f "fmt"
+```
+
+这样在当前这个文件中就可以通过使用`f`来调用`fmt`包中的函数了。
+
+```go
+f.Println("Hello world!")
+```
+
+
+
+如果引入一个包的时候为其设置了一个特殊`_`作为包名，那么这个包的引入方式就称为匿名引入。一个包被匿名引入的目的主要是为了加载这个包，从而使得这个包中的资源得以初始化。 被匿名引入的包中的`init`函数将被执行并且仅执行一遍。
+
+```go
+import _ "github.com/go-sql-driver/mysql"
+```
+
+匿名引入的包与其他方式导入的包一样都会被编译到可执行文件中。
+
+注意：Go语言中不允许引入包却不在代码中使用这个包的内容，如果引入了未使用的包则会触发编译错误。
+
+
+
+### init 初始化函数
+
+在每一个Go源文件中，都可以定义任意个如下格式的特殊函数：
+
+```go
+func init(){
+  // ...
+}
+```
+
+这种特殊的函数不接收任何参数也没有任何返回值，我们也不能在代码中主动调用它。当程序启动的时候，init函数会按照它们声明的顺序自动执行。
+
+
+
+一个包的初始化过程是按照代码中引入的顺序来进行的，所有在该包中声明的`init`函数都将被串行调用并且仅调用执行一次。
+
+每一个包初始化的时候都是先执行依赖的包中声明的`init`函数再执行当前包中声明的`init`函数。确保在程序的`main`函数开始执行时所有的依赖包都已初始化完成。
+
+![](https://www.liwenzhou.com/images/Go/package/package01.png)
+
+每一个包的初始化是先从初始化包级别变量开始的。例如从下面的示例中我们就可以看出包级别变量的初始化会先于`init`初始化函数：
+
+```go
+package main
+
+import "fmt"
+
+var x int8 = 10
+
+const pi = 3.14
+
+func init() {
+  fmt.Println("x:", x)
+	fmt.Println("pi:", pi)
+	sayHi()
+}
+
+func sayHi() {
+	fmt.Println("Hello World!")
+}
+
+func main() {
+	fmt.Println("你好，世界！")
+}
+```
+
+输出结果：
+
+```text
+x: 10
+pi: 3.14
+Hello World!
+你好，世界！
+```
+
+
+
+## go module
+
+在Go语言的早期版本中，我们编写Go项目代码时所依赖的所有第三方包都需要保存在GOPATH这个目录下面。这样的依赖管理方式存在一个致命的缺陷，那就是不支持版本管理，同一个依赖包只能存在一个版本的代码。可是我们本地的多个项目完全可能分别依赖同一个第三方包的不同版本。
+
+### go module 介绍
+
+Go module 是 Go1.11 版本发布的依赖管理方案，从 Go1.14 版本开始推荐在生产环境使用，于 Go1.16 版本默认开启。Go module 提供了以下命令供我们使用：
+
+| 命令            | 介绍                                       |
+| --------------- | ------------------------------------------ |
+| go mod init     | 初始化项目依赖，生成go.mod文件             |
+| go mod download | 根据 go.mod 文件下载依赖                   |
+| go mod tidy     | 比对项目文件中引入的依赖与 go.mod 进行比对 |
+| go mod graph    | 输出依赖关系图                             |
+| go mod edit     | 编辑 go.mod 文件                           |
+| go mod vendor   | 将项目的所有依赖导出至vendor目录           |
+| go mod verify   | 检验一个依赖包是否被篡改过                 |
+| go mod why      | 解释为什么需要某个依赖                     |
+
+
+
+**GOPROXY**：
+
+这个环境变量主要是用于设置 Go 模块代理（Go module proxy），其作用是用于使 Go 在后续拉取模块版本时能够脱离传统的 VCS 方式，直接通过镜像站点来快速拉取。
+
+GOPROXY 的默认值是：`https://proxy.golang.org,direct`，由于某些原因国内无法正常访问该地址，所以我们通常需要配置一个可访问的地址。目前社区使用比较多的有两个`https://goproxy.cn`和`https://goproxy.io`，当然如果你的公司有提供 GOPROXY 地址那么就直接使用。设置GOPAROXY的命令如下：
+
+```bash
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+
+GOPROXY 允许设置多个代理地址，多个地址之间需使用英文逗号 “,” 分隔。最后的 “direct” 是一个特殊指示符，用于指示 Go 回源到源地址去抓取（比如 GitHub 等）。当配置有多个代理地址时，如果第一个代理地址返回 404 或 410 错误时，Go  会自动尝试下一个代理地址，当遇见 “direct” 时触发回源，也就是回到源地址去抓取。
+
+**GOPRIVATE**：
+
+设置了GOPROXY 之后，go 命令就会从配置的代理地址拉取和校验依赖包。当我们在项目中引入了非公开的包（公司内部git仓库或  github 私有仓库等），此时便无法正常从代理拉取到这些非公开的依赖包，这个时候就需要配置 GOPRIVATE  环境变量。GOPRIVATE用来告诉 go 命令哪些仓库属于私有仓库，不必通过代理服务器拉取和校验。
+
+GOPRIVATE 的值也可以设置多个，多个地址之间使用英文逗号 “,” 分隔。我们通常会把自己公司内部的代码仓库设置到 GOPRIVATE 中，例如：
+
+```bash
+$ go env -w GOPRIVATE="git.mycompany.com"
+```
+
+这样在拉取以`git.mycompany.com`为路径前缀的依赖包时就能正常拉取了。
+
+此外，如果公司内部自建了 GOPROXY 服务，那么我们可以通过设置 `GONOPROXY=none`，允许通内部代理拉取私有仓库的包。
+
+
+
+### 使用 go module 引入包
+
+#### 初始化项目
+
+我们在本地新建一个名为`holiday`项目，按如下方式创建一个名为`holiday`的文件夹并切换到该目录下：
+
+```bash
+$ mkdir holiday
+$ cd holiday
+```
+
+目前我们位于`holiday`文件夹下，接下来执行下面的命令初始化项目。
+
+```bash
+$ go mod init holiday
+go: creating new go.mod: module holiday
+```
+
+该命令会自动在项目目录下创建一个`go.mod`文件，其内容如下。
+
+```go
+module holiday
+
+go 1.18
+```
+
+其中：
+
+- module holiday：定义当前项目的导入路径
+- go 1.18：标识当前项目使用的 Go 版本
+
+`go.mod`文件会记录项目使用的第三方依赖包信息，包括包名和版本，由于我们的`holiday`项目目前还没有使用到第三方依赖包，所以`go.mod`文件暂时还没有记录任何依赖包信息，只有当前项目的一些信息。
+
+接下来，我们在项目目录下新建一个`main.go`文件，其内容如下：
+
+```go
+// holiday/main.go
+
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("现在是假期时间...")
+}
+```
+
+然后，我们的`holiday`项目现在需要引入一个第三方包`github.com/q1mi/hello`来实现一些必要的功能。类似这样的场景在我们的日常开发中是很常见的。我们需要先将依赖包下载到本地同时在`go.mod`中记录依赖信息，然后才能在我们的代码中引入并使用这个包。
+
+下载依赖包主要有两种方法。
+
+
+
+第一种方法：
+
+在项目目录下执行`go get`命令手动下载依赖的包：
+
+```bash
+holiday $ go get -u github.com/q1mi/hello
+go get: added github.com/q1mi/hello v0.1.1
+```
+
+这样默认会下载最新的发布版本，你也可以指定想要下载指定的版本号的。
+
+```bash
+holiday $ go get -u github.com/q1mi/hello@v0.1.0
+go: downloading github.com/q1mi/hello v0.1.0
+go get: downgraded github.com/q1mi/hello v0.1.1 => v0.1.0
+```
+
+如果依赖包没有发布任何版本则会拉取最新的提交，最终`go.mod`中的依赖信息会变成类似下面这种由默认v0.0.0的版本号和最新一次commit的时间和hash组成的版本格式：
+
+```go
+require github.com/q1mi/hello v0.0.0-20210218074646-139b0bcd549d
+```
+
+如果想指定下载某个commit对应的代码，可以直接指定commit hash，不过没有必要写出完整的commit hash，一般前7位即可。例如：
+
+```bash
+holiday $ go get github.com/q1mi/hello@2ccfadd
+go: downloading github.com/q1mi/hello v0.1.2-0.20210219092711-2ccfaddad6a3
+go get: added github.com/q1mi/hello v0.1.2-0.20210219092711-2ccfaddad6a3
+```
+
+此时，我们打开`go.mod`文件就可以看到下载的依赖包及版本信息都已经被记录下来了。
+
+```go
+module holiday
+
+go 1.18
+
+require github.com/q1mi/hello v0.1.1 // indirect
+```
+
+行尾的`indirect`表示该依赖包为间接依赖，说明在当前程序中的所有 import 语句中没有发现引入这个包。
+
+另外在执行`go get`命令下载一个新的依赖包时一般会额外添加`-u`参数，强制更新现有依赖。
+
+若下载的依赖爆红，在Goland中需要勾选如下选项：
+
+![image-20220505143632336](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505143632336.png)
+
+
+
+第二种方法：
+
+直接编辑`go.mod`文件，将依赖包和版本信息写入该文件。例如我们修改`holiday/go.mod`文件内容如下：
+
+```go
+module holiday
+
+go 1.16
+
+require github.com/q1mi/hello latest
+```
+
+表示当前项目需要使用`github.com/q1mi/hello`库的最新版本，然后在项目目录下执行`go mod download`下载依赖包。
+
+```bash
+holiday $ go mod download
+```
+
+如果不输出其它提示信息就说明依赖已经下载成功，此时`go.mod`文件已经变成如下内容。
+
+```go
+module holiday
+
+go 1.16
+
+require github.com/q1mi/hello v0.1.1
+```
+
+从中我们可以知道最新的版本号是`v0.1.1`。如果事先知道依赖包的具体版本号，可以直接在`go.mod`中指定需要的版本然后再执行`go mod download`下载。
+
+这种方法同样支持指定想要下载的commit进行下载，例如直接在`go.mod`文件中按如下方式指定commit hash，这里只写出来了commit  hash的前7位。
+
+```go
+require github.com/q1mi/hello 2ccfadda
+```
+
+执行`go mod download`下载完依赖后，`go.mod`文件中对应的版本信息会自动更新为类似下面的格式。
+
+```go
+module holiday
+
+go 1.16
+
+require github.com/q1mi/hello v0.1.2-0.20210219092711-2ccfaddad6a3
+```
+
+下载好要使用的依赖包之后，我们现在就可以在`holiday/main.go`文件中使用这个包了。
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/q1mi/hello"
+)
+
+func main() {
+	fmt.Println("现在是假期时间...")
+
+	hello.SayHi() 	// 调用hello包的SayHi函数
+}
+```
+
+输出：
+
+```text
+现在是假期时间...
+你好呀~我是七米。很高兴认识你。
+```
+
+当我们的项目功能越做越多，代码越来越多的时候，通常会选择在项目内部按功能或业务划分成多个不同包。Go语言支持在一个项目（project）下定义多个包（package）。
+
+例如，我们在`holiday`项目内部创建一个新的package——`summer`，此时新的项目目录结构如下：
+
+```bash
+holidy
+├── go.mod
+├── go.sum
+├── main.go
+└── summer
+    └── summer.go
+```
+
+其中`holiday/summer/summer.go`文件内容如下：
+
+```go
+package summer
+
+import "fmt"
+
+// Diving 潜水...
+func Diving() {
+	fmt.Println("夏天去诗巴丹潜水...")
+}
+```
+
+此时想要在当前项目目录下的其他包或者`main.go`中调用这个`Diving`函数需要如何引入呢？这里以在`main.go`中演示详细的调用过程为例，在项目内其他包的引入方式类似。
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"holiday/summer" // 导入当前项目下的包
+
+	"github.com/q1mi/hello" // 导入github上第三方包
+)
+
+func main() {
+	fmt.Println("现在是假期时间...")
+	hello.SayHi()
+
+	summer.Diving()
+}
+```
+
+从上面的示例可以看出，项目中定义的包都会以项目的导入路径为前缀。
+
+如果你想要导入本地的一个包，并且这个包也没有发布到到其他任何代码仓库，这时候你可以在`go.mod`文件中使用`replace`语句将依赖临时替换为本地的代码包。例如在我的电脑上有另外一个名为`liwenzhou.com/overtime`的项目，它位于`holiday`项目同级目录下：
+
+```bash
+├── holiday
+│   ├── go.mod
+│   ├── go.sum
+│   ├── main.go
+│   └── summer
+│       └── summer.go
+└── overtime
+    ├── go.mod
+    └── overtime.go
+```
+
+由于`liwenzhou.com/overtime`包只存在于我本地，并不能通过网络获取到这个代码包，这个时候应该如何在`holidy`项目中引入它呢？
+
+我们可以在`holidy/go.mod`文件中正常引入`liwenzhou.com/overtime`包，然后像下面的示例那样使用`replace`语句将这个依赖替换为使用相对路径表示的本地包。
+
+```go
+module holiday
+
+go 1.16
+
+require github.com/q1mi/hello v0.1.1
+require liwenzhou.com/overtime v0.0.0
+
+replace liwenzhou.com/overtime  => ../overtime
+```
+
+这样，我们就可以在`holiday/main.go`下正常引入并使用`overtime`包了。
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"holiday/summer" // 导入当前项目下的包
+
+	"liwenzhou.com/overtime" // 通过replace导入的本地包
+
+	"github.com/q1mi/hello" // 导入github上第三方包
+)
+
+func main() {
+	fmt.Println("现在是假期时间...")
+	hello.SayHi()
+
+	summer.Diving()
+
+	overtime.Do()
+}
+```
+
+我们也经常使用`replace`将项目依赖中的某个包，替换为其他版本的代码包或我们自己修改后的代码包。
+
+
+
+#### go.mod 文件
+
+`go.mod`文件中记录了当前项目中所有依赖包的相关信息，声明依赖的格式如下：
+
+```bash
+require module/path v1.2.3
+```
+
+其中：
+
+- require：声明依赖的关键字
+- module/path：依赖包的引入路径
+- v1.2.3：依赖包的版本号。支持以下几种格式：
+  - latest：最新版本
+  - v1.0.0：详细版本号
+  - commit hash：指定某次commit hash
+
+引入某些没有发布过`tag`版本标识的依赖包时，`go.mod`中记录的依赖版本信息就会出现类似`v0.0.0-20210218074646-139b0bcd549d`的格式，由版本号、commit时间和commit的hash值组成。
+
+![go module生成的版本信息组成示意图](https://www.liwenzhou.com/images/Go/package/module_version_info.png)
+
+
+
+#### go.sum 文件
+
+使用go module下载了依赖后，项目目录下还会生成一个`go.sum`文件，这个文件中详细记录了当前项目中引入的依赖包的信息及其hash 值。`go.sum`文件内容通常是以类似下面的格式出现。
+
+```go
+<module> <version>/go.mod <hash>
+```
+
+或者
+
+```go
+<module> <version> <hash>
+<module> <version>/go.mod <hash>
+```
+
+不同于其他语言提供的基于中心的包管理机制，例如 npm 和 pypi 等，Go并没有提供一个中央仓库来管理所有依赖包，而是采用分布式的方式来管理包。为了防止依赖包被非法篡改，Go module 引入了`go.sum`机制来对依赖包进行校验。
+
+
+
+#### 依赖保存位置
+
+Go module 会把下载到本地的依赖包会以类似下面的形式保存在  `$GOPATH/pkg/mod`目录下，每个依赖包都会带有版本号进行区分，这样就允许在本地存在同一个包的多个不同版本。
+
+```bash
+mod
+├── cache
+├── cloud.google.com
+├── github.com
+    	└──q1mi
+          ├── hello@v0.0.0-20210218074646-139b0bcd549d
+          ├── hello@v0.1.1
+          └── hello@v0.1.0
+...
+```
+
+如果想清除所有本地已缓存的依赖包数据，可以执行 `go clean -modcache` 命令。
+
+
+
+## 使用 go module 发布包
+
+在上面的小节中我们学习了如何在项目中引入别人提供的依赖包，那么当我们想要在社区发布一个自己编写的代码包或者在公司内部编写一个供内部使用的公用组件时，我们该怎么做呢？接下来，我们就一起编写一个代码包并将它发布到`github.com`仓库，让它能够被全球的Go语言开发者使用。
+
+在GitHub仓库新建一个hello仓库，然后将其拉取到本地的项目目录中：
+
+```bash
+D:\Go\study\src\go-01-basis>git clone https://github.com/AruNi-01/hello.git
+```
+
+在hello目录下执行`go mod init`命令创建`go.mod`文件，定义项目的引入路径为自己的仓库路径：
+
+```bash
+D:\Go\study\src\go-01-basis\hello>go mod init github.com/AruNi-01/hello
+```
+
+接下来我们在该项目根目录下创建 `hello.go` 文件，添加下面的内容：
+
+```go
+package hello
+
+import "fmt"
+
+func SayHi() {
+	fmt.Println("Hello, I am Golang")
+}
+```
+
+然后将该项目的代码 push 到仓库的远端分支，这样就对外发布了一个Go包。其他的开发者可以通过`github.com/AruNi-01/hello`这个引入路径下载并使用这个包了。
+
+![image-20220505151727369](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505151727369.png)
+
+一个设计完善的包应该包含开源许可证及文档等内容，并且我们还应该尽心维护并适时发布适当的版本。github 上发布版本号使用`git tag`为代码包打上标签后，再push对应的tag即可：
+
+```bash
+hello $ git tag -a v0.1.0 -m "release version v0.1.0"
+hello $ git push origin v0.1.0
+```
+
+经过上面的操作我们就发布了一个版本号为`v0.1.0`的版本：
+
+![image-20220505152741276](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505152741276.png)
+
+Go modules中建议使用语义化版本控制，其建议的版本号格式如下：
+
+![语义化版本号示意图](https://www.liwenzhou.com/images/Go/package/version_number.png)
+
+其中：
+
+- 主版本号：发布了不兼容的版本迭代时递增（breaking changes）。
+- 次版本号：发布了功能性更新时递增。
+- 修订号：发布了bug修复类更新时递增。
+
+
+
+#### 发布新的主版本
+
+现在我们的`hello`项目要进行与之前版本不兼容的更新，我们计划让`SayHi`函数支持向指定人发出问候。更新后的`SayHi`函数内容如下：
+
+```go
+package hello
+
+import "fmt"
+
+func SayHi(name string) {
+	fmt.Printf("Hello %s, I am Golang!\n", name)
+}
+```
+
+由于这次改动巨大（修改了函数之前的调用规则），对之前使用该包作为依赖的用户影响巨大。因此我们需要发布一个主版本号递增的`v2`版本。
+
+在这种情况下，我们通常会修改当前包的引入路径，像下面的示例一样为引入路径添加版本后缀：
+
+```go
+module github.com/AruNi-01/hello/v2
+
+go 1.18
+```
+
+把修改后的代码提交：
+
+```bash
+D:\Go\study\src\go-01-basis\hello>git add .
+
+D:\Go\study\src\go-01-basis\hello>git commit -m "v2"
+
+D:\Go\study\src\go-01-basis\hello>git push
+```
+
+打好 tag 推送到远程仓库:
+
+```bash
+D:\Go\study\src\go-01-basis\hello>git tag -a v2.0.0 -m "release version v2.0.0"
+
+D:\Go\study\src\go-01-basis\hello>git push origin v2.0.0
+```
+
+这样在不影响使用旧版本的用户的前提下，我们新的版本也发布出去了。想要使用`v2`版本的代码包的用户只需按修改后的引入路径下载即可。
+
+```bash
+go get github.com/AruNi-01/hello/v2@v2.0.0
+```
+
+接下来我们在holiday包中引入自己远程仓库的hello包，需要注意引入路径要添加 v2 版本后缀。
+
+```bash
+D:\Go\study\src\go-01-basis\holiday>go get github.com/AruNi-01/hello/v2@v2.0.0
+```
+
+引入自己仓库的包后就可以直接使用了：
+
+![image-20220505155016630](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505155016630.png)
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/AruNi-01/hello/v2"
+)
+
+func main() {
+	fmt.Println("现在是假期时间...")
+
+	//hello.SayHi()
+	//
+	//summer.Diving()
+
+	hello.SayHi("AruNi")
+}
+```
+
+输出：
+
+```text
+现在是假期时间...
+Hello AruNi, I am Golang!
+```
+
+
+
+#### 废弃已发布版本
+
+如果某个发布的版本存在致命缺陷不再想让用户使用时，我们可以使用`retract`声明废弃的版本。例如我们在`hello/go.mod`文件中按如下方式声明即可对外废弃`v0.1.0`版本。
+
+```go
+module github.com/AruNi-01/hello
+
+go 1.18
+
+retract v0.1.0
+```
+
+用户使用go get下载`v0.1.0`版本时就会收到提示，催促其升级到其他版本。
+
+
+
+# 接口
 
 
 
