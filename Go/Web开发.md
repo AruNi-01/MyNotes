@@ -40,11 +40,11 @@ func main() {
 
 运行代码，在浏览器输入`localhost:8080/hello`，可以看到返回的JSON字符串：
 
-![image-20220508200149545](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508200149545.png)
+![image-20220508200149545](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3ac97ae4c30cc3f535e1f0fbc9263fc2.png)
 
 控制台也会有对应的信息：
 
-![image-20220508200225650](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508200225650.png)
+![image-20220508200225650](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/141a679999375910e17789fda7c27999.png)
 
 ## Gin 渲染
 
@@ -157,7 +157,7 @@ func main() {
 
 启动项目，访问对应的路径：
 
-![image-20220509185554444](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220509185554444.png)
+![image-20220509185554444](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0b0ab95817c8b26b91c21760c9de34fa.png)
 
 
 
@@ -220,7 +220,7 @@ func main() {
 
 启动项目测试：
 
-![image-20220509191950905](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220509191950905.png)
+![image-20220509191950905](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b3f0a55cd0f9fc8bbce181556a0206e8.png)
 
 
 
@@ -377,7 +377,7 @@ func main() {
 
 测试：
 
-![image-20220509200714666](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220509200714666.png)
+![image-20220509200714666](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6c79cc0095c261e08dd12956c41048b1.png)
 
 
 
@@ -472,7 +472,7 @@ func main() {
 
 启动项目，访问`/login`：
 
-![image-20220509203308939](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220509203308939.png)
+![image-20220509203308939](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dcd54ecd30df19d8589eec15e0fbf420.png)
 
 
 
@@ -525,7 +525,7 @@ func main() {
 
 测试：
 
-![image-20220509204007816](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220509204007816.png)
+![image-20220509204007816](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dbc4e90fc96b10d4a63737d468c8535c.png)
 
 
 
@@ -607,15 +607,15 @@ func main() {
 
 JSON 测试：
 
-![image-20220510110942941](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510110942941.png)
+![image-20220510110942941](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/393e8c4f016a7fbcb3b90715c941c6ca.png)
 
 form 表单测试：
 
-![image-20220510111457824](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510111457824.png)
+![image-20220510111457824](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/de341c00f61de58c7fc1d1384b82e8d8.png)
 
 querystring 测试：
 
-![image-20220510111312145](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510111312145.png)
+![image-20220510111312145](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f15adafcd8c91afa0649b7cdddb33c8f.png)
 
 
 
@@ -689,11 +689,11 @@ func main() {
 
 测试：
 
-![image-20220510114047523](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510114047523.png)
+![image-20220510114047523](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/83f8166f405f3919db62561af8481e4e.png)
 
 上传成功后，当前项目目录中发现已上传的文件：
 
-![image-20220510114130027](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510114130027.png)
+![image-20220510114130027](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/03ec9baab508c97b10e3d495bec3cd3d.png)
 
 ### 多个文件上传
 
@@ -766,7 +766,7 @@ func main() {
 
 测试，可以看到URL没有改变，所以只是转发了路由：
 
-![image-20220510120302908](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510120302908.png)
+![image-20220510120302908](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ed9c768c790623cab7937e53b59b26c7.png)
 
 
 
@@ -929,7 +929,7 @@ func main() {
 
 测试，由于indexHandler函数处理时间太短，所以显示0s ：
 
-![image-20220510203049986](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510203049986.png)
+![image-20220510203049986](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b981942879e43ad61e42bf935be5a52f.png)
 
 
 
@@ -989,15 +989,15 @@ func main() {
 
 测试：
 
-![image-20220510205212668](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510205212668.png)
+![image-20220510205212668](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5773611d5c2dadcaa704f34a64e49c96.png)
 
 执行过程：
 
-![image-20220510205253265](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510205253265.png)
+![image-20220510205253265](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/87e4fbb2920051174f91a0b67a50d009.png)
 
 当中间件中有 `c.Abort()` 或者 `return` 的情况：
 
-![image-20220510205949377](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220510205949377.png)
+![image-20220510205949377](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/431db695560e75c6c6a2fbc2193d59da.png)
 
 
 
@@ -1632,7 +1632,7 @@ func main() {
 
 运行该程序后，会发现 GORM 帮助我们创建了一个 `users `表：
 
-![image-20220511212410926](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220511212410926.png)
+![image-20220511212410926](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e54d5b2521ed09ba7141adec56c85639.png)
 
 
 
@@ -1683,7 +1683,7 @@ type NullInt64 struct {
 
 当前 `users` 表中的数据：
 
-![image-20220512105311999](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220512105311999.png)
+![image-20220512105311999](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/aeb94d76b2b52fde17d3a5010d568108.png)
 
 #### 一般查询
 
@@ -2597,7 +2597,7 @@ npm run build
 
 初始目录结构：
 
-![image-20220512173603618](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220512173603618.png)
+![image-20220512173603618](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/992c63b69a9177567c7b4ca3f4bfbdee.png)
 
 
 
@@ -2638,7 +2638,7 @@ func main() {
 
 运行项目，访问`localhost:8080/`：
 
-![image-20220512174242212](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220512174242212.png)
+![image-20220512174242212](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7ebe2b324f7841a8c29d15e0e715da42.png)
 
 项目运行成功，下面开始编写核心代码。
 
@@ -2896,31 +2896,264 @@ func main() {
 
 在企业级开发中，我们所有的代码肯定不是都放在一个程序里面的，我们需要对它进行结构拆分，让项目更加清晰，方便后续维护！
 
+整体目录结构：
+
+![image-20220513200927966](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/02783de8f03abd1016255c11c2c07188.png)
+
+
+
+### dao
+
+`mysql.go`，MySQL数据库的连接、关闭，初始化DB的操作。
+
+```go
+package dao
+
+import "github.com/jinzhu/gorm"
+import _ "github.com/jinzhu/gorm/dialects/mysql"
+
+// DB 定义全局变量DB
+var (
+	DB *gorm.DB
+)
+
+// InitMySQL 连接数据库，成功返回nil，失败返回error
+func InitMySQL() (err error) {
+	dsn := "root:123456@tcp(127.0.0.1:3306)/goweb_todolist?charset=utf8mb4&parseTime=True&loc=Local"
+
+	// 初始化全局变量DB
+	DB, err = gorm.Open("mysql", dsn)
+	if err != nil {
+		return
+	}
+	return DB.DB().Ping() // 测试连通性再返回,ping得通返回nil，否则返回error
+}
+
+func Close() {
+	DB.Close()
+}
+```
+
+
+
+
+
+### models
+
+`todo.go`，models中的结构体对象和数据库的表对应，有关todo的所有操作。
+
+```go
+package models
+
+import (
+	"go-web-project-todolist/dao"
+)
+
+// Todo Model：代办清单结构体
+type Todo struct {
+	ID     int    `json:"id"`
+	Title  string `json:"title"`
+	Status bool   `json:"status"`
+}
+
+/*
+	Todo这个Model的增删改查操作都放在这里
+*/
+func AddTodo(todo *Todo) (err error) {
+	err = dao.DB.Create(&todo).Error
+	return
+}
+
+func QueryAllTodos() (todoList []*Todo, err error) {
+	if err = dao.DB.Find(&todoList).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+func QueryTodoById(id string) (todo *Todo, err error) {
+	todo = new(Todo)
+	if err = dao.DB.Debug().Where("id = ?", id).First(todo).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+func UpdateTodoStatusById(id string) (err error) {
+	// 先查询出当前的todo事项，才知道修改成什么
+	var todo Todo
+	err = dao.DB.Where("id = ?", id).First(&todo).Error
+
+	// 再根据当前todo的status去修改status
+	if todo.Status {
+		dao.DB.Model(&todo).Select("status").Update(map[string]interface{}{"status": false})
+	} else {
+		dao.DB.Model(&todo).Select("status").Update(map[string]interface{}{"status": true})
+	}
+	return
+}
+
+func DeleteTodoById(id string) (err error) {
+	err = dao.DB.Where("id = ?", id).Delete(Todo{}).Error
+	return
+}
+```
+
 
 
 ### controller
 
+`controller.go`，主要与前端对接，负责接收参数和返回响应。
+
+```go
+package controller
+
+import (
+	"github.com/gin-gonic/gin"
+	"go-web-project-todolist/models"
+	"net/http"
+)
+
+// IndexHandler 主页
+func IndexHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.html", nil)
+}
+
+// AddTodo 添加代办事项
+func AddTodo(c *gin.Context) {
+	// 前面页面填写代办事项，点击提交，会发请求到这里
+	// 1. 从请求中把数据拿出来
+	var todo models.Todo
+	c.BindJSON(&todo)
+
+	// 2.插入数据库，返回响应
+	// 插入数据库失败，状态码为200表示请求成功，把插入失败的error返回
+	if err := models.AddTodo(&todo); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, todo) // 插入成功将该数据返回
+		
+		/*
+			企业中返回信息可能如下：
+			c.JSON(http.StatusOK, gin.H{
+				"code": 200,
+				"msg": "success",
+				"data": todo,
+			})
+		*/
+	}
+}
+
+// QueryAllTodos 查看所有待办事项
+func QueryAllTodos(c *gin.Context) {
+	// 从数据库中查询出所有todolist，返回响应
+	if todoList, err := models.QueryAllTodos(); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, todoList)
+	}
+}
+
+// QueryTodoById 根据id查看某个待办事项
+func QueryTodoById(c *gin.Context) {
+	// 1. 获取前端传来的参数
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "接收id失败"})
+		return
+	}
+
+	// 2. 去数据库中查数据，返回响应
+	if todo, err := models.QueryTodoById(id); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, todo)
+	}
+}
+
+// UpdateTodoStatusById 根据id修改待办事项的状态
+func UpdateTodoStatusById(c *gin.Context) {
+	// 获取前端传来的id
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "接收id失败"})
+		return
+	}
+
+	// 再根据当前todo的status去修改status
+	if err := models.UpdateTodoStatusById(id); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		// 修改成功返回响应
+		c.JSON(http.StatusOK, gin.H{id: "修改成功"})
+	}
+}
+
+// DeleteTodoById 根据id删除代办事项
+func DeleteTodoById(c *gin.Context) {
+	// 获取前端传来的id
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "接收id失败"})
+		return
+	}
+
+	// 删除
+	if err := models.DeleteTodoById(id); err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{id: "delete成功"})
+	}
+}
+```
 
 
 
+### routers
+
+`routers.go`，路由层，主要负责请求转发。
+
+```go
+package routers
+
+import (
+	"github.com/gin-gonic/gin"
+	"go-web-project-todolist/controller"
+)
+
+func SetupRouter() *gin.Engine {
+	route := gin.Default()
+	// 告诉gin 模板文件引用的静态文件在哪儿
+	route.Static("/static", "static")
+	// 告诉gin 模板文件在哪儿
+	route.LoadHTMLGlob("templates/*")
+
+	// 主页
+	route.GET("/", controller.IndexHandler)
+
+	// v1 路由组
+	v1Group := route.Group("v1")
+	{
+		// 添加
+		v1Group.POST("/todo", controller.AddTodo)
+
+		// 查看
+		// 查看所有待办事项
+		v1Group.GET("/todo", controller.QueryAllTodos)
+
+		// 根据id查看某个待办事项
+		v1Group.GET("/todo/:id", controller.QueryTodoById)
+
+		// 根据id修改待办事项的状态
+		v1Group.PUT("todo/:id", controller.UpdateTodoStatusById)
+
+		// 根据id删除代办事项
+		v1Group.DELETE("todo/:id", controller.DeleteTodoById)
+	}
+	return route
+}
+```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+在实际开发中，很多业务逻辑是十分复杂的，此时需要另外分出一个 `logic` 逻辑层来处理具体的逻辑服务。

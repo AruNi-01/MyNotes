@@ -57,21 +57,21 @@ README.md, AUTHORS, CONTRIBUTORS, LICENSE
 
 1. 系统变量 GOROOT ，变量值为Go目录
 
-   ![image-20220430110143079](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430110143079.png)
+   ![image-20220430110143079](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a6bdc6420aa21a706b92ab082f45a378.png)
 
 2. Go的工程目录，新建系统变量 GOPATH，变量值为工程目录：
 
-   ![image-20220430111204206](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430111204206.png)
+   ![image-20220430111204206](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/63fca31b32ab8c0315f37bd85d6a2b7a.png)
 
 3. 在用户变量里也修改相应的 GOPATH：
 
-   ![image-20220430111449566](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430111449566.png)
+   ![image-20220430111449566](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f76e18422a415349e90c2661a391cead.png)
 
 4. 在 Path 变量中添加Go的 bin 目录
 
 5. 在终端输入 `go env` 命令，查看 GOPATH 和 GOROOT 路径是否正确和 Go 的版本号：
 
-   ![image-20220430112241689](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430112241689.png)
+   ![image-20220430112241689](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6a73e1a409214991faec7f34e3db4d92.png)
 
 ## 2. GOROOT和GOPATH
 
@@ -93,7 +93,7 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 用VS Code编辑器安装`Go`扩展插件，让它支持Go语言开发。
 
-![image-20220430122822728](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430122822728.png)
+![image-20220430122822728](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/179f2f50350e248464652cbd33e38eb1.png)
 
 现在我们来创建第一个Go项目—`hello`，创建一个`hello`目录。
 
@@ -109,7 +109,7 @@ go env -w GOPROXY=https://goproxy.cn,direct
 go mod init hello
 ```
 
-![image-20220430141109052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430141109052.png)
+![image-20220430141109052](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8966771712523d016b97f9250ffa64e2.png)
 
 接下来在该目录中创建一个`main.go`文件：
 
@@ -170,7 +170,7 @@ go build -o myhello.exe
 
 `go run hello.go`也可以执行程序，该命令本质上也是先编译再执行。
 
-![image-20220430142211489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430142211489.png)
+![image-20220430142211489](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9766536c7e184499c7be322ddbf8e403.png)
 
 
 
@@ -180,11 +180,11 @@ go build -o myhello.exe
 
 `go install`表示安装的意思，它先编译源代码得到可执行文件，然后将可执行文件移动到`GOPATH`的bin目录下。因为我们的环境变量中配置了`GOPATH`下的bin目录，所以我们就可以在任意地方直接执行可执行文件了。
 
-![image-20220430142355022](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430142355022.png)
+![image-20220430142355022](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/747b88e35306321cc1a2b29845764049.png)
 
 可以看到 hello 的同级目录下，自动生成了 bin 和 pkg 目录，并且 bin 目录下有 hello.exe可执行文件：
 
-![image-20220430142453035](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430142453035.png)
+![image-20220430142453035](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0517275262dbbfa10c2567dcbbfcb212.png)
 
 ### 目录结构
 
@@ -211,13 +211,13 @@ go build -o myhello.exe
 │         ├── hello.go
 ```
 
-![image-20220501140644801](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220501140644801.png)
+![image-20220501140644801](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/fc59d1503e3643da54a3615e28e2fdd9.png)
 
 ## 4. VS Code配置代码片段快捷键
 
 按`Ctrl+Shift+P`，输入`snippets`，选择命令并执行，然后再输入go：
 
-![image-20220430143304398](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430143304398.png)
+![image-20220430143304398](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8857ff2909f87fa19eda242451cd7c3f.png)
 
 在空白位置就可以自定义代码片段了，其中`$0`表示最终光标提留的位置：
 
@@ -231,11 +231,11 @@ go build -o myhello.exe
 
 示例：创建了两个快捷方式，一个是输入`pln`就会在编辑器中插入`fmt.Println()`代码；输入`plf`，就会插入`fmt.Printf("")`代码。
 
-![image-20220430143944404](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430143944404.png)
+![image-20220430143944404](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/13780f2b0992293d913ef537bbcd1310.png)
 
 测试：
 
-![image-20220430144036544](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220430144036544.png)
+![image-20220430144036544](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/941768f78b8f3d067dbd8df197b92437.png)
 
 # 语言结构
 
@@ -1036,7 +1036,7 @@ func main() {
 
 `b := &a`的图示：
 
-![image-20220502192740753](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220502192740753.png)
+![image-20220502192740753](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/00d90b4d5c59d7a16ea79e0a58ad2dd5.png)
 
 ### 指针取值
 
@@ -3052,7 +3052,7 @@ end
 
 `defer`语句执行的时机就在返回值赋值操作后，RET指令执行前。具体如下图所示：
 
-![image-20220503112609132](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220503112609132.png)
+![image-20220503112609132](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b09848c5f9a8e496977ad8bda7e36cde.png)
 
 
 
@@ -4043,7 +4043,7 @@ require github.com/q1mi/hello v0.1.1 // indirect
 
 若下载的依赖爆红，在Goland中需要勾选如下选项：
 
-![image-20220505143632336](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505143632336.png)
+![image-20220505143632336](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2743073adf076a1d629427e138903d61.png)
 
 
 
@@ -4317,7 +4317,7 @@ func SayHi() {
 
 然后将该项目的代码 push 到仓库的远端分支，这样就对外发布了一个Go包。其他的开发者可以通过`github.com/AruNi-01/hello`这个引入路径下载并使用这个包了。
 
-![image-20220505151727369](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505151727369.png)
+![image-20220505151727369](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e584d75ae278d4e20f72460dc7bb2ff5.png)
 
 一个设计完善的包应该包含开源许可证及文档等内容，并且我们还应该尽心维护并适时发布适当的版本。github 上发布版本号使用`git tag`为代码包打上标签后，再push对应的tag即可：
 
@@ -4328,7 +4328,7 @@ hello $ git push origin v0.1.0
 
 经过上面的操作我们就发布了一个版本号为`v0.1.0`的版本：
 
-![image-20220505152741276](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505152741276.png)
+![image-20220505152741276](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/26f1b29cfa9b567f02799e764a521eed.png)
 
 Go modules中建议使用语义化版本控制，其建议的版本号格式如下：
 
@@ -4398,7 +4398,7 @@ D:\Go\study\src\go-01-basis\holiday>go get github.com/AruNi-01/hello/v2@v2.0.0
 
 引入自己仓库的包后就可以直接使用了：
 
-![image-20220505155016630](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220505155016630.png)
+![image-20220505155016630](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/eeb03164c944c941b35c1e40f9423328.png)
 
 ```go
 package main
@@ -5685,7 +5685,7 @@ Go语言在语言层面天生支持并发，充分利用现代CPU的多核优势
 - 多核处理器；
 - 物理上同步运行。
 
-![image-20220506185701884](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220506185701884.png)
+![image-20220506185701884](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bf2dad9826f49fe8c8c8f9cdc6ed6be4.png)
 
 ### 进程、线程和协程
 
@@ -5912,7 +5912,7 @@ func main() {
 
 多次执行上面的代码会发现每次终端上打印数字的顺序都不一致。这是因为100个 goroutine 是并发执行的，而 goroutine 的调度是随机的。
 
-![image-20220506203317207](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220506203317207.png)
+![image-20220506203317207](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1d573accce65c8eaf3a0d6d25f7b8194.png)
 
 ### 匿名函数 goroutine
 
@@ -5943,7 +5943,7 @@ func main() {
 
 运行输出，发现会有很多相同的结果：
 
-![image-20220506204205207](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220506204205207.png)
+![image-20220506204205207](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/35053138de09be802409854c0b97249d.png)
 
 这是因为这个匿名函数也是一个闭包，匿名函数中包含了一个外部作用域的变量 i，当匿名函数的 goroutine 在执行的时候，还要去外面找 i 的值；可能外面的for循环已经遍历好多次了，匿名函数的 goroutine 才开始执行，所以慢的那些 goroutine 就会打印出相同的值。此例中就是for循环的 i 已经遍历到100了，还有好几个 goroutine 才开始执行，所以都输出了相同的。
 
@@ -6285,7 +6285,7 @@ func main() {
 
 ### 总结
 
-![image-20220507194919278](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220507194919278.png)
+![image-20220507194919278](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ab1eb1083f8cada8dfa0d90fcac49c57.png)
 
 **注意：**对已经关闭的通道再执行 close 也会引发 panic。
 
@@ -6976,7 +6976,7 @@ func main() {
 
 互联网的逻辑实现被分为好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。用户接触到的只是最上面的那一层，根本不会感觉到下面的几层。要理解互联网就需要自下而上理解每一层的实现的功能。 
 
-![image-20220508090931190](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508090931190.png)
+![image-20220508090931190](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/dbb4d3d000c099efff46249a29b4229c.png)
 
 如上图所示，互联网按照不同的模型划分会有不用的分层，但是不论按照什么模型去划分，越往上的层越靠近用户，越往下的层越靠近硬件。在软件开发中我们使用最多的是上图中将互联网划分为五个分层的模型。
 
@@ -7024,7 +7024,7 @@ UDP协议的优点是比较简单，容易实现，但是缺点是可靠性较�
 
 如下图所示，发送方的HTTP数据经过互联网的传输过程中会依次添加各层协议的标头信息，接收方收到数据包之后再依次根据协议解包得到数据。
 
-![image-20220508091003324](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508091003324.png)
+![image-20220508091003324](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9cefe6b842ed0f3252219cd4946fc372.png)
 
 ## socket 编程
 
@@ -7172,11 +7172,11 @@ func main() {
 
 client 端：
 
-![image-20220508094701777](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508094701777.png)
+![image-20220508094701777](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3f2ea422c56b0a306cb895634be51ffb.png)
 
 service 端：
 
-![image-20220508094727614](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508094727614.png)
+![image-20220508094727614](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a18753a94202c0f7db797aa98d1dec09.png)
 
 
 
@@ -7500,11 +7500,11 @@ func main() {
 
 client端：
 
-![image-20220508160424375](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508160424375.png)
+![image-20220508160424375](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/53c07ff7374cbd66933f0c25e3ac68f9.png)
 
 server端：
 
-![image-20220508160440142](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220508160440142.png)
+![image-20220508160440142](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/64d3bcf4fe10a2511bde7200980a197c.png)
 
 
 
@@ -7643,7 +7643,7 @@ func TestSplit(t *testing.T) { // 测试函数名必须以Test开头，必须接
 
 在split包路径下，执行`go test`命令，可以看到测试通过：
 
-![image-20220504191711547](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504191711547.png)
+![image-20220504191711547](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/38411928ba51f194566fc5ef20b4606c.png)
 
 一个测试用例有点单薄，我们再编写一个测试使用多个字符切割字符串的例子，在`split_test.go`中添加如下测试函数：
 
@@ -7659,11 +7659,11 @@ func TestSplit2(t *testing.T) {
 
 再次运行`go test`命令，可以为其添加`-v`参数，查看测试函数名称和运行时间：
 
-![image-20220504192240674](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504192240674.png)
+![image-20220504192240674](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/448deddd78d0ad7a9f31411cc92ae057.png)
 
 可以看到是`TestSplit2`这个测试没有成功。 还可以在`go test`命令后添加`-run`参数，它对应一个正则表达式，只有函数名匹配上的测试函数才会被`go test`命令执行：
 
-![image-20220504192403869](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504192403869.png)
+![image-20220504192403869](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7db6b2987e3b2fdd7da2871c3c184654.png)
 
 现在我们回过头来解决我们程序中的问题。很显然我们最初的split函数并没有考虑到sep为多个字符的情况，我们来修复下这个Bug：
 
@@ -7693,7 +7693,7 @@ func Split(s, sep string) (result []string) {
 
 这一次我们再来测试一下，我们的程序。注意，当我们修改了我们的代码之后不要仅仅执行那些失败的测试函数，我们应该完整的运行所有的测试，保证不会因为修改代码而引入了新的问题。
 
-![image-20220504192529980](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504192529980.png)
+![image-20220504192529980](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/eaf0fbb1a29500b1755238d0ef6cb35e.png)
 
 
 
@@ -7731,7 +7731,7 @@ func TestChineseSplit(t *testing.T) {
 
 通过上面的测试组就把多个测试用例合到一起了，再次执行`go test`命令。
 
-![image-20220504194107947](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504194107947.png)
+![image-20220504194107947](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6af368067096eed28932aec38ca6119e.png)
 
 我们的测试出现了问题，仔细看打印的测试失败提示信息：`expected:[河有 又有河], got:[ 河有 又有河]`，你会发现`[ 河有 又有河]`中有个不明显的空串(首字符为空)，这种情况下十分推荐使用`%#v`的格式化方式。
 
@@ -7752,7 +7752,7 @@ func TestChineseSplit(t *testing.T) {
 
 此时运行`go test`命令后就能看到比较明显的提示信息了：
 
-![image-20220504194506665](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504194506665.png)
+![image-20220504194506665](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1611f5886ec03e520fd1d421aeb1f3fb.png)
 
 
 
@@ -7812,7 +7812,7 @@ func TestSplit(t *testing.T) {
 
 此时我们再执行`go test`命令就能够看到更清晰的输出内容了：
 
-![image-20220504195728449](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504195728449.png)
+![image-20220504195728449](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2084befaf9bb1ecd8c6d7fed2b1c0d3d.png)
 
 这个时候我们要把测试用例中的错误修改回来：
 
@@ -7822,7 +7822,7 @@ func TestSplit(t *testing.T) {
 
 我们都知道可以通过`-run=RegExp`来指定运行的测试用例，还可以通过`/`来指定要运行的子测试用例，例如：`go test -v -run=Split/simple`只会运行`simple`对应的子测试用例：
 
-![image-20220504195943561](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504195943561.png)
+![image-20220504195943561](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7848fc2aac8cbf5e52f9a66f72501a71.png)
 
 ### 测试覆盖率
 
@@ -7830,7 +7830,7 @@ func TestSplit(t *testing.T) {
 
 Go提供内置功能来检查你的代码覆盖率。我们可以使用`go test -cover`来查看测试覆盖率。例如：
 
-![image-20220504200047991](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504200047991.png)
+![image-20220504200047991](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bdba802cb3e118eb6d5eceda649b92bc.png)
 
 从上面的结果可以看到我们的测试用例覆盖了100%的代码。
 
@@ -7894,7 +7894,7 @@ func BenchmarkSplit(b *testing.B) {
 
 基准测试并不会默认执行，需要增加`-bench`参数，所以我们通过执行`go test -bench=Split`命令执行基准测试，输出结果如下：
 
-![image-20220504202739502](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504202739502.png)
+![image-20220504202739502](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/294550d69b94888c21a5f9cc41287ef1.png)
 
 信息说明：
 
@@ -7904,7 +7904,7 @@ func BenchmarkSplit(b *testing.B) {
 
 我们还可以为基准测试添加`-benchmem`参数，来获得内存分配的统计数据：
 
-![image-20220504202955863](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504202955863.png)
+![image-20220504202955863](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1ae7c6c308073bf1ca9aa4859dd55f87.png)
 
 其中，`112 B/op`表示每次操作内存分配了112字节，`3 allocs/op`则表示每次操作进行了3次内存分配。 
 
@@ -7936,7 +7936,7 @@ func Split(s, sep string) (result []string) {
 
 这一次我们提前使用make函数将result初始化为一个容量足够大的切片（容量为s中sep的个数+1，因为n个sep把s切割成n+1段），而不再像之前一样通过调用append函数来追加。我们来看一下这个改进会带来多大的性能提升：
 
-![image-20220504203627238](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504203627238.png)
+![image-20220504203627238](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/834caffef01be0ff1dfbe0b9c83c0662.png)
 
 这个使用make函数提前分配内存的改动，减少了2/3的内存分配次数，并且减少了一半多的内存分配。
 
@@ -7996,13 +7996,13 @@ func BenchmarkFib40(b *testing.B) { benchmarkFib(b, 40) }
 
 运行基准测试：
 
-![image-20220504205820376](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504205820376.png)
+![image-20220504205820376](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/457a7bb141e4ba794c7de58cc3912d90.png)
 
 这里需要注意的是，默认情况下，每个基准测试至少运行1秒。如果在Benchmark函数返回时没有到1秒，则b.N的值会按1,2,5,10,20,50，…增加，并且函数再次运行。
 
 最终的BenchmarkFib40只运行了两次，每次运行的平均值只有不到一秒。像这种情况下我们应该可以使用`-benchtime`标志增加最小基准时间，以产生更准确的结果。例如：
 
-![image-20220504210141501](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504210141501.png)
+![image-20220504210141501](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a8a9845a316128760436fd4f87bf9c64.png)
 
 这一次`BenchmarkFib40`函数运行了44次，结果就会更准确一些了。
 
@@ -8061,7 +8061,7 @@ func BenchmarkSplitParallel(b *testing.B) {
 
 执行一下基准测试：
 
-![image-20220504213556736](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504213556736.png)
+![image-20220504213556736](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ddc8539b3e123723f5d35c2e7b90aafc.png)
 
 还可以通过在测试命令后添加`-cpu`参数如`go test -bench=Parallel -cpu 1`来指定使用的CPU数量。
 
@@ -8156,7 +8156,7 @@ func TestSetupAndTeardownSplit(t *testing.T) {
 
 测试结果：
 
-![image-20220504224218983](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504224218983.png)
+![image-20220504224218983](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/33cc6d24f8ca97feb940112d118a66a5.png)
 
 
 
@@ -8196,6 +8196,6 @@ func ExampleSplit() {
 
 2. 示例函数只要包含了`Output`输出，也是可以通过`go test`运行的可执行测试：
 
-   ![image-20220504225001454](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220504225001454.png)
+   ![image-20220504225001454](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f1af5658b1eeadb5da99f336cbfaf5bb.png)
 
 3. 示例函数提供了可以直接运行的示例代码，可以直接在`golang.org`的`godoc`文档服务器上使用`Go Playground`运行示例代码。下图为`strings.ToUpper`函数在Playground的示例函数效果。 ![Go Playground](https://www.liwenzhou.com/images/Go/unit_test/example.png)
