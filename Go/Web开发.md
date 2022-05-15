@@ -1213,7 +1213,7 @@ func main() {
 
 
 
-# Go-MySQL-Driver
+# Go MySQL Driver
 
 ## 安装驱动
 
@@ -2302,6 +2302,7 @@ db.Model(&User{}).Select("name, sum(age) as total").Where("name LIKE ?", "group%
 db.Model(&User{}).Select("name, sum(age) as total").Group("name").Having("name = ?", "group").Find(&result)
 // SELECT name, sum(age) as total FROM `users` GROUP BY `name` HAVING name = "group"
 
+// Rows() 返回一个迭代器，需要使用 .Next() 进行遍历，遍历的时候使用 .Scan() s
 rows, err := db.Table("orders").Select("date(created_at) as date, sum(amount) as total").Group("date(created_at)").Rows()
 defer rows.Close()
 for rows.Next() {
@@ -2679,7 +2680,7 @@ db.Unscoped().Delete(&order)
 
 
 
-# To Do List
+# Todo List
 
 ## 前端
 
