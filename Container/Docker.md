@@ -1441,11 +1441,11 @@ elasticsearch         7.6.2     f29a1ee41030   2 years ago      791MB
 
 这就要使用到容器之间能实现数据共享的技术，卷技术，它能将 Docker 容器中产生的数据同步到本地中。
 
-卷技术，说白了就是一个目录的挂载挂载，将我们容器内的目录，挂载到Linux上面。
+卷技术，说白了就是一个目录的挂载，将我们容器内的目录，挂载到Linux上面。
 
 ![image-20220518210923687](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518210923687.png)
 
-**容器数据卷总结：容器的持久化和同步操作！容器间也是可以数据共享的**。
+**容器数据卷总结：容器的持久化和同步操作**。
 
 ## 使用数据卷
 
@@ -1615,152 +1615,216 @@ $ docker run -d -P --name nginx05 -v juming:/etc/nginx:rw nginx
 # 只要看到ro就说明这个路径只能通过宿主机来操作，容器内部是无法操作的！
 ```
 
-# 初始 Dockerfile
+## 初识 Dockerfile
 
-**Dockerfile 就是用来构建docker镜像的构建文件**！命令脚本！先体验一下！
+**Dockerfile 就是用来构建 docker镜像 的构建文件**，命令脚本！先体验一下！
 
 通过这个**脚本可以生成镜像**，镜像是一层一层的，脚本是一个个的命令，每个命令都是一层！
 
 ```shell
-# 创建一个dockerfile文件，名字可以随便 建议Dockerfile
+# 创建一个dockerfile文件，名字可以随便 建议dockerfile
+# 我这里把文件放在home目录下的docker-test-volume文件夹下
 # 文件中的内容： 指令(大写) + 参数
-$ vim dockerfile1
+[root@VM-16-12-centos home]# ls
+ceshi  jdk-8u202-linux-x64.rpm  lighthouse  mysql  nginx03
+[root@VM-16-12-centos home]# mkdir docker-test-volume
+[root@VM-16-12-centos home]# ls
+ceshi  docker-test-volume  jdk-8u202-linux-x64.rpm  lighthouse  mysql  nginx03
+[root@VM-16-12-centos home]# cd docker-test-volume/
+[root@VM-16-12-centos docker-test-volume]# vim dockerfile01
     FROM centos 					# 当前这个镜像是以centos为基础的
 
     VOLUME ["volume01","volume02"] 	# 挂载卷的卷目录列表(多个目录)
 
     CMD echo "-----end-----"		# 输出一下用于测试
     CMD /bin/bash					# 默认走bash控制台
+# 编辑完毕     :wq	保存退出
+
+# 查看dockerfile01中的内容：
+[root@VM-16-12-centos docker-test-volume]# cat dockerfile01 
+FROM centos
+
+VOLUME ["volume01","volume02"]
+
+CMD echo "-----end-----"
+CMD /bin/bash
+# ---------------------------------------------------------------------
 
 # 这里的每个命令，就是镜像的一层！
 # 构建出这个镜像 
--f dockerfile1 			# f代表file，指这个当前文件的地址(这里是当前目录下的dockerfile1)
--t caoshipeng/centos 	# t就代表target，指目标目录(注意caoshipeng镜像名前不能加斜杠‘/’)
-. 						# 表示生成在当前目录下
-$ docker build -f dockerfile1 -t caoshipeng/centos .
-Sending build context to Docker daemon   2.56kB
+# 参数：
+-f dockerfile01 		# f代表file，指这个当前文件的地址(这里是当前目录下的dockerfile01)
+-t aruni/centos 	# t就代表target，指目标目录(注意aruni镜像名前不能加斜杠‘/’)
+. 	# 表示生成在当前目录下
+
+[root@VM-16-12-centos docker-test-volume]# docker build -f dockerfile01 -t aruni/centos .
+Sending build context to Docker daemon  2.048kB
 Step 1/4 : FROM centos
 latest: Pulling from library/centos
-8a29a15cefae: Already exists 
-Digest: sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700
+a1d0c7532777: Pull complete 
+Digest: sha256:a27fd8080b517143cbbbab9dfb7c8571c40d67d534bbdee55bd6c473f432b177
 Status: Downloaded newer image for centos:latest
- ---> 470671670cac
-Step 2/4 : VOLUME ["volume01","volume02"] 			# 卷名列表
- ---> Running in c18eefc2c233
-Removing intermediate container c18eefc2c233
- ---> 623ae1d40fb8
-Step 3/4 : CMD echo "-----end-----"					# 输出 脚本命令
- ---> Running in 70e403669f3c
-Removing intermediate container 70e403669f3c
- ---> 0eba1989c4e6
+ ---> 5d0da3dc9764
+Step 2/4 : VOLUME ["volume01","volume02"]	# 挂载的数据卷目录
+ ---> Running in 9ee2a3d67d9c
+Removing intermediate container 9ee2a3d67d9c
+ ---> d36b6582d14b
+Step 3/4 : CMD echo "-----end-----"		# 输出的脚本
+ ---> Running in 8eac77b09566
+Removing intermediate container 8eac77b09566
+ ---> 7ebcaf6219dc
 Step 4/4 : CMD /bin/bash
- ---> Running in 4342feb3a05b
-Removing intermediate container 4342feb3a05b
- ---> f4a6b0d4d948
-Successfully built f4a6b0d4d948
-Successfully tagged caoshipeng/centos:latest
+ ---> Running in 872075f872ad
+Removing intermediate container 872075f872ad
+ ---> 2b40f24fc014
+Successfully built 2b40f24fc014
+Successfully tagged aruni/centos:latest
 
 # 查看自己构建的镜像
-$ docker images
-REPOSITORY          TAG          IMAGE ID            CREATED              SIZE
-caoshipeng/centos   latest       f4a6b0d4d948        About a minute ago   237MB
-123456789101112131415161718192021222324252627282930313233343536373839404142
+[root@VM-16-12-centos docker-test-volume]# docker images
+REPOSITORY     TAG       IMAGE ID       CREATED              SIZE
+aruni/centos   latest    2b40f24fc014   About a minute ago   231MB
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMTIyMTA2Ni5wbmc?x-oss-process=image/format,png)
+
 
 > 启动自己写的容器镜像
 
 ```shell
-$ docker run -it f4a6b0d4d948 /bin/bash	# 运行自己写的镜像
-$ ls -l 								# 查看目录
-12
+[root@VM-16-12-centos docker-test-volume]# docker run -it 2b40f24fc014 /bin/bash
+[root@6e6c99e6d717 /]# ls -l			# 查看目录							
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMTQ1OTAyNi5wbmc?x-oss-process=image/format,png)
+![image-20220518232801301](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518232801301.png)
 
-这个卷和外部一定有一个同步的目录
+这个卷和外部一定有一个同步的目录，我们在生产镜像的时候采用的是匿名挂载。
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMTUzMTYyNi5wbmc?x-oss-process=image/format,png)
 
-查看一下卷挂载
+先在容器中新建一个文件：
 
 ```shell
-# docker inspect 容器id
-$ docker inspect ca3b45913df5
-12
+[root@6b2ae59910f5 /]# cd volume01
+[root@6b2ae59910f5 volume01]# touch container.txt
+[root@6b2ae59910f5 volume01]# ls
+container.txt
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMTYzMDI5NS5wbmc?x-oss-process=image/format,png)
+查看一下卷挂载，看看挂载的目录：
 
-测试一下刚才的文件是否同步出去了！
+```shell
+# docker inspect 容器id（注意是容器id，不是镜像id）
+[root@VM-16-12-centos docker-test-volume]# docker inspect 6b2ae59910f5
+```
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200524154444736.png#pic_center)
+![image-20220518233959757](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518233959757.png)
+
+复制 `volume01` 的 Source 路径，查询一下刚才的文件是否同步到宿主机中了：
+
+```shell
+[root@VM-16-12-centos docker-test-volume]# cd /var/lib/docker/volumes/f8b569175ae967d7472253c2be907da404cd701fed9e9c29cee8d9a6cbe3e5b8/_data
+[root@VM-16-12-centos _data]# ls
+container.txt
+```
 
 这种方式使用的十分多，因为我们通常会构建自己的镜像！
 
-假设构建镜像时候没有挂载卷，要手动镜像挂载 -v 卷名：容器内路径！
+假设构建镜像时候没有挂载卷，要手动镜像挂载 `-v 卷名:容器内路径`
 
 # 数据卷容器
 
-**多个MySQL同步数据**！
+命名的容器已挂载数据卷，其他的容器通过挂载这个容器(父容器)实现数据共享，**挂载数据卷的容器，称为数据卷容器**。通过数据卷容器可以实现容器间的数据共享。
 
-命名的容器挂载数据卷！
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200524154518325.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220518234435292](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518234435292.png)
 
 ```shell
 # 测试 启动3个容器，通过刚才自己写的镜像启动
-# 创建docker01：因为我本机是最新版，故这里用latest，狂神老师用的是1.0如下图
-$ docker run -it --name docker01 caoshipeng/centos:latest
+# 创建docker01：先使用 docker images 查看一下刚才自己写的镜像的TAG
+[root@VM-16-12-centos ~]# docker run -it --name docker01 aruni/centos:latest
 
 # 查看容器docekr01内容
-$ ls
-bin  home   lost+found	opt   run   sys  var
-dev  lib    media	proc  sbin  tmp  volume01
-etc  lib64  mnt		root  srv   usr  volume02
+[root@8bda3903613f /]# ls -l
+total 56
+lrwxrwxrwx   1 root root    7 Nov  3  2020 bin -> usr/bin
+drwxr-xr-x   5 root root  360 May 18 15:50 dev
+drwxr-xr-x   1 root root 4096 May 18 15:50 etc
+drwxr-xr-x   2 root root 4096 Nov  3  2020 home
+lrwxrwxrwx   1 root root    7 Nov  3  2020 lib -> usr/lib
+lrwxrwxrwx   1 root root    9 Nov  3  2020 lib64 -> usr/lib64
+drwx------   2 root root 4096 Sep 15  2021 lost+found
+drwxr-xr-x   2 root root 4096 Nov  3  2020 media
+drwxr-xr-x   2 root root 4096 Nov  3  2020 mnt
+drwxr-xr-x   2 root root 4096 Nov  3  2020 opt
+dr-xr-xr-x 107 root root    0 May 18 15:50 proc
+dr-xr-x---   2 root root 4096 Sep 15  2021 root
+drwxr-xr-x  11 root root 4096 Sep 15  2021 run
+lrwxrwxrwx   1 root root    8 Nov  3  2020 sbin -> usr/sbin
+drwxr-xr-x   2 root root 4096 Nov  3  2020 srv
+dr-xr-xr-x  13 root root    0 May 18 15:26 sys
+drwxrwxrwt   7 root root 4096 Sep 15  2021 tmp
+drwxr-xr-x  12 root root 4096 Sep 15  2021 usr
+drwxr-xr-x  20 root root 4096 Sep 15  2021 var
+drwxr-xr-x   2 root root 4096 May 18 15:50 volume01	# 数据卷
+drwxr-xr-x   2 root root 4096 May 18 15:50 volume02	# 数据卷
 
 # 不关闭该容器退出
 CTRL + Q + P  
 
 # 创建docker02: 并且让docker02 继承 docker01
-$ docker run -it --name docker02 --volumes-from docker01 caoshipeng/centos:latest
+# --volumes-from：继承自......
+[root@VM-16-12-centos ~]# docker run -it --name docker02 --volumes-from docker01 aruni/centos:latest
 
 # 查看容器docker02内容
-$ ls
-bin  home   lost+found	opt   run   sys  var
-dev  lib    media	proc  sbin  tmp  volume01
-etc  lib64  mnt		root  srv   usr  volume02
-123456789101112131415161718192021
+[root@edcf3680467f /]# ls -l
+total 56
+lrwxrwxrwx   1 root root    7 Nov  3  2020 bin -> usr/bin
+drwxr-xr-x   5 root root  360 May 18 15:53 dev
+drwxr-xr-x   1 root root 4096 May 18 15:53 etc
+drwxr-xr-x   2 root root 4096 Nov  3  2020 home
+lrwxrwxrwx   1 root root    7 Nov  3  2020 lib -> usr/lib
+lrwxrwxrwx   1 root root    9 Nov  3  2020 lib64 -> usr/lib64
+drwx------   2 root root 4096 Sep 15  2021 lost+found
+drwxr-xr-x   2 root root 4096 Nov  3  2020 media
+drwxr-xr-x   2 root root 4096 Nov  3  2020 mnt
+drwxr-xr-x   2 root root 4096 Nov  3  2020 opt
+dr-xr-xr-x 109 root root    0 May 18 15:53 proc
+dr-xr-x---   2 root root 4096 Sep 15  2021 root
+drwxr-xr-x  11 root root 4096 Sep 15  2021 run
+lrwxrwxrwx   1 root root    8 Nov  3  2020 sbin -> usr/sbin
+drwxr-xr-x   2 root root 4096 Nov  3  2020 srv
+dr-xr-xr-x  13 root root    0 May 18 15:26 sys
+drwxrwxrwt   7 root root 4096 Sep 15  2021 tmp
+drwxr-xr-x  12 root root 4096 Sep 15  2021 usr
+drwxr-xr-x  20 root root 4096 Sep 15  2021 var
+drwxr-xr-x   2 root root 4096 May 18 15:50 volume01
+drwxr-xr-x   2 root root 4096 May 18 15:50 volume02
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMzAyMDA1MC5wbmc?x-oss-process=image/format,png)
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200524154539606.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220519000124020](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519000124020.png)
 
 ```shell
 # 再新建一个docker03同样继承docker01
-$ docker run -it --name docker03 --volumes-from docker01 caoshipeng/centos:latest
-$ cd volume01	#进入volume01 查看是否也同步docker01的数据
-$ ls 
-docker01.txt
+[root@VM-16-12-centos ~]# docker run -it --name docker03 --volumes-from docker01 aruni/centos:latest
+[root@feb4354873cf /]# cd volume01	
+[root@feb4354873cf volume01]# ls	
+docker01		# 同步了 docker01的数据
 
 # 测试：可以删除docker01，查看一下docker02和docker03是否可以访问这个文件
 # 测试发现：数据依旧保留在docker02和docker03中没有被删除
-12345678
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMzM1NTAzNC5wbmc?x-oss-process=image/format,png)
+**原理**：三个容器都公用宿主机上的匿名数据卷中的文件，如果把宿主机上的文件删了，容器里面的文件也就没了。
+
+
 
 **多个mysql实现数据共享**
 
 ```shell
-$ docker run -d -p 3306:3306 -v /home/mysql/conf:/etc/mysql/conf.d -v /home/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql01 mysql:5.7
+[root@VM-16-12-centos ~]# docker run -d -p 3306:3306 -v /home/mysql/conf:/etc/mysql/conf.d -v /home/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql01 mysql:5.7
 
-$ docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=123456 --name mysql02 --volumes-from mysql01  mysql:5.7
+[root@VM-16-12-centos ~]# docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=123456 --name mysql02 --volumes-from mysql01  mysql:5.7
 
 # 这个时候，可以实现两个容器数据同步！
-12345
 ```
 
 结论：
@@ -1769,117 +1833,97 @@ $ docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=123456 --name mysql02 --volu
 
 **但是一旦你持久化到了本地，这个时候，本地的数据是不会删除的**！
 
-## DockerFile
+# DockerFile
 
-#### DockerFile介绍
+## DockerFile 介绍
 
-`dockerfile`是用来构建docker镜像的文件！命令参数脚本！
+`dockerfile` 是用来构建docker镜像的文件！命令参数脚本！
 
 构建步骤：
 
-1、 编写一个dockerfile文件
+1. 编写一个dockerfile文件
+2. docker build 构建称为一个镜像
+3. docker run运行镜像
+4. docker push发布镜像（DockerHub 、阿里云仓库)
 
-2、 docker build 构建称为一个镜像
 
-3、 docker run运行镜像
 
-4、 docker push发布镜像（DockerHub 、阿里云仓库)
+查看官方的镜像：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEzMTQwMDQ1Ni5wbmc?x-oss-process=image/format,png)
+![image-20220519105825182](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519105825182.png)
 
-点击后跳到一个Dockerfile
+点击后跳到一个 Dockerfile
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEzMTQ0MTc1MC5wbmc?x-oss-process=image/format,png)
+![image-20220519105908422](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519105908422.png)
 
 很多官方镜像都是基础包，很多功能没有，我们通常会自己搭建自己的镜像！
 
 官方既然可以制作镜像，那我们也可以！
 
-#### DockerFile构建过程
+## DockerFile 构建过程
 
 **基础知识**：
 
-1、每个保留关键字(指令）都是必须是大写字母
-
-2、执行从上到下顺序
-
-3、#表示注释
-
-4、每一个指令都会创建提交一个新的镜像曾，并提交！
+1. 每个保留关键字(指令）都是必须是大写字母
+2. 执行从上到下顺序
+3. `#` 表示注释
+4. 每一个指令都会创建提交一个新的镜像层，并提交
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEzMTc1Njk5Ny5wbmc?x-oss-process=image/format,png)
 
-Dockerfile是面向开发的，我们以后要发布项目，做镜像，就需要编写dockerfile文件，这个文件十分简单！
+Dockerfile 是面向开发的，我们以后要发布项目，做镜像，就需要编写 dockerfile 文件，这个文件十分简单。
 
-Docker镜像逐渐成企业交付的标准，必须要掌握！
+Docker 镜像逐渐成企业交付的标准，必须要掌握！
 
-DockerFile：构建文件，定义了一切的步骤，源代码
+DockerFile：构建文件，定义了一切的步骤。
 
-DockerImages：通过DockerFile构建生成的镜像，最终发布和运行产品。
+DockerImages：通过 DockerFile 构建生成的镜像，最终发布和运行产品。
 
-Docker容器：容器就是镜像运行起来提供服务。
+Docker 容器：容器就是镜像运行起来提供服务。
 
-#### DockerFile的指令
+## DockerFile 指令
 
 ```shell
-FROM				# from:基础镜像，一切从这里开始构建
-MAINTAINER			# maintainer:镜像是谁写的， 姓名+邮箱
-RUN					# run:镜像构建的时候需要运行的命令
-ADD					# add:步骤，tomcat镜像，这个tomcat压缩包！添加内容 添加同目录
-WORKDIR				# workdir:镜像的工作目录
-VOLUME				# volume:挂载的目录
-EXPOSE				# expose:保留端口配置
-CMD					# cmd:指定这个容器启动的时候要运行的命令，只有最后一个会生效，可被替代
-ENTRYPOINT			# entrypoint:指定这个容器启动的时候要运行的命令，可以追加命令
-ONBUILD				# onbuild:当构建一个被继承DockerFile这个时候就会运行onbuild的指令，触发指令
-COPY				# copy:类似ADD，将我们文件拷贝到镜像中
-ENV					# env:构建的时候设置环境变量！
-123456789101112
+FROM				# from: 基础镜像，一切从这里开始构建
+MAINTAINER			# maintainer: 镜像是谁写的， 姓名+邮箱
+RUN					# run: 镜像构建的时候需要运行的命令
+ADD					# add: 步骤，tomcat镜像，这个tomcat压缩包！添加内容 添加同目录
+WORKDIR				# workdir: 镜像的工作目录
+VOLUME				# volume: 挂载的目录
+EXPOSE				# expose: 暴露端口配置
+CMD					# cmd: 指定这个容器启动的时候要运行的命令，只有最后一个会生效，可被替代
+ENTRYPOINT			# entrypoint: 指定这个容器启动的时候要运行的命令，可以追加命令
+ONBUILD				# onbuild: 当构建一个被继承 DockerFile 的时候就会运行onbuild的指令，触发指令
+COPY				# copy: 类似ADD，将我们文件拷贝到镜像中
+ENV					# env: 构建的时候设置环境变量！
 ```
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200524154609624.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
+![image-20220519111320642](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519111320642.png)
 
-#### 实战测试
+## DockerFile 构建自己的镜像
 
-scratch 镜像
+Docker Hub 中 99% 的镜像都是 `FROM scratch` 这个基础的镜像而来的，然后添加需要的软件和配置来进行构建。
 
-```shell
-FROM scratch
-ADD centos-7-x86_64-docker.tar.xz /
+![image-20220519111510545](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519111510545.png)
 
-LABEL \
-    org.label-schema.schema-version="1.0" \
-    org.label-schema.name="CentOS Base Image" \
-    org.label-schema.vendor="CentOS" \
-    org.label-schema.license="GPLv2" \
-    org.label-schema.build-date="20200504" \
-    org.opencontainers.image.title="CentOS Base Image" \
-    org.opencontainers.image.vendor="CentOS" \
-    org.opencontainers.image.licenses="GPL-2.0-only" \
-    org.opencontainers.image.created="2020-05-04 00:00:00+01:00"
 
-CMD ["/bin/bash"]
-123456789101112131415
-```
 
-**Docker Hub 中 99%的镜像都是从这个基础镜像过来的 FROM scratch**，然后配置需要的软件和配置来进行构建。
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200524154740467.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70#pic_center)
-
-> 创建一个自己的centos
+> 创建自己的 centos
 
 ```shell
-# 1./home下新建dockerfile目录
-$ mkdir dockerfile
+# 1. /home下新建dockerfile目录
+[root@VM-16-12-centos home]# mkdir dockerfile
+[root@VM-16-12-centos home]# ls
+ceshi  dockerfile  docker-test-volume  jdk-8u202-linux-x64.rpm  lighthouse  mysql  nginx03
 
 # 2. dockerfile目录下新建mydockerfile-centos文件
-$ vim mydockerfile-centos
+[root@VM-16-12-centos dockerfile]# vim mydockerfile-centos
 
 # 3.编写Dockerfile配置文件
-FROM centos							# 基础镜像是官方原生的centos
-MAINTAINER cao<1165680007@qq.com> 	# 作者
+FROM centos:7						# 基础镜像是官方原生的centos7
+MAINTAINER AruNi<1298911600@qq.com> 	# 作者信息
 
-ENV MYPATH /usr/local				# 配置环境变量的目录 
+ENV MYPATH /usr/local				# 配置环境变量的目录 ，ENV命令为键值对
 WORKDIR $MYPATH						# 将工作目录设置为 MYPATH
 
 RUN yum -y install vim				# 给官方原生的centos 增加 vim指令
@@ -1887,61 +1931,68 @@ RUN yum -y install net-tools		# 给官方原生的centos 增加 ifconfig命令
 
 EXPOSE 80							# 暴露端口号为80
 
-CMD echo $MYPATH					# 输出下 MYPATH 路径
+CMD echo $MYPATH					# 输出 MYPATH 路径
 CMD echo "-----end----"				
 CMD /bin/bash						# 启动后进入 /bin/bash
 
-# 4.通过这个文件构建镜像
-# 命令： docker build -f 文件路径 -t 镜像名:[tag] .
-$ docker build -f mydockerfile-centos -t mycentos:0.1 .
+# 4. 通过这个文件构建镜像
+# 命令： docker build -f 文件路径 -t 镜像名:[tag] .	（末尾一定要有 .  表示当前目录）
+[root@VM-16-12-centos dockerfile]# docker build -f mydockerfile-centos -t mycentos:0.1 .
 
 # 5.出现下图后则构建成功
-123456789101112131415161718192021222324252627
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE0MDgzMTQ2NC5wbmc?x-oss-process=image/format,png)
+![image-20220519112907635](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519112907635.png)
 
 ```shell
-$ docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-mycentos            0.1                 cbf5110a646d        2 minutes ago       311MB
+[root@VM-16-12-centos /]# docker images
+REPOSITORY     TAG       IMAGE ID       CREATED              SIZE
+mycentos       1.0       baa6b4d0e8f1   About a minute ago   592MB
 
-# 6.测试运行
-$ docker run -it mycentos:0.1 		# 注意带上版本号，否则每次都回去找最新版latest
+# 6. 测试运行
+[root@VM-16-12-centos /]# docker run -it mycentos:1.0 	# 注意带上版本号，否则每次都去找最新版latest
 
-$ pwd	
-/usr/local							# 与Dockerfile文件中 WORKDIR 设置的 MYPATH 一致
-$ vim								# vim 指令可以使用
-$ ifconfig     						# ifconfig 指令可以使用
+[root@9c95c34d9afc local]# pwd
+/usr/local		# 与Dockerfile文件中 WORKDIR 设置的 MYPATH 一致
+
+[root@9c95c34d9afc local]# vim			# vim 指令可以使用
+[root@9c95c34d9afc local]# ifconfig     		# ifconfig 指令可以使用
 
 # docker history 镜像id 查看镜像构建历史步骤
-$ docker history 镜像id
-1234567891011121314
+[root@VM-16-12-centos /]# docker history baa6b4d0e8f1
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+baa6b4d0e8f1   6 minutes ago   /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "/bin…   0B        
+f6079e8434f4   6 minutes ago   /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "echo…   0B        
+1417a4c9c830   6 minutes ago   /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "echo…   0B        
+028ee8b09570   6 minutes ago   /bin/sh -c #(nop)  EXPOSE 80                    0B        
+0c86004a707d   6 minutes ago   /bin/sh -c yum -y install net-tools             166MB     
+b6a0fb4ec5c3   6 minutes ago   /bin/sh -c yum -y install vim                   221MB     
+99e472ca137e   7 minutes ago   /bin/sh -c #(nop) WORKDIR /usr/local            0B        
+9be5bd0e76e6   7 minutes ago   /bin/sh -c #(nop)  ENV MYPATH=/usr/local        0B        
+0568a1cc15b0   7 minutes ago   /bin/sh -c #(nop)  MAINTAINER AruNi<12989116…   0B  
+eeb6ee3f44bd   8 months ago    /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B        
+<missing>      8 months ago    /bin/sh -c #(nop)  LABEL org.label-schema.sc…   0B        
+<missing>      8 months ago    /bin/sh -c #(nop) ADD file:b3ebbe8bd304723d4…   204MB     
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE0MTYyOTU4My5wbmc?x-oss-process=image/format,png)
+我们平时拿到一个镜像，可以用 `docker history 镜像id` 研究一下是什么做的。
 
-我们可以列出本地进行的变更历史
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE0MTg0MDcwNi5wbmc?x-oss-process=image/format,png)
 
-我们平时拿到一个镜像，可以用 “docker history 镜像id” 研究一下是什么做的
-
-> CMD 和 ENTRYPOINT区别
+## CMD 和 ENTRYPOINT 的区别
 
 ```shell
 CMD					# 指定这个容器启动的时候要运行的命令，只有最后一个会生效，可被替代。
 ENTRYPOINT			# 指定这个容器启动的时候要运行的命令，可以追加命令
-12
 ```
 
-**测试cmd**
+**测试cmd**：
 
 ```shell
 # 编写dockerfile文件
 $ vim dockerfile-test-cmd
 FROM centos
-CMD ["ls","-a"]					# 启动后执行 ls -a 命令
+CMD ["ls","-a"]					# CMD方式：启动后就执行 ls -a 命令
 
 # 构建镜像
 $ docker build  -f dockerfile-test-cmd -t cmd-test:0.1 .
@@ -1956,23 +2007,22 @@ dev
 etc
 home
 
-# 想追加一个命令  -l 成为ls -al：展示列表详细数据
+# 在运行时想追加一个命令 -l 连起来成为ls -al：展示列表详细数据
 $ docker run cmd-test:0.1 -l
 docker: Error response from daemon: OCI runtime create failed: container_linux.go:349: starting container process caused "exec: \"-l\":
 executable file not found in $PATH": unknown.
 ERRO[0000] error waiting for container: context canceled 
 
-# cmd的情况下 -l 替换了CMD["ls","-l"] 而 -l  不是命令所以报错
-12345678910111213141516171819202122232425
+# 使用cmd的情况下 -l 替换了CMD["ls","-l"] ，而 -l  不是命令所以报错
 ```
 
-**测试ENTRYPOINT**
+**测试ENTRYPOINT**：
 
 ```shell
 # 编写dockerfile文件
 $ vim dockerfile-test-entrypoint
 FROM centos
-ENTRYPOINT ["ls","-a"]
+ENTRYPOINT ["ls","-a"]		# ENTRYPOINT方式：启动后就执行 ls -a 命令
 
 # 构建镜像
 $ docker build  -f dockerfile-test-entrypoint -t cmd-test:0.1 .
@@ -2002,90 +2052,163 @@ drwxr-xr-x   1 root root 4096 May 16 06:32 etc
 drwxr-xr-x   2 root root 4096 May 11  2019 home
 lrwxrwxrwx   1 root root    7 May 11  2019 lib -> usr/lib
 lrwxrwxrwx   1 root root    9 May 11  2019 lib64 -> usr/lib64 ....
-
-12345678910111213141516171819202122232425262728293031323334
 ```
 
-Dockerfile中很多命令都十分的相似，我们需要了解它们的区别，我们最好的学习就是对比他们然后测试效果！
+Dockerfile中很多命令都十分的相似，需要了解它们的区别，最好的学习方法就是对比它们然后测试效果！
 
-# 实战：Tomcat镜像
+## 实战：Tomcat镜像
 
-##### 1、准备镜像文件
+### 1、准备镜像文件
 
-```
-准备tomcat 和 jdk 到当前目录，编写好README
-1
-```
-
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE2MjQ0MzY1Mi5wbmc?x-oss-process=image/format,png)
-
-##### 2、编写dokerfile
+在自己的 `/home/aruni` 目录下新建 `docker-tomcat` 文件夹，准备 tomcat 和 jdk 到当前目录，编写好README文件。
 
 ```shell
-$ vim dockerfile
+[root@VM-16-12-centos aruni]# cd docker-tomcat/
+[root@VM-16-12-centos docker-tomcat]# ls
+apache-tomcat-9.0.63.tar.gz  jdk-8u333-linux-x64.tar.gz  readme.md
+```
+
+
+
+### 2、编写 Dokerfile
+
+官方命名：`Dokerfile`，build 时会自动寻找这个文件，就不需要 `-f` 指定了。
+
+```shell
+[root@VM-16-12-centos docker-tomcat]# vim dockerfile
 FROM centos 										# 基础镜像centos
-MAINTAINER cao<1165680007@qq.com>					# 作者
-COPY README /usr/local/README 						# 复制README文件
-ADD jdk-8u231-linux-x64.tar.gz /usr/local/ 			# 添加jdk，ADD 命令会自动解压
-ADD apache-tomcat-9.0.35.tar.gz /usr/local/ 		# 添加tomcat，ADD 命令会自动解压
+MAINTAINER AruNi<1298911600@qq.com>					# 作者
+
+COPY readme.md /usr/local/readme.md						# 复制README文件
+
+ADD jdk-8u333-linux-x64.tar.gz /usr/local/ 			# 添加jdk，ADD 命令会自动解压
+ADD apache-tomcat-9.0.63.tar.gz /usr/local/ 		# 添加tomcat，ADD 命令会自动解压
+
 RUN yum -y install vim								# 安装 vim 命令
 ENV MYPATH /usr/local 								# 环境变量设置 工作目录
 WORKDIR $MYPATH
 
-ENV JAVA_HOME /usr/local/jdk1.8.0_231 				# 环境变量： JAVA_HOME环境变量
+ENV JAVA_HOME /usr/local/jdk1.8.0_333			# 环境变量： JAVA_HOME环境变量
 ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
-ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.35 	# 环境变量： tomcat环境变量
-ENV CATALINA_BASH /usr/local/apache-tomcat-9.0.35
+ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.63 	# 环境变量： tomcat环境变量
+ENV CATALINA_BASH /usr/local/apache-tomcat-9.0.63
 
 # 设置环境变量 分隔符是：
 ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin 	
 
 EXPOSE 8080 										# 设置暴露的端口
 
-CMD /usr/local/apache-tomcat-9.0.35/bin/startup.sh && tail -F /usr/local/apache-tomcat-9.0.35/logs/catalina.out 					# 设置默认命令
-
-1234567891011121314151617181920212223
+CMD /usr/local/apache-tomcat-9.0.63/bin/startup.sh && tail -F /usr/local/apache-tomcat-9.0.63/logs/catalina.out 					# 设置默认命令
 ```
 
-##### 3、构建镜像
+### 3、构建镜像
 
 ```shell
 # 因为dockerfile命名使用默认命名 因此不用使用-f 指定文件
-$ docker build -t mytomcat:0.1 .
-12
+[root@VM-16-12-centos docker-tomcat]# docker build -t mytomcat:0.1 .
 ```
 
-##### 4、run镜像
+### 4、run镜像
 
 ```shell
 # -d:后台运行 -p:暴露端口 --name:别名 -v:绑定路径 
-$ docker run -d -p 8080:8080 --name tomcat01 
--v /home/kuangshen/build/tomcat/test:/usr/local/apache-tomcat-9.0.35/webapps/test 
--v /home/kuangshen/build/tomcat/tomcatlogs/:/usr/local/apache-tomcat-9.0.35/logs mytomcat:0.1
-1234
+# 这里挂载了test目录和logs目录
+[root@VM-16-12-centos docker-tomcat]# docker run -d -p 8080:8080 --name tomcat01 -v /home/aruni/docker-tomcat/test:/usr/local/apache-tomcat-9.0.63/webapps/test -v /home/aruni/docker-tomcat/tomcatlogs:/usr/local/apache-tomcat-9.0.63/logs mytomcat:0.1
+12172ff7e7868d4265a7b563a44e0a87589964f5f5a567f6cb8a289bdf5967a8
 ```
 
-##### 5、访问测试
+### 5、访问测试
 
 ```shell
-$ docker exec -it 自定义容器的id /bin/bash
-
-$ cul localhost:8080
-123
+[root@VM-16-12-centos docker-tomcat]# docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS              PORTS                                       NAMES
+12172ff7e786   mytomcat:0.1   "/bin/sh -c '/usr/lo…"   About a minute ago   Up About a minute   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   tomcat01
+[root@VM-16-12-centos docker-tomcat]# docker exec -it 12172ff7e786 /bin/bash
 ```
 
-##### 6、发布项目
+测试访问 `ip:8080` 成功：
 
-(由于做了卷挂载，我们直接在本地编写项目就可以发布了！)
+![image-20220519144652365](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519144652365.png)
 
-发现：项目部署成功，可以直接访问！
+### 6、发布项目
 
-我们以后开发的步骤：需要掌握Dockerfile的编写！我们之后的一切都是使用docker镜像来发布运行！
+由于做了卷挂载，本地的 `/home/aruni/docker-tomcat/test` 目录 和 tomcat的 `webapps中的test目录` 挂载了。我们直接在本地 test 中编写项目就可以发布了！
 
-## 发布自己的镜像
+1、在 test目录 创建一个 `WEB-INF` 文件夹，在里面新建编写 `web.xml` 配置文件：
 
-> 发布到 Docker Hub
+```shell
+[root@VM-16-12-centos test]# pwd
+/home/aruni/docker-tomcat/test
+[root@VM-16-12-centos test]# mkdir WEB-INF
+[root@VM-16-12-centos test]# cd WEB-INF/
+[root@VM-16-12-centos WEB-INF]# vim web.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+    xmlns="http://java.sun.com/xml/ns/j2ee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+</web-app>
+
+# 编写完输入   :wq   保存退出
+```
+
+2、在 test 目录 创建一个 `index.html` 文件，作为我们的首页：
+
+```shell
+[root@VM-16-12-centos test]# vim index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>mydocker</title>
+</head>
+<body>
+    <h1>Hello Docker</h1>
+</body>
+</html>
+
+# 编写完输入   :wq   保存退出
+```
+
+在本地编写完成后，已经同步到了 Docker 容器中了，可以直接访问：`ip:8080/test`
+
+![image-20220519150342099](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519150342099.png)
+
+因为本地目录中的 `tomcatlogs` 和 Docker 的 `tomcat中的logs` 也挂载了，所以也可以在本地查看 logs ，在 `/tomcatlogs/catalina.out` 文件中：
+
+```shell
+[root@VM-16-12-centos docker-tomcat]# cd tomcatlogs/
+[root@VM-16-12-centos tomcatlogs]# ls
+catalina.2022-05-19.log  host-manager.2022-05-19.log  localhost_access_log.2022-05-19.txt
+catalina.out             localhost.2022-05-19.log     manager.2022-05-19.log
+[root@VM-16-12-centos tomcatlogs]# cat catalina.out
+
+.......
+
+org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/apache-tomcat-9.0.63/webapps/test]
+19-May-2022 06:44:40.026 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/apache-tomcat-9.0.63/webapps/test] has finished in [31] ms
+19-May-2022 06:44:40.031 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+19-May-2022 06:44:40.046 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [756] milliseconds
+19-May-2022 06:56:40.131 INFO [Catalina-utility-2] org.apache.catalina.startup.HostConfig.reload Reloading context [/test]
+19-May-2022 06:56:40.131 INFO [Catalina-utility-2] org.apache.catalina.core.StandardContext.reload Reloading Context with name [/test] has started
+19-May-2022 06:56:40.155 INFO [Catalina-utility-2] org.apache.catalina.core.StandardContext.reload Reloading Context with name [/test] is completed
+.........
+```
+
+
+
+
+
+以后开发的步骤：需要掌握 Dockerfile 的编写！之后的一切都是使用 docker 镜像来发布运行！
+
+## 发布镜像
+
+### 发布到 Docker Hub
 
 1、地址 https://hub.docker.com/
 
@@ -2094,51 +2217,149 @@ $ cul localhost:8080
 3、登录
 
 ```shell
-$ docker login --help
-Usage:  docker login [OPTIONS] [SERVER]
-
-Log in to a Docker registry.
-If no server is specified, the default is defined by the daemon.
-
-Options:
-  -p, --password string   Password
-      --password-stdin    Take the password from stdin
-  -u, --username string   Username
-
-$ docker login -u 你的用户名 -p 你的密码
-123456789101112
+$ docker login -u 用户名 -p 密码
+........
+Login Succeeded
 ```
 
 4、提交 push镜像
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE2NDQzNDA0Mi5wbmc?x-oss-process=image/format,png)
-
 ```shell
-# 会发现push不上去，因为如果没有前缀的话默认是push到 官方的library
+[root@VM-16-12-centos tomcatlogs]# docker push mytomcat:0.1
+The push refers to repository [docker.io/library/mytomcat]
+7c46d6d75ab1: Preparing 
+40589f8cf446: Preparing 
+6b34c8359045: Preparing 
+10315a21d5b0: Preparing 
+174f56854903: Preparing 
+denied: requested access to the resource is denied	# 被拒绝了
+
+# 发现push不上去，因为如果没有前缀的话默认是push到 官方的library
+
 # 解决方法：
-# 第一种 build的时候添加你的dockerhub用户名，然后在push就可以放到自己的仓库了
-$ docker build -t kuangshen/mytomcat:0.1 .
+# 第一种：build的时候添加你的dockerhub用户名，然后在push就可以放到自己的仓库了
+[root@VM-16-12-centos tomcatlogs]# docker build -t aruni01/mytomcat:0.1
 
-# 第二种 使用docker tag #然后再次push
-$ docker tag 容器id kuangshen/mytomcat:1.0 #然后再次push
-$ docker push kuangshen/mytomcat:1.0
-12345678
+# 由于前面已经build过了，所以采取第二种方法：给镜像标一个tag
+[root@VM-16-12-centos tomcatlogs]# docker tag 442da366082f aruni01/tomcat:1.0
+[root@VM-16-12-centos tomcatlogs]# docker images
+REPOSITORY       TAG       IMAGE ID       CREATED          SIZE
+aruni01/tomcat   1.0       442da366082f   48 minutes ago   810MB
+mytomcat         0.1       442da366082f   48 minutes ago   810MB
+# 再次push
+[root@VM-16-12-centos tomcatlogs]# docker push aruni01/tomcat:1.0
+The push refers to repository [docker.io/aruni01/tomcat]
+7c46d6d75ab1: Pushed 
+40589f8cf446: Pushed 
+6b34c8359045: Pushed 
+10315a21d5b0: Pushed 
+174f56854903: Pushed 
+1.0: digest: sha256:0e4994d62f29f722a0c67ee38a865ee5f072c40a2f6c7184ea9d3f5562072c85 size: 1373
 ```
 
-> 发布到 阿里云镜像服务上
+提交的时候也是按照层级来提交的，在 Docker Hub 中查看自己的此镜像：
 
-看官网 很详细https://cr.console.aliyun.com/repository/
+![image-20220519155707116](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155707116.png)
+
+
+
+### 发布到阿里云镜像
+
+官网：https://cr.console.aliyun.com/repository/
+
+1、在阿里云官网找到容器镜像服务，创建一个个人实例
+
+2、创建命名空间
+
+![image-20220519155028247](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155028247.png)
+
+4、创建容器镜像，选择本地仓库
+
+![image-20220519155231013](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155231013.png)
+
+> 官方操作指南
+
+1、**登录**阿里云 Docker Registry
 
 ```shell
-$ sudo docker login --username=zchengx registry.cn-shenzhen.aliyuncs.com
-$ sudo docker tag [ImageId] registry.cn-shenzhen.aliyuncs.com/dsadxzc/cheng:[镜像版本号]
-
-# 修改id 和 版本
-sudo docker tag a5ef1f32aaae registry.cn-shenzhen.aliyuncs.com/dsadxzc/cheng:1.0
-# 修改版本
-$ sudo docker push registry.cn-shenzhen.aliyuncs.com/dsadxzc/cheng:[镜像版本号]
-1234567
+$ docker login --username=aruni registry.cn-hangzhou.aliyuncs.com
 ```
+
+用于登录的用户名为阿里云账号全名，密码为开通服务时设置的密码。
+
+您可以在访问凭证页面修改凭证密码。
+
+2、从 Registry 中**拉取**镜像
+
+```shell
+$ docker pull registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat:[镜像版本号]
+```
+
+3、将镜像**推送**到 Registry
+
+```shell
+$ docker login --username=aruni registry.cn-hangzhou.aliyuncs.com
+$ docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat:[镜像版本号]
+$ docker push registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat:[镜像版本号]
+```
+
+请根据实际镜像信息替换示例中的[ImageId]和[镜像版本号]参数。
+
+4、选择合适的镜像仓库地址
+
+从ECS推送镜像时，可以选择使用镜像仓库内网地址。推送速度将得到提升并且将不会损耗您的公网流量。
+
+如果您使用的机器位于VPC网络，请使用 `registry-vpc.cn-hangzhou.aliyuncs.com` 作为Registry的域名登录。
+
+5、示例
+
+使用 `"docker tag"` 命令重命名镜像，并将它通过专有网络地址推送至Registry。
+
+```shell
+$ docker imagesREPOSITORY                                                         TAG                 IMAGE ID            CREATED             VIRTUAL SIZEregistry.aliyuncs.com/acs/agent                                    0.7-dfb6816         37bb9c63c8b2        7 days ago          37.89 MB
+$ docker tag 37bb9c63c8b2 registry-vpc.cn-hangzhou.aliyuncs.com/acs/agent:0.7-dfb6816
+```
+
+使用 `"docker push"` 命令将该镜像推送至远程。
+
+```shell
+$ docker push registry-vpc.cn-hangzhou.aliyuncs.com/acs/agent:0.7-dfb6816
+```
+
+
+
+
+
+根据官方文档的第3步操作，将自己的 tomcat 镜像发布到阿里云镜像中：
+
+```shell
+# 1. 登录阿里云镜像
+[root@VM-16-12-centos tomcatlogs]# docker login --username=aruni registry.cn-hangzhou.aliyuncs.com
+......
+Login Succeeded
+
+# 2. 给镜像生成一个tag 版本号
+[root@VM-16-12-centos ~]# docker tag 442da366082f registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat:1.0
+[root@VM-16-12-centos ~]# docker images
+REPOSITORY                                                    TAG       IMAGE ID       CREATED             SIZE
+aruni01/tomcat                                                1.0       442da366082f   About an hour ago   810MB
+mytomcat                                                      0.1       442da366082f   About an hour ago   810MB
+registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat   1.0       442da366082f   About an hour ago   810MB
+
+# 3. push到阿里云镜像
+[root@VM-16-12-centos ~]# docker push registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat:1.0
+The push refers to repository [registry.cn-hangzhou.aliyuncs.com/run-docker-study/mytomcat]
+7c46d6d75ab1: Pushed 
+40589f8cf446: Pushed 
+6b34c8359045: Pushed 
+10315a21d5b0: Pushed 
+174f56854903: Pushed 
+1.0: digest: sha256:0e4994d62f29f722a0c67ee38a865ee5f072c40a2f6c7184ea9d3f5562072c85 size: 1373
+```
+
+在阿里云镜像中查看自己发布的镜像：
+
+![image-20220519163247494](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519163247494.png)
 
 ## 小结
 
@@ -2146,7 +2367,7 @@ $ sudo docker push registry.cn-shenzhen.aliyuncs.com/dsadxzc/cheng:[镜像版本
 
 # Docker 网络
 
-##### 理解Docker 0
+## 理解Docker 0
 
 学习之前**清空下前面的docker 镜像、容器**
 
@@ -2258,7 +2479,7 @@ Docker中所有网络接口都是虚拟的，虚拟的转发效率高（内网�
 
 **思考一个场景：我们编写了一个微服务，database url=ip: 项目不重启，数据ip换了，我们希望可以处理这个问题，可以通过名字来进行访问容器**？
 
-##### –-link
+## –-link
 
 ```shell
 $ docker exec -it tomcat02 ping tomca01   # ping不通
@@ -2302,7 +2523,7 @@ docker inspect tomcat03
 
 docker0问题：不支持容器名连接访问！
 
-##### 自定义网络
+## 自定义网络
 
 ```shell
 docker network
