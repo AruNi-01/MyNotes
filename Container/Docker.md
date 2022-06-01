@@ -38,7 +38,7 @@
 
 为了解决上述问题，Docker 闪亮登场！！！
 
-![查看源图像](https://cdn.1min30.com/wp-content/uploads/2018/04/Logo-Docker.jpg)
+![image-20220520182016348](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/011973965f6795c2334ef1cf2711ff0b.png)
 Docker 的思想就来自于集装箱！
 
 Docker 可以将我们想要的环境**构建**（打包）成一个镜像，然后我们可以**推送**（发布）到网上去。在需要用这个环境的时候，在网上**拉取**一份就好了。
@@ -71,7 +71,7 @@ Docker通过隔离机制，可以将服务器利用到极致！
 
 ### 虚拟机技术
 
-![image-20200515153852954](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE1Mzg1Mjk1NC5wbmc?x-oss-process=image/format,png)
+![image-20200515153852954](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a38007024084daea5854b4b84b470101.png)
 **缺点**：
 
 1. 资源占用十分多
@@ -84,7 +84,7 @@ Docker通过隔离机制，可以将服务器利用到极致！
 
 容器化技术不是模拟一个完整的操作系统，每个应用都有自己的Lib库：
 
-![image-20200515094336846](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTA5NDMzNjg0Ni5wbmc?x-oss-process=image/format,png)
+![image-20200515094336846](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/cc015968bdc9616b1f754bfdf6afb222.png)
 
 比较Docker和虚拟机技术的不同：
 
@@ -118,7 +118,7 @@ Docker是内核级别的虚拟化，可以在一个物理机上可以运行很�
 
 ### Docker 的基本组成
 
-![查看源图像](https://images2018.cnblogs.com/blog/1288699/201803/1288699-20180313150542894-1089569291.png)
+![查看源图像](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f15c6e60c568af17742bf035ede241ce.png)
 
 **镜像（Image)**：
 
@@ -227,13 +227,13 @@ rm -rf /var/lib/docker
 
 ### 1、登录阿里云找到容器服务
 
-![image-20220516212449873](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516212449873.png)
+![image-20220516212449873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1fb7b0fc55eef20edc42f1e9d022e64a.png)
 
 进入控制台管理。
 
 ### 2、找到镜像加速器
 
-![image-20220516212605016](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516212605016.png)
+![image-20220516212605016](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9e1b1c6bfe37f1fc4dbfb028875a05fb.png)
 
 ### 3、配置使用
 
@@ -258,13 +258,13 @@ sudo systemctl restart docker
 
 ## 回顾 hello-world 流程
 
-![image-20220516212045633](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516212045633.png)
+![image-20220516212045633](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2e55af09edbe4e013ff2b88008580de4.png)
 
 ### docker run
 
 `docker run xxx` 具体流程如下：
 
-![image-20200515102637246](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTEwMjYzNzI0Ni5wbmc?x-oss-process=image/format,png)
+![image-20200515102637246](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8fe2a3909db235251423bec36ea8aa52.png)
 
 ### 底层原理
 
@@ -274,7 +274,7 @@ Docker 是一个CS (Client-Server) 结构的系统，Docker 的守护进程运�
 
 Docker-Server 接收到 Docker-Client 的指令，就会执行这个命令！
 
-![image-20200515102949558](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTEwMjk0OTU1OC5wbmc?x-oss-process=image/format,png)
+![image-20200515102949558](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/ae5e2c05efeb1f4c1c806d927ffd4232.png)
 
 **为什么 Docker 比 Vm 快**：
 
@@ -287,7 +287,7 @@ Guest OS： VM（虚拟机）里的的系统
 
 Host OS：物理机里的系统
 
-![image-20200515104117329](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTEwNDExNzMyOS5wbmc?x-oss-process=image/format,png)
+![image-20200515104117329](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/296764d655b7d11ebc20ba779a33d4f7.png)
 
 因此，当新建一个容器时，Docker 不需要和虚拟机一样重新加载一个操作系统内核。从而避免引导、加载操作系统内核返个比较费时费资源的过程。
 
@@ -363,7 +363,7 @@ mysql     MySQL is a widely used, open-source relation…   12578     [OK]
 mariadb   MariaDB Server is a high performing open sou…   4834      [OK]
 ```
 
-![image-20220516214047156](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516214047156.png)
+![image-20220516214047156](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/9f55ff2d5d8ba848e7396601aba7e050.png)
 
 ### 下载镜像
 
@@ -471,7 +471,7 @@ docker ps  		# 列出当前正在运行的容器
 ```
 
 
-![image-20220516220926574](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516220926574.png)
+![image-20220516220926574](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/532edf833717dc70299fe54a549b4230.png)
 
 
 
@@ -568,7 +568,7 @@ docker logs -ft 容器id 		# 跟着日志
 # 命令 docker top 容器id
 ```
 
-![image-20220516224705621](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220516224705621.png)
+![image-20220516224705621](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bdc78ec308096829ce1eb6e85412c2b1.png)
 
 UID：当前用户id
 
@@ -863,7 +863,7 @@ jdk-8u202-linux-x64.rpm  lighthouse  test.java
 ### 命令大全
 
 
-![img](https://pic2.zhimg.com/80/v2-820aee2a33654099d87cdd2b7a1ce741_1440w.jpg?source=1940ef5c)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/14fb5b50e7f8953bd305dd26deaee877.jpeg)
 
 ```shell
   attach      Attach local standard input, output, and error streams to a running container
@@ -940,15 +940,15 @@ curl localhost:8080
 
 此时我们的 Nginx 就在 Docker 中部署成功了，在服务器防火墙中添加3344端口：
 
-![image-20220517185251001](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517185251001.png)
+![image-20220517185251001](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/912bdb432c4f824803a2b5df841e9481.png)
 
 现在就可以通过服务器的公网IP，访问3344端口，就成功的访问了 Nginx：
 
-![image-20220517204414135](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517204414135.png)
+![image-20220517204414135](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/88efaf9debd2fdf252aa6d11eb7dfcc2.png)
 
 **宿主机端口** 和 **容器内部端口** 以及端口暴露：
 
-![image-20220517185923124](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517185923124.png)
+![image-20220517185923124](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0d0c9ebd76cc685d1ed3dec4df1641a3.png)
 
 ```shell
 # 6. 进入容器
@@ -1054,7 +1054,7 @@ root@706630d66e6f:/usr/local/tomcat/webapps#
 
 这样 docker 部署 tomcat 就可以访问了，同样需要在服务器的防火墙中添加3355端口：
 
-![image-20220517204344873](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517204344873.png)
+![image-20220517204344873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a2dc319b2a44a9364aef1b6d8e23e695.png)
 
 
 
@@ -1123,7 +1123,7 @@ c2e6ff669c5a   elasticsearch   0.00%     376.9MiB / 1.795GiB   20.51%    656B / 
 
 
 要使用 Kibana 连接 ES ？思考网络如何才能连接？
-![image-20220517200340052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517200340052.png)
+![image-20220517200340052](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/59e99aa1d0f1cbf41ba5f02f59fc638e.png)
 
 ## 6. Portainer 可视化面板
 
@@ -1147,16 +1147,16 @@ Portainer 是 Docker 的图形化界面管理工具，提供一个后台面板�
 ```
 
 测试访问8080端口：
- ![image-20220517204633140](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517204633140.png)
+ ![image-20220517204633140](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3a81e7fd6721983759ee289280f54ceb.png)
 创建账户后选择本地仓库：
 
-![image-20220517205225228](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517205225228.png)
+![image-20220517205225228](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/2e589a85cd1f321ddffe4fc8494f93dc.png)
 
 此时就可以在 Portainer 中看见我们的 Docker 了：
 
-![image-20220517205414572](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517205414572.png)
+![image-20220517205414572](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c8de41680fff874bdd4169e3863d1eb7.png)
 
-![image-20220517205429404](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220517205429404.png)
+![image-20220517205429404](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3fb16b26fd837091d0bcbe308201a26d.png)
 
 # Docker 镜像
 
@@ -1194,11 +1194,11 @@ docker 的镜像实际上是由一层一层的文件系统组成，这种层级�
 
 `rootfs（root file system)`，在 bootfs 之上。包含的就是典型 Linux 系统中的 `/dev`, `/proc`, `/bin`, `/etc` 等标准目录和文件。 rootfs 就是各种不同的操作系统发行版，比如 Ubuntu, Centos等等。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2MzA0OTk1OS5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/356d07dcbf285795a400653a367606a0.png)
 
 平时我们安装进虚拟机的CentOS都是好几个G，为什么Docker这里才200M？
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2MzE0MDU1OS5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1d187c35efd83dbafb32982cc05f6c3f.png)
 
 对于个精简的OS，rootfs 可以很小，只需要包合最基本的命令，工具和程序库就可以了，因为底层直接用 Host 的 kernel，自己只需要提供 rootfs 就可以了。由此可见对于不同的 Linux 发行版， boots 基本是一致的， rootfs 会有差別，因此不同的发行版可以公用 bootfs。
 
@@ -1347,17 +1347,17 @@ docker 的镜像实际上是由一层一层的文件系统组成，这种层级�
 
 举一个简单的例子，假如基于 Ubuntu Linux16.04 创建一个新的镜像，这就是新镜像的第一层；如果在该镜像中添加 Python 包，就会在基础镜像层之上创建第二个镜像层；如果继续添加一个安全补丁，就会创健第三个镜像层该像。当前已经包含3个镜像层，如下图所示（这只是一个用于演示的很简单的例子）。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2NTIzNDI3NC5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0b2611805f5556fcb35026eabdcd17a8.png)
 
 **在添加额外的镜像层的同时，镜像始终保持是当前所有镜像的组合**，理解这一点非常重要。下图中举了一个简单的例子，每个镜像层包含3个文件，而镜像包含了来自两个镜像层的6个文件。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2NDk1ODkzMi5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/6c55c550ea191e06ca9cb7fee391fb88.png)
 
 上图中的镜像层跟之前图中的略有区別，主要目的是便于展示文件。
 
 下图中展示了一个稍微复杂的三层镜像，在外部看来整个镜像只有6个文件，这是因为最上层中的文件7是文件5的一个更新版。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2NTE0ODAwMi5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/31982f68d35473f1199b90f69e369518.png)
 
 上述情況下，上层镜像层中的文件覆盖了底层镜像层中的文件。这样就使得文件的更新版本作为一个新镜像层添加到镜像当中
 
@@ -1369,7 +1369,7 @@ Docker 在 Windows 上仅支持 windowsfilter 一种存储引擎，该引擎基�
 
 下图展示了与系统显示相同的三层镜像。所有镜像层堆并合井，对外提供统一的视图。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2NTU1NzgwNy5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/a1f8c0f8afd3d17bb8ad6db0ea5b4664.png)
 
 ### 特点
 
@@ -1379,7 +1379,7 @@ Docker 镜像都是只读的，当容器启动时，一个新的可写层加载�
 
 我们的所有操作都是基于容器层的，我们无法操作镜像层。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTE2MTUwNTg5Ny5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/3f7a67fc55e15635f5c757d7c8af4a14.png)
 
 ## commit 镜像
 
@@ -1443,7 +1443,7 @@ elasticsearch         7.6.2     f29a1ee41030   2 years ago      791MB
 
 卷技术，说白了就是一个目录的挂载，将我们容器内的目录，挂载到Linux上面。
 
-![image-20220518210923687](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518210923687.png)
+![image-20220518210923687](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/5bea2fcce8620d0fe2143c581d6c9bb5.png)
 
 **容器数据卷总结：容器的持久化和同步操作**。
 
@@ -1465,15 +1465,15 @@ docker run -it -v 主机目录:容器内目录  -p 主机端口:容器内端口
 [root@VM-16-12-centos ~]# docker inspect f3be5caf61a4
 ```
 
-![image-20220518211552249](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518211552249.png)
+![image-20220518211552249](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7989bf3b56b27eb3a27b611a2491f154.png)
 
 测试文件的同步：
 
-![image-20220518212008139](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518212008139.png)
+![image-20220518212008139](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/f4d30b0926d58d9240d724160e8ce842.png)
 
 进一步测试：
 
-![image-20220518213049723](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518213049723.png)
+![image-20220518213049723](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/630c86d50aec2ecae7ed27c9188bb640.png)
 
 好处：我们以后修改只需要在本地修改即可，容器内会自动同步！
 
@@ -1507,13 +1507,13 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
 
 **测试连接**：注意3310端口要在服务器的防火墙中添加此端口，否则无法连接。
 
-![image-20220518214724053](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518214724053.png)
+![image-20220518214724053](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0f8507144c30268cc34478da32c1485b.png)
 
 
 
 当我们在本地用 Navicat 新建名称为 `docker_test` 的数据库时（相当于在docker容器中创建），绑定的宿主机中也会创建：
 
-![image-20220518215159637](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518215159637.png)
+![image-20220518215159637](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/65087d98c1b1cd7d019198e44371e9d2.png)
 
 现在将mysql容器删除：`[root@VM-16-12-centos data]# docker rm -f mysql03`
 
@@ -1695,11 +1695,11 @@ aruni/centos   latest    2b40f24fc014   About a minute ago   231MB
 [root@6e6c99e6d717 /]# ls -l			# 查看目录							
 ```
 
-![image-20220518232801301](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518232801301.png)
+![image-20220518232801301](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/251e89fa8ee51c3c42e5f3a7023c9eb9.png)
 
 这个卷和外部一定有一个同步的目录，我们在生产镜像的时候采用的是匿名挂载。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEyMTUzMTYyNi5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/17eedf388e4a7e68d2cb20af3422267d.png)
 
 先在容器中新建一个文件：
 
@@ -1717,7 +1717,7 @@ container.txt
 [root@VM-16-12-centos docker-test-volume]# docker inspect 6b2ae59910f5
 ```
 
-![image-20220518233959757](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518233959757.png)
+![image-20220518233959757](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0247d3d8a9adf627f3192af47dd1eba6.png)
 
 复制 `volume01` 的 Source 路径，查询一下刚才的文件是否同步到宿主机中了：
 
@@ -1735,7 +1735,7 @@ container.txt
 
 命名的容器已挂载数据卷，其他的容器通过挂载这个容器(父容器)实现数据共享，**挂载数据卷的容器，称为数据卷容器**。通过数据卷容器可以实现容器间的数据共享。
 
-![image-20220518234435292](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220518234435292.png)
+![image-20220518234435292](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/b6853b2fd00070211502e27dbe093532.png)
 
 ```shell
 # 测试 启动3个容器，通过刚才自己写的镜像启动
@@ -1800,7 +1800,7 @@ drwxr-xr-x   2 root root 4096 May 18 15:50 volume01
 drwxr-xr-x   2 root root 4096 May 18 15:50 volume02
 ```
 
-![image-20220519000124020](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519000124020.png)
+![image-20220519000124020](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d2d4c25453f51911cc19508059b85b93.png)
 
 ```shell
 # 再新建一个docker03同样继承docker01
@@ -1850,11 +1850,11 @@ docker01		# 同步了 docker01的数据
 
 查看官方的镜像：
 
-![image-20220519105825182](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519105825182.png)
+![image-20220519105825182](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/c7e39bfe132c0492ea96645375a9723e.png)
 
 点击后跳到一个 Dockerfile
 
-![image-20220519105908422](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519105908422.png)
+![image-20220519105908422](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e678c5bfad8467ff3054b9bb029904be.png)
 
 很多官方镜像都是基础包，很多功能没有，我们通常会自己搭建自己的镜像！
 
@@ -1869,7 +1869,7 @@ docker01		# 同步了 docker01的数据
 3. `#` 表示注释
 4. 每一个指令都会创建提交一个新的镜像层，并提交
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjEzMTc1Njk5Ny5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/413b15ed70dea098b4ed3d3964096471.png)
 
 Dockerfile 是面向开发的，我们以后要发布项目，做镜像，就需要编写 dockerfile 文件，这个文件十分简单。
 
@@ -1898,13 +1898,13 @@ COPY				# copy: 类似ADD，将我们文件拷贝到镜像中
 ENV					# env: 构建的时候设置环境变量！
 ```
 
-![image-20220519111320642](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519111320642.png)
+![image-20220519111320642](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d649a2d66b8e16db7ad0b5242a8954e7.png)
 
 ## DockerFile 构建自己的镜像
 
 Docker Hub 中 99% 的镜像都是 `FROM scratch` 这个基础的镜像而来的，然后添加需要的软件和配置来进行构建。
 
-![image-20220519111510545](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519111510545.png)
+![image-20220519111510545](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e678c5bfad8467ff3054b9bb029904be.png)
 
 
 
@@ -1942,7 +1942,7 @@ CMD /bin/bash						# 启动后进入 /bin/bash
 # 5.出现下图后则构建成功
 ```
 
-![image-20220519112907635](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519112907635.png)
+![image-20220519112907635](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/bb50b8a19c50de48ad1668281edaa87a.png)
 
 ```shell
 [root@VM-16-12-centos /]# docker images
@@ -2129,7 +2129,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED              STAT
 
 测试访问 `ip:8080` 成功：
 
-![image-20220519144652365](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519144652365.png)
+![image-20220519144652365](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1a2741c8d5573bd9ad02b1cc6329895c.png)
 
 ### 6、发布项目
 
@@ -2177,7 +2177,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED              STAT
 
 在本地编写完成后，已经同步到了 Docker 容器中了，可以直接访问：`ip:8080/test`
 
-![image-20220519150342099](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519150342099.png)
+![image-20220519150342099](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/08ff503067fcd6510a4fc03cecd2de43.png)
 
 因为本地目录中的 `tomcatlogs` 和 Docker 的 `tomcat中的logs` 也挂载了，所以也可以在本地查看 logs ，在 `/tomcatlogs/catalina.out` 文件中：
 
@@ -2259,7 +2259,7 @@ The push refers to repository [docker.io/aruni01/tomcat]
 
 提交的时候也是按照层级来提交的，在 Docker Hub 中查看自己的此镜像：
 
-![image-20220519155707116](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155707116.png)
+![image-20220519155707116](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7248bdc3441f68566b41c38c45177d09.png)
 
 
 
@@ -2271,11 +2271,11 @@ The push refers to repository [docker.io/aruni01/tomcat]
 
 2、创建命名空间
 
-![image-20220519155028247](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155028247.png)
+![image-20220519155028247](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/8ef44a03f16c920c62f73bdb662808df.png)
 
 4、创建容器镜像，选择本地仓库
 
-![image-20220519155231013](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519155231013.png)
+![image-20220519155231013](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/7be7bee536b8bab168b543e28db50d67.png)
 
 > 官方操作指南
 
@@ -2359,11 +2359,11 @@ The push refers to repository [registry.cn-hangzhou.aliyuncs.com/run-docker-stud
 
 在阿里云镜像中查看自己发布的镜像：
 
-![image-20220519163247494](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220519163247494.png)
+![image-20220519163247494](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/0cf971b0a2791a16444f1f30086c394b.png)
 
 ## 小结
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3MTE1NTY2Ny5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/09a0c35acf75e283d303fe7d32023ce1.png)
 
 # Docker 网络
 
