@@ -1,0 +1,92 @@
+{
+  "main": {
+    "id": "2f7c8d32abd23668",
+    "type": "split",
+    "children": [
+      {
+        "id": "fc58eb85e3a4ef36",
+        "type": "leaf",
+        "state": {
+          "type": "empty",
+          "state": {}
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "14c40e33a0fbd2c8",
+    "type": "split",
+    "children": [
+      {
+        "id": "e16dcfc2ab583631",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b1dbddc3fcafa4b7",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "295a21c3434594e2",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "780b47c12c721cdc",
+    "type": "split",
+    "children": [
+      {
+        "id": "3017e4dd304e39d5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6c9be64abeedd5c3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": true,
+                "extraContext": true,
+                "sortOrder": "alphabetical",
+                "showSearch": true,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "fc58eb85e3a4ef36",
+  "lastOpenFiles": [
+    "Java/Mybatis.md",
+    "Go/Web开发.md",
+    "Data_Struct/数据结构与算法.md",
+    "Untitled.md"
+  ]
+}
