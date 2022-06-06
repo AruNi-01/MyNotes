@@ -1818,7 +1818,9 @@ db.First(&user, 5)
 // SELECT * FROM users WHERE id = 5;
 ```
 
+注意：`First()` 函数找不到record的时候，会返回 `ErrRecordNotFound` 错误 ， 而 `Find()` 则是返回nil，不会返回错误信息。
 
+所以在项目中，如果想让 record 为0时不报错，则需要提前捕获一下 `ErrRecordNotFound` 错误，将 err 置为 nil。
 
 #### Scan & Raw
 
