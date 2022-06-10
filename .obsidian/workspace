@@ -4,13 +4,13 @@
     "type": "split",
     "children": [
       {
-        "id": "fc58eb85e3a4ef36",
+        "id": "71bc83116a119fa8",
         "type": "leaf",
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Untitled.md",
-            "mode": "preview"
+            "file": "README.md",
+            "mode": "source"
           }
         }
       }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Untitled.md",
+                "file": "README.md",
                 "collapseAll": true,
                 "extraContext": true,
                 "sortOrder": "alphabetical",
@@ -76,6 +76,16 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "6d392db32a961b0a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "README.md"
               }
             }
           }
@@ -86,11 +96,12 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "fc58eb85e3a4ef36",
+  "active": "71bc83116a119fa8",
   "lastOpenFiles": [
+    "README.md",
+    "Go/Go基础.md",
     "Untitled.md",
     "Go/Web开发.md",
-    "Go/Go基础.md",
     "Java/Mybatis.md",
     "Data_Struct/数据结构与算法.md"
   ]
