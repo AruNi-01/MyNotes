@@ -1,5 +1,6 @@
 {
   "cssTheme": "Minimal",
   "translucency": false,
-  "theme": "moonstone"
+  "theme": "moonstone",
+  "baseFontSize": 18
 }

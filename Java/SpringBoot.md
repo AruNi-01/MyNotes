@@ -7,6 +7,9 @@
 
 ## 1.2 Spring是如何简化Java开发的
 
+^d98971
+
+
 为了降低Java开发的复杂性，Spring采用了以下4种关键策略：
 
 1、基于POJO的轻量级和最小侵入性编程，所有东西都是bean；
@@ -2512,7 +2515,7 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 1. 导入相关静态资源
 
-   ![image-20220331215243683](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331215243683.png)
+   ![image-20220331215243683](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220331215243683.png)
 
 2. pojo层：部门类、员工类
 
@@ -2656,11 +2659,11 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 2. 将静态文件中相关标签全部改成Thymeleaf的模板，示例如下：
 
-   ![image-20220401123042971](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401123042971.png)
+   ![image-20220401123042971](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401123042971.png)
 
 3. 启动项目，查看首页：
 
-   ![image-20220331225852489](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331225852489.png)
+   ![image-20220331225852489](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220331225852489.png)
 
 ## 11.3 页面国际化
 
@@ -2670,7 +2673,7 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 先在IDEA中统一设置properties的编码问题！
 
-![image-20220331213516288](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220331213516288.png)
+![image-20220331213516288](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220331213516288.png)
 
 编写国际化配置文件，抽取页面需要显示的国际化页面消息。
 
@@ -2680,27 +2683,27 @@ If you want to take complete control of Spring MVC, you can add your own @Config
 
 2. 建立一个`login.properties`文件，还有一个`login_zh_CN.properties`；发现IDEA自动识别了我们要做国际化操作；文件夹变了！
 
-   ![image-20220401102524302](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102524302.png)
+   ![image-20220401102524302](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401102524302.png)
 
 3. 我们可以在这上面去新建一个文件；
 
-   ![image-20220401102553866](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102553866.png)
+   ![image-20220401102553866](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401102553866.png)
 
    弹出如下页面：我们再添加一个英文的；
 
-   ![image-20220401102620870](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102620870.png)
+   ![image-20220401102620870](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401102620870.png)
 
    这样就快捷多了！
 
-   ![image-20220401102643052](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401102643052.png)
+   ![image-20220401102643052](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401102643052.png)
 
 4. **接下来，我们就来编写配置，我们可以看到idea下面有另外一个视图**
 
-   ![image-20220401105424073](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105424073.png)
+   ![image-20220401105424073](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401105424073.png)
 
    这个视图我们点击 + 号就可以直接添加属性了；我们新建一个`login.tip`，可以看到边上有三个文件框可以输入
 
-   ![image-20220401105512451](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401105512451.png)
+   ![image-20220401105512451](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401105512451.png)
 
    然后依次添加其他页面内容即可！
 
@@ -2782,11 +2785,11 @@ spring.messages.basename=i18n.login
 
 去页面获取国际化的值，查看Thymeleaf的文档，找到message取值操作为：`#{...}`。我们去index首页进行修改：
 
-![image-20220401111528571](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111528571.png)
+![image-20220401111528571](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401111528571.png)
 
 我们可以去启动项目，访问一下，发现已经自动识别为中文的了！
 
-![image-20220401111547450](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401111547450.png)
+![image-20220401111547450](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401111547450.png)
 
 **接下来取配置根据按钮自动切换中文英文**
 
@@ -2898,7 +2901,7 @@ public LocaleResolver localeResolver(){
 
 **我们重启项目，来访问一下，发现点击按钮可以实现成功切换**
 
-![image-20220401114001820](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401114001820.png)
+![image-20220401114001820](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401114001820.png)
 
 ### 11.3.6 小结
 
@@ -2962,7 +2965,7 @@ public LocaleResolver localeResolver(){
 
 5. 测试，可以发现登录成功后url是`main.html`，实际还是dashboard页面：
 
-   ![image-20220401124241604](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401124241604.png)
+   ![image-20220401124241604](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401124241604.png)
 
 
 
@@ -3023,7 +3026,7 @@ public LocaleResolver localeResolver(){
 
 4. 测试：
 
-   ![image-20220401135154331](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135154331.png)
+   ![image-20220401135154331](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401135154331.png)
 
 5. 登录成功后，可以通过session拿到用户的名字，在主页中显示，在`dashboard.html`中对应位置获取即可：
 
@@ -3033,7 +3036,7 @@ public LocaleResolver localeResolver(){
 
 6. 测试：
 
-   ![image-20220401135736113](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401135736113.png)
+   ![image-20220401135736113](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401135736113.png)
 
 
 
@@ -3143,7 +3146,7 @@ public LocaleResolver localeResolver(){
 
 4. 先测试一下：
 
-   ![image-20220401145922383](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401145922383.png)
+   ![image-20220401145922383](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401145922383.png)
 
 5. 在点击员工管理后，确实跳转到了`list.html`页面，但是员工管理的位置没有高亮，先解决一下这个问题。
 
@@ -3178,9 +3181,9 @@ public LocaleResolver localeResolver(){
 
 8. 测试，可以发现，刚进入登录页面，是首页高亮，当点击员工管理时，员工管理高亮：
 
-   ![image-20220401152205641](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152205641.png)
+   ![image-20220401152205641](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401152205641.png)
 
-   ![image-20220401152224972](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401152224972.png)
+   ![image-20220401152224972](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401152224972.png)
 
    
 
@@ -3221,7 +3224,7 @@ public LocaleResolver localeResolver(){
 
 测试：
 
-![image-20220401154227488](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401154227488.png)
+![image-20220401154227488](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401154227488.png)
 
 
 
@@ -3314,9 +3317,9 @@ public LocaleResolver localeResolver(){
 
 5. 测试：
 
-   ![image-20220401164646710](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164646710.png)
+   ![image-20220401164646710](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401164646710.png)
 
-   ![image-20220401164714897](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401164714897.png)
+   ![image-20220401164714897](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401164714897.png)
 
 
 
@@ -3427,7 +3430,7 @@ public LocaleResolver localeResolver(){
 
 2. Spring会帮我们自动扫描到404页面，直接去测试
 
-   ![image-20220401181044013](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220401181044013.png)
+   ![image-20220401181044013](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220401181044013.png)
 
 
 
@@ -4431,10 +4434,9 @@ Spring Security的两个主要目标是 “认证” 和 “授权”（访问�
 
       ![image-20220402165550336](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/34a89ef6ad10d9d5caf23b2413687985.png)
 
+- 某个用户登录：
 
-    - 某个用户登录：
-    
-      ![image-20220402165644511](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220402165644511.png)
+  ![image-20220402165644511](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220402165644511.png)
 
 
 ​      
