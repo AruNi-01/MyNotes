@@ -174,11 +174,11 @@ class Ticket {
 
 当 `public void sale()` 没有加 `Synchronized` 关键字时，输出的结果是有误的：
 
-![image-20220623224752999](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220623224752999.png)
+![image-20220623224752999](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220623224752999.png)
 
 加上 `Synchronized` 关键字后，输出结果正常：
 
-![image-20220623224910963](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220623224910963.png)
+![image-20220623224910963](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220623224910963.png)
 
 `Synchronized` 本质：队列、锁。
 
@@ -186,11 +186,11 @@ class Ticket {
 
 `Lock` 接口的实现类：
 
-![image-20220623231112473](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220623231112473.png)
+![image-20220623231112473](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220623231112473.png)
 
 - `ReentrantLock`：不传参数时，默认是一个**非公平锁**（可以插队）；传参数 true 时，是一个**公平锁**（先来先到）。
 
-  ![image-20220623232021283](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220623232021283.png)
+  ![image-20220623232021283](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220623232021283.png)
 
 - `ReentrantReadWriteLock`：
 
@@ -495,7 +495,7 @@ Process finished with exit code 0
 
 ### 4.2 Lock 版
 
-![image-20220627225019083](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220627225019083.png)
+![image-20220627225019083](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220627225019083.png)
 
 `Lock` 和 `Synchronized` 写法大同小异，`Lock` 需要先 `new` 一个 `Condition` 对象，然后调用 `Condition` 中的等待、唤醒方法。`Lock` 需要手动上锁，示例如下：
 
@@ -866,7 +866,7 @@ class Phone {
         System.out.println("hello");
     }
 }
-12345678910111213141516171819202122232425262728
+
 ```
 
 输出结果：
@@ -1848,7 +1848,7 @@ Process finished with exit code 0
 
 阻塞队列在数据结构中所起的作用如下图：
 
-![image-20220629174558000](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220629174558000.png)
+![image-20220629174558000](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220629174558000.png)
 
 `Thread1`（生产线程）往阻塞队列中添加元素，`Thread2`（消费线程）从阻塞队列中移除元素；
 
@@ -1862,7 +1862,7 @@ Process finished with exit code 0
 
 BlockingQueue 是 Queue 的子类：
 
-![image-20220629183950790](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220629183950790.png)
+![image-20220629183950790](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220629183950790.png)
 
 BlockingQueue 有多个实现类：
 
@@ -1874,7 +1874,7 @@ BlockingQueue 有多个实现类：
 - LinkedTransferQueue：由链表结构组成的无界阻塞队列。
 - LikedBlockingDeque：由链表结构组成的双端阻塞队列。
 
-![image-20220629182826154](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220629182826154.png)
+![image-20220629182826154](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220629182826154.png)
 
 
 
@@ -2240,11 +2240,11 @@ public class Demo02 {
 
 - 在 `java.utils.function` 包中有许多函数式接口，有四个原生的：
 
-  ![image-20220703101655716](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703101655716.png)
+  ![image-20220703101655716](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703101655716.png)
 
 ### 12.1 Function 函数型接口
 
-![image-20220703102830360](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703102830360.png)
+![image-20220703102830360](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703102830360.png)
 
 ```java
 public class FunctionDemo {
@@ -2277,7 +2277,7 @@ public class FunctionDemo {
 
 ### 12.2 Predicate 断定型接口
 
-![image-20220703103648801](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703103648801.png)
+![image-20220703103648801](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703103648801.png)
 
 ```java
 public class PredicateDemo {
@@ -2871,7 +2871,7 @@ public class StreamDemo05 {
 
 Java 7开始引入了一种新的 Fork/Join 线程池，它可以执行一种特殊的任务：把一个大任务拆成多个小任务并行执行，最终汇总每个小任务结果后得到大任务的计算结果。
 
-![image-20220703132244662](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703132244662.png)
+![image-20220703132244662](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703132244662.png)
 
 它同 `ThreadPoolExecutor` 一样，也实现了 `Executor` 和 `ExecutorService` 接口。它使用了一个**无限队列**来保存需要执行的任务，而线程的数量则是通过构造函数传入，如果没有向构造函数中传入指定的线程数量，那么当前计算机可用的CPU数量会被设置为线程数量作为默认值。
 
@@ -2881,7 +2881,7 @@ Java 7开始引入了一种新的 Fork/Join 线程池，它可以执行一种特
 
 实现原理：**双端队列**！从上面和下面都可以去拿到任务去执行！
 
-![image-20220703132607509](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703132607509.png)
+![image-20220703132607509](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703132607509.png)
 
 > 使用 ForkJoin
 
@@ -2978,7 +2978,7 @@ Future 设计的初衷：对将来的某个事件结果进行建模！
 
 其实就是类似前端发送 Ajax 异步请求给后端的过程。
 
-![image-20220703155740306](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220703155740306.png)
+![image-20220703155740306](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220703155740306.png)
 
 平时都使用异步回调**CompletableFuture**。
 
@@ -3107,11 +3107,11 @@ JMM：JAVA内存模型，不存在的东西，是一个概念，也是一个约�
 
 - **unlock（解锁）**：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定；
 
-  ![image-20220704164310803](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704164310803.png)
+  ![image-20220704164310803](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704164310803.png)
 
   当线程 B 也在操作 Flag 时，把 Flag 改为了 false，这时线程 A 中的 Flag 还是 true。线程 A 不能及时可见。
 
-  ![image-20220704164659060](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704164659060.png)
+  ![image-20220704164659060](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704164659060.png)
 
   
   
@@ -3161,11 +3161,11 @@ public class VolatileDemo {
 
 子线程先运行，1s 后主线程把 number 改为了 1，按道理子线程应该退出了循环，在实际上还一直在循环：
 
-![image-20220704170540298](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704170540298.png)
+![image-20220704170540298](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704170540298.png)
 
 把 number 变量加上 valatile 关键字：`private volatile static Integer number = 0;`，即可使变量保证可见。输出结果如下：
 
-![image-20220704170817595](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704170817595.png)
+![image-20220704170817595](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704170817595.png)
 
 ### 17.2 不保证原子性
 
@@ -3232,11 +3232,11 @@ Process finished with exit code 0
 
 先来通过反编译 Java 字节码 分析一下 `add()` 方法中 `number++` 的执行过程，可以发现确实只是简单的 +1，没有保证原子性：
 
-![image-20220704174300804](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704174300804.png)
+![image-20220704174300804](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704174300804.png)
 
 为了保证其具有原子性，需要使用 **原子类** 来解决：
 
-![image-20220704174534023](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220704174534023.png)
+![image-20220704174534023](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704174534023.png)
 
 ```java
 public class VolatileDemo02 {
@@ -3339,7 +3339,7 @@ y = x * x;          //4
 1. 保证特定操作的执行顺序；
 2. 可以保证某些变量的内存可见性（利用这些特性，就可以保证 volatile 实现的可见性）
 
-![image-20200812220019582](https://img-service.csdnimg.cn/img_convert/85fa53d83ee4f89d5a7202e9e5a98987.png)
+![image-20200812220019582](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/85fa53d83ee4f89d5a7202e9e5a98987.png)
 
 ### 17.4 总结
 
@@ -3725,7 +3725,7 @@ private LazySingle() {
 
 再次运行，可以发现，当使用反射第二次创建对象时，就会抛出异常：
 
-![image-20220705103913425](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705103913425.png)
+![image-20220705103913425](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705103913425.png)
 
 但是，如果把反射方式放在 `getInstance()` 前面或者两次都使用反射来创建对象，还是会破坏单例模式的安全性。
 
@@ -3780,7 +3780,7 @@ private LazySingle() {
 
 查看反射的 `newInstance()` 方法，在源码中可以发现一个异常，说的是 “不能用反射创建枚举对象”：
 
-![image-20220705110707642](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705110707642.png)
+![image-20220705110707642](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705110707642.png)
 
 所以枚举类型的单例模式，可以解决反射带来的问题。
 
@@ -3825,13 +3825,13 @@ class Test {
 
 运行，发现如下错误：
 
-![image-20220705112528441](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705112528441.png)
+![image-20220705112528441](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705112528441.png)
 
 很明显这不是我们想要的异常，它显示没有这个方法，说明枚举类 EnumSingle 的构造方法不是无参数的。
 
 我们先看一下生成的 .class 文件，发现确实是无参构造器啊，但结合异常来看，这并不是真实的：
 
-![image-20220705112755170](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705112755170.png)
+![image-20220705112755170](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705112755170.png)
 
 使用 `javap -p` 指令，查看反编译后的代码，发现还是无参构造：
 
@@ -3893,7 +3893,7 @@ class Test {
 
 输出，这才是我们想要的：
 
-![image-20220705113612873](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705113612873.png)
+![image-20220705113612873](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705113612873.png)
 
 
 
@@ -3957,11 +3957,11 @@ public class CASDemo {
 
 因为是修改工作内存中的 value 值，所以 value 是用 volatile 修饰的，保证了多线程之间的可见性和避免指令重排。
 
-![image-20220705144418886](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705144418886.png)
+![image-20220705144418886](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705144418886.png)
 
 点击 `getAndAddInt` ，通过分析发现，如果 object(AtomicInteger) 内的 value 和 expect 相等，就证明没有其他线程改变过这个变量，那么就更新它为 update，如果这一步的 CAS 没有成功，那就采用自旋的方式继续进行CAS操作。这个操作是一个 do-while 循环，通过 CAS 一直进行比较，直到成功才退出循环，这就是一个自旋锁。
 
-![image-20220705151848415](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705151848415.png)
+![image-20220705151848415](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705151848415.png)
 
 > 总结
 
@@ -3979,7 +3979,7 @@ CAS：比较当前工作内存中的值 和 主内存中的值，如果这个值
 
 > 什么是 ABA 问题
 
-![image-20200812220441615](https://img-service.csdnimg.cn/img_convert/4b9db8d951df5271f214561766442910.png)
+![image-20200812220441615](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/4b9db8d951df5271f214561766442910.png)
 
 线程1：期望值是1，要变成2；
 
@@ -4050,7 +4050,7 @@ Process finished with exit code 0
 
 1. 看 `compareAndSet` 的源码，里面是使用 `==` 进行比较的
 
-   ![image-20220705165140150](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705165140150.png)
+   ![image-20220705165140150](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705165140150.png)
 
 2. 由于 `new AtomicStampedReference<>` 的时候声明泛型 ，肯定是使用的装箱类，这个时候传入值类型将会自动装箱
 
@@ -4290,13 +4290,13 @@ class Phone2 {
 
 而为了让当前线程 “稍等一下”，我们需让当前线程进行自旋，如果在自旋完成后，前面锁定同步资源的线程已经释放了锁，那么当前线程就可以不必阻塞而是直接获取同步资源，从而避免切换线程的开销。这就是自旋锁（Spin Lock）。
 
-![image-20220705173338234](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705173338234.png)
+![image-20220705173338234](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705173338234.png)
 
 自旋锁本身是有缺点的，它不能代替阻塞。自旋等待虽然避免了线程切换的开销，但它要占用处理器时间。如果锁被占用的时间很短，自旋等待的效果就会非常好。反之，如果锁被占用的时间很长，那么自旋的线程只会白浪费处理器资源。所以，自旋等待的时间必须要有一定的限度，如果自旋超过了限定次数（默认是 10 次，可以使用 -XX:PreBlockSpin 来更改）没有成功获得锁，就应当挂起线程。
 
 自旋锁的实现原理同样也是 CAS，AtomicInteger 中调用 unsafe 进行自增操作的源码中的 do-while 循环就是一个自旋操作，如果修改数值失败则通过循环来执行自旋，直至修改成功。
 
-![image-20220705173523969](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705173523969.png)
+![image-20220705173523969](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705173523969.png)
 
 
 
@@ -4396,9 +4396,9 @@ Process finished with exit code 0
 
 下图为 `ReentrantReadWriteLock` 的部分源码：
 
-![image-20220705203123157](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705203123157.png)
+![image-20220705203123157](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705203123157.png)
 
-![image-20220705203142543](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705203142543.png)
+![image-20220705203142543](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705203142543.png)
 
 看到 `ReentrantReadWriteLock` 有两把锁：`ReadLock` 和 `WriteLock`，由词知意，一个读锁一个写锁，合称 “读写锁”。再进一步观察可以发现 `ReadLock` 和 `WriteLock` 是靠内部类 `Sync` 实现的锁。`Sync` 是 AQS 的一个子类，这种结构在 `CountDownLatch`、`ReentrantLock`、`Semaphore` 里面也都存在。
 
@@ -4408,7 +4408,7 @@ Process finished with exit code 0
 
 死锁是指两个或两个以上的线程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。
 
-![image-20200812214548908](https://img-service.csdnimg.cn/img_convert/707c1f0130ce66a3ecb13ca178a881cc.png)
+![image-20200812214548908](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/707c1f0130ce66a3ecb13ca178a881cc.png)
 
 ```java
 public class DeadLockDemo {
@@ -4451,7 +4451,7 @@ class MyThread implements Runnable {
 
 输出：
 
-![image-20220705205020174](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220705205020174.png)
+![image-20220705205020174](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705205020174.png)
 
 
 
@@ -4461,7 +4461,7 @@ class MyThread implements Runnable {
 
 命令：`jps -l`
 
-![image-20200812214833647](https://img-service.csdnimg.cn/img_convert/32b977206fd43d9cd67cf7bf432b13e6.png)
+![image-20200812214833647](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/32b977206fd43d9cd67cf7bf432b13e6.png)
 
 **2、使用`jstack` 进程进程号 找到死锁信息**
 
@@ -4469,7 +4469,7 @@ class MyThread implements Runnable {
 
 **一般情况信息在最后：**
 
-![image-20200812214957930](https://img-service.csdnimg.cn/img_convert/814d63935d3d21ed799afcc2eccd20c9.png)
+![image-20200812214957930](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/814d63935d3d21ed799afcc2eccd20c9.png)
 
 
 
