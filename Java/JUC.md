@@ -14,6 +14,8 @@ JUC 就是 `java.util.concurrent` 下面的类包，专门用于多线程的开�
 
 一个进程至少有一个线程，一个进程可以运行多个线程，多个线程可共享数据。
 
+与进程不同的是同类的多个线程共享进程的**堆**和**方法区**资源，但每个线程有自己的**程序计数器**、**虚拟机栈**和**本地方法栈**，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为轻量级进程。
+
 对于 Java 而言：Thread、Runable、Callable 进行开启线程的。
 
 Java 默认有**2个线程**： main线程、GC线程。
@@ -127,17 +129,6 @@ public enum State {
 列举一个卖票的例子。
 
 ```java
-package com.marchsoft.juctest;
-
-import lombok.Synchronized;
-
-/**
- * Description：synchronized
- *
- * @author jiaoqianjin
- * Date: 2020/8/10 21:36
- **/
-
 public class Demo01 {
     public static void main(String[] args) {
         final Ticket ticket = new Ticket();
@@ -866,7 +857,6 @@ class Phone {
         System.out.println("hello");
     }
 }
-
 ```
 
 输出结果：
@@ -1514,7 +1504,7 @@ class MyCallable implements Callable<String>{
 
 
 
-## 8. 常用的辅助类
+## 8. AQS 组件（辅助类）
 
 ### CountDownLatch（减法计数器）
 
@@ -1573,10 +1563,10 @@ public class CyclicBarrier {
 
     private int dowait(boolean timed, long nanos); // 供await方法调用 判断是否达到条件 可以往下执行吗
     
-    // 创建一个新的CyclicBarrier，它将在给定数量的参与方（线程）等待时触发，每执行一次CyclicBarrier就累加1，达到了parties，就会触发barrierAction的执行
+    // 创建一个新的 CyclicBarrier，它将在给定数量的参与方（线程）等待时触发，每执行一次 CyclicBarrier 就累加1，达到了 parties，就会触发 barrierAction 的执行
     public CyclicBarrier(int parties, Runnable barrierAction) ;
     
-    // 创建一个新的CyclicBarrier ，参数就是目标障碍数，它将在给定数量的参与方（线程）等待时触发，每次执行 CyclicBarrier 一次障碍数会加一，如果达到了目标障碍数，才会执行 cyclicBarrier.await()之后的语句
+    // 创建一个新的 CyclicBarrier ，参数就是目标障碍数，它将在给定数量的参与方（线程）等待时触发，每次执行 CyclicBarrier 一次障碍数会加一，如果达到了目标障碍数，才会执行 cyclicBarrier.await() 之后的语句
     public CyclicBarrier(int parties) 
         
     // 返回触发此障碍所需的参与方数量。
@@ -1609,7 +1599,7 @@ public class CyclicBarrierDemo {
         });
 
         for (int i = 1; i <= 7; i++) {
-            // lambda表达式中拿不到i
+            // lambda表达式中拿不到 i
             final int temp = i;
             new Thread(() -> {
                 System.out.println(Thread.currentThread().getName() + " 收集了第 " + temp + " 颗龙珠");
@@ -3915,8 +3905,6 @@ volatile 是不错的机制，但是 volatile 不能保证原子性。因此对�
 
 
 
-
-
 CAS 全称是 compare and swap（比较并交换），是一种无锁算法。在不使用锁（没有线程被阻塞）的情况下实现多线程之间的变量同步。CAS 操作包含三个操作数 —  内存位置、预期数值和新值。
 
 CAS  的实现逻辑是将内存位置处的数值与预期数值想比较，若相等，则将内存位置处的值替换为新值。若不相等，则不做任何操作。
@@ -3951,7 +3939,7 @@ public class CASDemo {
     }
 ```
 
-点击 `unsafe` 对象，在 AtomicInteger 数据定义的部分，我们还获取了 unsafe 实例，并且定义了 valueOffset。再看到 static 块，懂类加载过程的都知道，static 块的加载发生于类加载的时候，是最先初始化的，这时候我们调用 unsafe 的 objectFieldOffset 从 Atomic 类文件中获取 value 的偏移量，那么 valueOffset 其实就是记录 value 值在内存中的偏移地址。
+点击 `unsafe` 对象，在 AtomicInteger 数据定义的部分，我们还获取了 unsafe 实例，并且定义了 valueOffset。再看到 static 块，懂类加载过程的都知道，static 块的加载发生于类加载的时候，是最先初始化的，这时候我们调用 unsafe 的 `objectFieldOffset()` 方法（本地方法）从 Atomic 类文件中获取 value 的偏移量，那么 valueOffset 其实就是记录 value 值在内存中的偏移地址，即原来 value 的内存地址。
 
 有了value在工作内存中的偏移地址之后，我们就可以用unsafe直接操作这个地址了，通过这个地址我们可以获取原值，也可以写入新值。
 
@@ -3985,7 +3973,7 @@ CAS：比较当前工作内存中的值 和 主内存中的值，如果这个值
 
 线程2：先把1变成了3，又把3变回了1；
 
-所以对于线程1来说，A的值还是1，此1已经不是原来的1了，所以就出现了问题：
+如果线程1先拿到A（此时为1），把A变成2之前线程2进来了，一顿操作，把A值先改为3，又改回1（相当于还原了）。 之后线程1终于要来操作A了，要把A的值改为2，此时对于线程1来说，A 的值还是 1，所以CAS 成功，但此1已经不是原来的1了，所以就出现了问题。
 
 - 如果是基本类型不会产生影响，但是如果是引用类型，Java是值传递，就会有影响了，传递的值可能没变但是引用的对象可能变了，所以骗过了线程1；
 
@@ -4056,13 +4044,13 @@ Process finished with exit code 0
 
 3. 自动装箱的后果就是地址不一致，使用 `==` 判断的结果就为 `false`，则更新值都失败了
 
-4. 总结：最好不使用原子类型，使用原子类型得保证比较时候传入的为同一个装箱类
+4. 总结：泛型最好不为包装类型，使用包装类型得保证比较时候传入的为同一个装箱类；可以为引用类型，重写 equals 方法。
 
 如何才能保证传入的值是同一个装箱类？
 
 - 拿 `Integer` 来说，在 Integer 中，使用了对象缓存机制，默认范围是 -128~127，如果超出了这个范围，就会创建新的对象，这个对象和之前的对象地址就不一样。所以需要控制数值范围。
 
-- 在区间内的 `Integer` 类型的值可以直接使用 `==` 进行判断，但是在区间外的值需要使用 `equals()` 方法进行判断。
+- 在区间内的 `Integer` 类型的值可以直接使用 `==` 进行判断，但是在区间外的值需要使用 `equals()` 方法进行判断。例如，原子引用的类型为 String，由于 String 重写了 equals() 方法，比较的还是值，所以不会出现上面的坑。
 
 
 
@@ -4408,54 +4396,125 @@ Process finished with exit code 0
 
 死锁是指两个或两个以上的线程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。
 
-![image-20200812214548908](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/707c1f0130ce66a3ecb13ca178a881cc.png)
+![image-20220727132304102](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220727132304102.png)
+
+示例：
 
 ```java
 public class DeadLockDemo {
+    private static Object resource1 = new Object();//资源 1
+    private static Object resource2 = new Object();//资源 2
+
     public static void main(String[] args) {
-        String lockA = "lockA";
-        String lockB = "lockB";
-
-        new Thread(new MyThread(lockA, lockB), "T1").start();
-        new Thread(new MyThread(lockB, lockA), "T2").start();	// 注意这里参数位置
-    }
-}
-
-class MyThread implements Runnable {
-    private String lockA;
-    private String lockB;
-
-    public MyThread(String lockA, String lockB) {
-        this.lockA = lockA;
-        this.lockB = lockB;
-    }
-
-    @Override
-    public void run() {
-        synchronized (lockA) {
-            System.out.println(Thread.currentThread().getName() + lockA + " ===> get" + lockB);
-
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        new Thread(() -> {
+            synchronized (resource1) {
+                System.out.println(Thread.currentThread() + "get resource1");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread() + "waiting get resource2");
+                synchronized (resource2) {
+                    System.out.println(Thread.currentThread() + "get resource2");
+                }
             }
+        }, "线程 1").start();
 
-            synchronized (lockB) {
-                System.out.println(Thread.currentThread().getName() + lockB+" ===> get" + lockA);
+        new Thread(() -> {
+            synchronized (resource2) {
+                System.out.println(Thread.currentThread() + "get resource2");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread() + "waiting get resource1");
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
+                }
             }
-        }
+        }, "线程 2").start();
     }
 }
 ```
 
 输出：
 
-![image-20220705205020174](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220705205020174.png)
+```text
+Thread[线程 1,5,main]get resource1
+Thread[线程 2,5,main]get resource2
+Thread[线程 1,5,main]waiting get resource2
+Thread[线程 2,5,main]waiting get resource1
+```
+
+线程 A 通过 `synchronized (resource1)` 获得 `resource1` 的监视器锁，然后通过`Thread.sleep(1000);`让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。
+
+上面的例子符合产生死锁的四个必要条件：
+
+1. 互斥条件：该资源任意一个时刻只由一个线程占用。
+2. 请求与保持条件：一个线程因请求资源而阻塞时，对已获得的资源保持不放。
+3. 不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。
+4. 循环等待条件：若干线程之间形成一种头尾相接的循环等待资源关系。
 
 
 
-> 如何解开死锁
+> 如何预防死锁
+
+破坏死锁的产生的必要条件即可：
+
+1. **破坏请求与保持条件** ：一次性申请所有的资源。
+2. **破坏不剥夺条件** ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。
+3. **破坏循环等待条件** ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。
+
+
+
+> 如何避免死锁
+
+避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。
+
+**安全状态** 指的是系统能够按照某种线程推进顺序（P1、P2、P3.....Pn）来为每个线程分配所需资源，直到满足每个线程对资源的最大需求，使每个线程都可顺利完成。称<P1、P2、P3.....Pn>序列为安全序列。
+
+我们对线程 2 的代码修改成下面这样就不会产生死锁了。
+
+```java
+        new Thread(() -> {
+            // 和线程1 一样，先获取resource1，再获取 resource2
+            synchronized (resource1) {
+                System.out.println(Thread.currentThread() + "get resource1");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread() + "waiting get resource2");
+                synchronized (resource2) {
+                    System.out.println(Thread.currentThread() + "get resource2");
+                }
+            }
+        }, "线程 2").start();
+```
+
+输出：
+
+```text
+Thread[线程 1,5,main]get resource1
+Thread[线程 1,5,main]waiting get resource2
+Thread[线程 1,5,main]get resource2
+Thread[线程 2,5,main]get resource1
+Thread[线程 2,5,main]waiting get resource2
+Thread[线程 2,5,main]get resource2
+
+Process finished with exit code 0
+```
+
+分析一下上面的代码为什么避免了死锁的发生?
+
+线程 1 首先获得到 resource1 的监视器锁，这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。
+
+
+
+> 如何排解死锁
 
 **1、使用jps定位进程号，jdk的bin目录下： 有一个jps**
 

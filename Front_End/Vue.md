@@ -1,13 +1,10 @@
-# Vue
-
 ## 1. 概述
 
-- Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的**渐进式JavaScript框架**，发布于2014年2月。
-- 与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。
+- Vue (读音 /vjuː/，类似于 view) 是一套用于 **构建用户界面** 的 **渐进式** JavaScript框架，发布于2014年2月。
+- 与其它大型框架不同的是，Vue 被设计为可以 **自底向上逐层应用**。
+- 采用 **组件化** 模式，提高代码复用率，且让代码更好维护。
+- **声明式** 编码，让编码人员无需直接操作 DOM，提高开发效率。
 - **Vue 的核心库只关注视图层**，方便与第三方库（如：`vue-router:跳转`，`vue-resource:通信`，`vuex:管理`)或既有项目整合。
-- 官网：[https://cn.vuejs.org/v2/guide/](https://gitee.com/link?target=https%3A%2F%2Fcn.vuejs.org%2Fv2%2Fguide%2F)
-
-- https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2FTencent%2Fweui)
 
 
 
@@ -123,18 +120,18 @@
 
 #### 2.1.1 什么是MVVM
 
-MVVM（Model-View-ViewModel）是一种软件设计模式，由微软WPF（用于替代WinForm，以前就是用这个技术开发桌面应用程序的）和Silverlight（类似于Java Applet，简单点说就是在浏览器上运行WPF）的架构师Ken Cooper和Ted Peters开发，是一种简化用户界面的**事件驱动编程方式**。由John Gossman（同样也是WPF和Sliverlight的架构师）与2005年在他的博客上发表。
+MVVM（Model-View-ViewModel）是一种软件设计模式，由微软WPF（用于替代WinForm，以前就是用这个技术开发桌面应用程序的）和Silverlight（类似于Java Applet，简单点说就是在浏览器上运行WPF）的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的**事件驱动编程方式**。由John Gossman（同样也是 WPF 和 Sliverlight 的架构师）与2005年在他的博客上发表。
 
-MVVM源自于经典的MVC（Model-View-Controller）模式。MVVM的核心是ViewModel层，负责转换Model中的数据对象来让数据变得更容易管理和使用。其作用如下：
+MVVM 源自于经典的 MVC（Model-View-Controller）模式。MVVM的核心是ViewModel层，负责转换Model中的数据对象来让数据变得更容易管理和使用。其作用如下：
 
 - 该层向上与视图层进行双向数据绑定
-- 向下与Model层通过接口请求进行数据交互
+- 向下与 Model 层通过接口请求进行数据交互
 
-MVVM已经相当成熟了，主要运用但不仅仅在网络应用程序开发中。当下流行的MVVM框架有`Vue.js`，`Anfular JS`
+MVVM 已经相当成熟了，主要运用但不仅仅在网络应用程序开发中。当下流行的 MVVM 框架有 `Vue.js`，`Anfular JS`
 
 #### 2.1.2 为什么要使用MVVM
 
-MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（Model），有几大好处
+MVVM 模式和 MVC模 式一样，主要目的是分离视图（View）和模型（Model），有几大好处
 
 - **低耦合**：视图（View）可以独立于Model变化和修改，一个ViewModel可以绑定到不同的View上，当View变化的时候Model可以不变，当Model变化的时候View也可以不变。
 - **可复用**：你可以把一些视图逻辑放在一个ViewModel里面，让很多View重用这段视图逻辑。
@@ -145,33 +142,37 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 **View:**
 
-  View是视图层， 也就是用户界面。前端主要由HTH L和csS来构建， 为了更方便地展现vi eu to  del或者Hodel层的数据， 已经产生了各种各样的前后端模板语言， 比如FreeMarker，Thyme leaf等等， 各大MV  VM框架如Vue.js.Angular JS， EJS等也都有自己用来构建用户界面的内置模板语言。
+  View 是视图层， 也就是用户界面。前端主要由 HTML 和 CSS 来构建， 为了更方便地展现 View 或者 Model 层的数据， 已经产生了各种各样的前后端模板语言， 比如 FreeMarker，Thymeleaf 等等， 各大 MV VM 框架如 Vue.js，Angular JS， EJS 等也都有自己用来构建用户界面的内置模板语言。
 
 **Model:**
 
-  Model是指数据模型， 泛指后端进行的各种业务逻辑处理和数据操控， 主要围绕数据库系统展开。这里的难点主要在于需要和前端约定统一的接口规则
+  Model 是指数据模型， 泛指后端进行的各种业务逻辑处理和数据操控， 主要围绕数据库系统展开。这里的难点主要在于需要和前端约定统一的接口规则
 
 **ViewModel:**
 
-  ViewModel是由前端开发人员组织生成和维护的视图数据层。在这一层， 前端开发者对从后端获取的Model数据进行转换处理， 做二次封装， 以生成符合View层使用预期的视图数据模型。  需要注意的是View Model所封装出来的数据模型包括视图的状态和行为两部分， 而Model层的数据模型是只包含状态的
+  ViewModel 是由前端开发人员组织生成和维护的视图数据层。在这一层， 前端开发者对从后端获取的 Model 数据进行转换处理， 做二次封装， 以生成符合 View 层使用预期的视图数据模型。  需要注意的是View Model 所封装出来的数据模型包括视图的状态和行为两部分， 而Model层的数据模型是只包含状态的 
 
 - 比如页面的这一块展示什么，那一块展示什么这些都属于视图状态(展示)
 - 页面加载进来时发生什么，点击这一块发生什么，这一块滚动时发生什么这些都属于视图行为(交互)
 
-  视图状态和行为都封装在了View Model里。这样的封装使得View Model可以完整地去描述View层。由于实现了双向绑定，  View Model的内容会实时展现在View层， 这是激动人心的， 因为前端开发者再也不必低效又麻烦地通过操纵DOM去更新视图。  MVVM框架已经把最脏最累的一块做好了， 我们开发者只需要处理和维护View Model， 更新数据视图就会自动得到相应更新，真正实现`事件驱动编程`。  View层展现的不是`Model`层的数据， 而是`ViewModel`的数据， 由`ViewModel`负责与`Model`层交互， 这就**完全解耦了View层和Model层， 这个解耦是至关重要的， 它是前后端分离方案实施的重要一环。**
+  视图状态和行为都封装在了View Model里。这样的封装使得 View Model可 以完整地去描述 View 层。由于实现了双向绑定，  View Model的内容会实时展现在 View 层， 这是激动人心的， 因为前端开发者再也不必低效又麻烦地通过操纵 DOM 去更新视图。  MVVM 框架已经把最脏最累的一块做好了， 我们开发者只需要处理和维护View Model， 更新数据视图就会自动得到相应更新，真正实现`事件驱动编程`。  View层展现的不是`Model`层的数据， 而是`ViewModel`的数据， 由`ViewModel`负责与`Model`层交互， 这就**完全解耦了View层和Model层， 这个解耦是至关重要的， 它是前后端分离方案实施的重要一环。**
 
 #### 2.2.3 MVVM模式的实现者
 
-- Model：模型层， 在这里表示JavaScript对象
-- View：视图层， 在这里表示DOM(HTML操作的元素)
-- ViewModel：连接视图和数据的中间件， `Vue.js`就是MVVM中的View Model层的实现者
+- Model：模型层， 在这里表示 JavaScript 对象
+- View：视图层， 在这里表示 DOM (HTML操作的元素)
+- ViewModel：连接视图和数据的中间件， `Vue.js ` 就是 MVVM 中的 View Model 层的实现者
 
-在MVVM架构中， 是**不允许数据和视图直接通信**的， 只能通过ViewModel来通信， 而View Model就是定义了一个Observer观察者
+在 MVVM 架构中， 是**不允许数据和视图直接通信**的， 只能通过ViewModel来通信， 而View Model就是定义了一个 Observer 观察者
 
-- ViewModel能够观察到数据的变化， 并对视图对应的内容进行更新
-- ViewModel能够监听到视图的变化， 并能够通知数据发生改变
+- ViewModel 能够观察到数据的变化， 并对视图对应的内容进行更新
+- ViewModel 能够监听到视图的变化， 并能够通知数据发生改变
 
-至此， 我们就明白了， `Vue.js`就是一个MV VM的实现者， 他的核心就是实现了DOM监听与数据绑定
+至此， 我们就明白了， `Vue.js ` 就是一个 MV VM 的实现者， 他的核心就是实现了 **DOM 监听** 与 **数据绑定**：
+
+![image-20220725235848798](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220725235848798.png)
+
+
 
 ### 2.3 第一个Vue程序
 
@@ -181,7 +182,7 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 - 开发版本
   - 包含完整的警告和调试模式：https://yuejs.org/js/vue.js
-  - 删除了警告， 30.96KBmin+gzip：https://vuejs.org/js/vue.min.js
+  - 删除了警告， 30.96KB min：https://vuejs.org/js/vue.min.js
 - CDN
   - `<script src=“https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js”></script>`
   - `<script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>`
@@ -217,10 +218,10 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 ```vue
  <script type="text/javascript">
      var vm = new Vue({
-         el:"#app",
+         el: "#app",
          /*Model：数据*/
          data:{
-             message:"hello,vue!"
+             message: "hello,vue!"
          }
      });
  </script>
@@ -234,13 +235,23 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 **4、将数据绑定到页面元素**
 
 ```vue
-<!--view层，模板-->
+ <!--view层，模板-->
  <div id="app">
-     {{message}}
+     {{ message }}
  </div>
 ```
 
-说明：只需要在绑定的元素中使用双花括号将Vue创建的名为message属性包裹起来， 即可实现数据绑定功能， 也就实现了`View Model`层所需的效果， 是不是和EL表达式非常像?
+说明：只需要在绑定的元素中使用双花括号将 Vue 创建的名为 message 属性包裹起来， 即可实现数据绑定功能， 也就实现了 `View Model`层 所需的效果， 是不是和 EL 表达式非常像？
+
+`{{ }}` 中可以写表达式，js代码（语句）：
+
+```vue
+ <div id="app">
+     {{ message.toUpperCase() }}	<!-- 将message转为大写-->
+ </div>
+```
+
+
 
 ### 2.3 完整的HTML
 
@@ -259,7 +270,7 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
     {{message}}
 </div>
 
-<!--1.导入Vue.js-->
+<!--导入Vue.js-->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
 <script type="text/javascript">
     var vm = new Vue({
@@ -274,13 +285,67 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 </html>
 ```
 
+
+
+
+
+> el 与 data 两种写法
+
+`el` 属性可以使用 Vue 示例中的 `$mount()` 方法来代替，这种写法更加灵活，如下：
+
+```vue
+<script type="text/javascript">
+    var vm = new Vue({
+        // el: "#app",
+        /*Model：数据*/
+        data: {
+            message: "hello,vue!"
+        }
+    });
+    
+    // 1s 后再与模板中的 root 关联
+    setTimeout(() => {
+        vm.$mount("#root")
+    }, 1000);
+</script>
+```
+
+
+
+`data` 除了使用对象式写法外，还可以使用函数式写法，如下：
+
+```vue
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        
+        /*Model：数据*/
+        // data: {
+        //    message: "hello,vue!"
+        // }
+        
+        data: function() {
+          return {
+              message: "hello,vue!"
+          }
+      }
+    });
+</script>
+```
+
+在后面使用组件的时候，`data` 必须写成函数式写法，非则会报错。
+
+由 Vue 管理的函数，一定不要写箭头函数 `=>`，否则得到的 this 对象是 Windows 对象，而不是 Vue 对象。
+
+
+
 ### 2.4 测试
 
-为了能够更直观的体验Vue带来的数据绑定功能， 我们需要在浏览器测试一番， 操作流程如下：
+为了能够更直观的体验 Vue 带来的数据绑定功能， 我们需要在浏览器测试一番， 操作流程如下：
 
-1. 在浏览器上运行第一个Vue应用程序， 进入开发者工具
-2. 在控制台输入`vm.message=‘HelloWorld’`， 然后回车， 你会发现浏览器中显示的内容会直接变成HelloWorld
-3. 此时就可以在控制台直接输入`vm.message`来修改值， 中间是可以**省略data**的， 在这个操作中，并**没有主动操作DOM**， 就让页面的内容发生了变化，这就是借助了Vue的数据绑定功能实现的；MV VM模式中要求View  Model层就是使用观察者模式来实现数据的监听与绑定，以做到数据与视图的快速响应。
+1. 在浏览器上运行第一个 Vue 应用程序， 进入开发者工具
+2. 在控制台输入 `vm.message=‘HelloWorld’`， 然后回车， 你会发现浏览器中显示的内容会直接变成 HelloWorld
+3. 此时就可以在控制台直接输入 `vm.message` 来修改值， 中间是可以 **省略data** 的， 在这个操作中，并**没有主动操作 DOM**， 就让页面的内容发生了变化，这就是借助了Vue的数据绑定功能实现的；MV VM模式中要求 View  Model 层就是使用观察者模式来实现数据的监听与绑定，以做到数据与视图的快速响应。
 
 
 
@@ -288,9 +353,9 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 ## 3. Vue基础语法
 
-### 3.1 v-bind指令
+### 3.1 v-bind 单向绑定
 
-- 我们已经成功创建了第一个Vue应用！看起来这跟渲染一个字符串模板非常类似，但是Vue在背后做了大量工作。现在数据和DOM已经被建立了关联，所有东西都是响应式的。我们在控制台操作对象属性，界面可以实时更新!
+- 我们已经成功创建了第一个Vue应用！看起来这跟渲染一个字符串模板非常类似，但是Vue在背后做了大量工作。现在数据和DOM已经被建立了关联，所有东西都是响应式的。我们在控制台操作对象属性，界面可以实时更新！
 
 - 我们还可以使用`v-bind`来绑定元素特性
 
@@ -307,7 +372,7 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
   <!--view层，模板-->
   <div id="app">
       <span v-bind:title="message">
-      鼠标悬停几秒钟查看此处动态绑定的提示信息！
+      	鼠标悬停几秒钟查看此处动态绑定的提示信息！
     </span>
   </div>
   
@@ -330,13 +395,15 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 
 
-- 你看到的v-bind等被称为指令。指令带有前缀v以表示它们是Vue提供的特殊特性。可能你已经猜到了， 它们会在渲染的DOM上应用特殊的响应式行为在这里，该指令的意思是：“将这个元素节点的title特性和Vue实例的message属性保持一致”。
+- 你看到的 `v-bind  `等被称为指令。指令带有前缀 v 以表示它们是 Vue 提供的特殊特性。可能你已经猜到了， 它们会在渲染的 DOM 上应用特殊的响应式行为在这里，该指令的意思是：“将这个元素节点的 title 特性和 Vue 实例的 message 属性保持一致”。
 
   ![](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1bfafbc187e51d0ee9ed734095126b0b.png)
 
-- 如果你再次打开浏览器的JavaScript控制台， 输入`app.message=‘新消息’`，就会再一次看到这个绑定了title特性的HTML已经进行了更新。
+- 如果你再次打开浏览器的 JavaScript 控制台， 输入 `app.message=‘新消息’`，就会再一次看到这个绑定了 title 特性的 HTML 已经进行了更新。
 
-### 3.2 v-if，v-else
+- `v-bind` 实现的是单向绑定，双向绑定可以使用 `v-model`，后面会讲。
+
+### 3.2 v-if、v-else
 
 ```html
 <!DOCTYPE html>
@@ -464,11 +531,11 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 
 
-### 3.5 v-on
+### 3.5 v-on 监听事件
 
-- `v-on`监听事件
+- `v-on` 监听事件
 
-- 事件有Vue的事件、和前端页面本身的一些事件!我们这里的`click`是vue的事件， 可以绑定到Vue中的`methods`中的方法事件
+- 事件有Vue的事件、和前端页面本身的一些事件！我们这里的 `click ` 是 Vue 的事件， 可以绑定到 Vue 中的 `methods` 中的方法事件
 
   ```html
   <!DOCTYPE html>
@@ -480,8 +547,9 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
   <body>
   <div id="app">
       <button v-on:click="sayHi">clickMe</button>
+      <!-- 简写成 @ -->
+      <button @click="sayHi">clickMe</button>
   </div>
-  
   
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
   <script>
@@ -492,6 +560,7 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
           },
           methods:{
               sayHi: function () {
+                  // this 是 Vue 实例 vm
                   alert(this.message);
               }
           }
@@ -503,7 +572,115 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 
 
+### 补充：事件修饰符
 
+有时候我们希望在触发事件的时候执行或不执行某种操作，这时就需要用到时间修饰符了。
+
+Vue 中的事件修饰符：
+
+- prevent：阻止默认事件（常用）
+- stop：阻止事件冒泡（常用）
+- once：事件只触发一次（常用）
+- capture：使用事件的捕获模式
+- self：只有 event.target 是当前操作的元素时才触发事件
+- passive：事件的默认行为立即执行，无需等待事件回调执行完毕
+
+事件修饰符直接在 `v-on:xxx` 后用 `.` 连接，例如：`@click.prevent="sayHi"`，支持 “链式编程”。
+
+示例：
+
+```vue
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="root">
+  <!-- 阻止默认事件：点击链接，先弹出弹窗，点击确定后，本来默认应该进入百度主页的，但是被阻止了 -->
+  <a href="https://www.baidu.com" @click.prevent="showInfo">点我进入百度主页</a>
+
+  <!-- 阻止事件冒泡：div和button都有相同的点击事件，点一下本来会弹2此窗，用了.stop就只会弹1次了，阻止了div的冒泡 -->
+  <div style="margin-top: 20px" @click="showInfo">
+    <button @click.stop="showInfo">点我提示信息</button>
+  </div>
+
+  <!-- 事件只触发一次：只有点第一次的时候才会有弹窗 -->
+  <button @click.once="showInfo">点我提示信息</button>
+</div>
+
+<script>
+  const vm = new Vue({
+    el: '#root',
+    data: {
+      name: 'AruNi'
+    },
+    methods: {
+      showInfo() {
+        alert('我是弹窗！！')
+      }
+    }
+  });
+</script>
+</body>
+</html>
+```
+
+
+
+### 补充：键盘事件
+
+Vue 中常用案件别名：
+
+- enter：回车键
+- delete：删除和退格键
+- esc：退出
+- space：空格
+- tab：换行（特殊，要配合 `@keydown` 使用）
+- up：上
+- down：下
+- left：左
+- right：右
+
+直接在 `v-on:xxx` 后用 `.` 连接即可。
+
+示例：
+
+```vue
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+<div id="root">
+  <!-- Vue写法：加上.enter 只有当输入回车时才提示输入的信息 -->
+  <input type="text" placeholder="按下回车键提示输入信息" @keyup.enter="showInfo">
+</div>
+
+<script>
+  const vm = new Vue({
+    el: '#root',
+    data: {
+
+    },
+    methods: {
+      showInfo(event) {
+        // 原生写法：当输入的键不为13(回车键编码)，直接return，防止按一个键提示一个键
+        // if (event.keyCode !== 13) return
+        alert(event.target.value)
+      }
+    }
+  });
+</script>
+</body>
+</html>
+```
 
 ## 4. 表单双绑
 
@@ -525,9 +702,9 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 
 ### 4.1 在表单中使用双向数据绑定
 
-  你可以用`v-model`指令在表单`<input>`、`<textarea>`及`<select>`元素上创建双向数据绑定。它会根据控件类型自动选取正确的方法来更新元素。尽管有些神奇， 但`v-model`本质上不过是语法糖。它负责监听用户的输入事件以更新数据，并对一些极端场景进行一些特殊处理。  
+你可以用 `v-model` 指令在表单 `<input>`、`<textarea>` 及 `<select>` 元素上创建双向数据绑定。它会根据控件类型自动选取正确的方法来更新元素。尽管有些神奇， 但 `v-model` 本质上不过是语法糖。它负责监听用户的输入事件以更新数据，并对一些极端场景进行一些特殊处理。  
 
-注意：`v-model`会忽略所有表单元素的`value`、`checked`、`selected`特性的初始值而总是将`Vue`实例的数据作为数据来源。你应该通过`JavaScript`在组件的`data`选项中声明初始值!
+注意：`v-model` 会忽略所有表单元素的 `value`、`checked`、`selected` 特性的初始值而总是将 `Vue` 实例的数据作为数据来源。你应该通过 `JavaScript` 在组件的 `data` 选项中声明初始值！
 
 #### 4.1.1 单行文本
 
@@ -723,7 +900,7 @@ MVVM模式和MVC模式一样，主要目的是分离视图（View）和模型（
 </html>
 ```
 
-  注意：`v-model`表达式的初始值未能匹配任何选项，元系将被渲染为“未选中”状态。 在iOS中， 这会使用户无法选择第一个选项，因为这样的情况下，iOS不会触发`change`事件。因此，更推荐像上面这样提供一个值为空的禁用选项。
+  注意：`v-model` 表达式的初始值未能匹配任何选项，元系将被渲染为“未选中”状态。 在 iOS 中， 这会使用户无法选择第一个选项，因为这样的情况下，iOS 不会触发 `change` 事件。因此，更推荐像上面这样提供一个值为空的禁用选项。
 
 ## 5. 组件
 
@@ -1033,7 +1210,13 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 
 ### 7.1 计算属性
 
-计算属性的重点突出在`属性`两个字上(属性是名词)，首先它是个`属性`其次这个属性有`计算`的能力(计算是动词)，这里的`计算`就是个函数：简单点说，它就是一个能够将计算结果缓存起来的属性(将行为转化成了静态的属性)，仅此而已；可以想象为缓存!
+计算属性的重点突出在 `属性` 两个字上 (属性是名词)，首先它是个 `属性`，其次这个属性有 `计算` 的能力 (计算是动词)，这里的 `计算` 就是个函数。
+
+简单点说，它就是一个能够将计算结果缓存起来的属性 (将行为转化成了静态的属性)，仅此而已；可以想象为缓存，若多个地方需要这个属性，不会每次都计算一遍。
+
+不用担心缓存与实际不一致问题，每次被依赖的数据发生变化时，都会重新计算一次，更新缓存。
+
+其实不使用计算属性，用纯 JS 也能实现，但是 Vue 的计算属性具有缓存的功能。
 
 **示例:**
 
@@ -1047,10 +1230,10 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 <body>
 
 <div id="app">
-    <!--methods中的对象是方法，要加()，通过方法来调用-->
+    <!-- methods中的对象是方法，要加()，通过方法来调用 -->
     <p>currentTime1: {{currentTime1()}}</p>
 
-    <!--computed中的对象是属性，不加()，通过属性直接查看-->
+    <!-- computed中的对象是属性，不加()，通过属性直接查看 -->
     <p>currentTime2: {{currentTime2}}</p>
 </div>
 
@@ -1064,11 +1247,11 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
         },
         methods: {
             currentTime1: function () {
-                return Date.now();      //返回当前时间戳
+                return Date.now();      // 返回当前时间戳
             }
         },
 
-        //计算属性；methods和computed方法名不能重名，重名只会调用methods的方法
+        // 计算属性；methods 和 computed 方法名不能重名，重名只会调用 methods 的方法
         computed: {
             currentTime2: function () {
                 this.message;
@@ -1081,21 +1264,96 @@ GitHub：[https://github.com/axios/axios](https://gitee.com/link?target=https%3A
 </html>
 ```
 
-注意：methods和computed里的东西不能重名 
+注意：methods 和 computed 里的东西不能重名 
 
 说明：
 
-- methods：定义方法， 调用方法使用currentTime1()， 需要带括号
-- computed：定义计算属性， 调用属性使用currentTime2， 不需要带括号：`this.message`是为了能够让currentTime2观察到数据的变化而变化，改变了`this.message`的值（相当于刷新缓存），缓存中的currentTime2的数值才会变化。
-- 如何在方法中的值发生了变化，则缓存就会刷新!可以在控制台使用`vm.message="vue"`， 改变下数据的值，再次测试观察效果
+- methods：定义方法， 调用方法使用 `currentTime1()`， 需要带括号
+- computed：定义计算属性， 调用属性使用 `currentTime2`， 不需要带括号：`this.message` 是为了能够让 `currentTime2` 观察到数据的变化而变化，改变了 `this.message` 的值（计算属性中被依赖的数据发生变化，会刷新缓存），缓存中的 `currentTime2` 的数值发生变化。
+
+
+
+如何在方法中的值发生了变化，则缓存就会刷新，可以在控制台使用 `vm.message="vue"`， 改变下数据的值，再次测试观察效果
 
 ![image-20220327170845483](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/1de69dab228708805ef94cd44b4102d4.png)
 
 
 
-**结论：**调用方法时，每次都需要讲行计算，既然有计算过程则必定产生系统开销，那如果这个结果是不经常变化的呢?此时就可以考虑将这个结果缓存起来，采用计算属性可以很方便的做到这点，**计算属性的主要特性就是为了将不经常变化的计算结果进行缓存，以节约我们的系统开销**
+**结论：**调用方法时，每次都需要讲行计算，既然有计算过程则必定产生系统开销，那如果这个结果是不经常变化的呢？此时就可以考虑将这个结果缓存起来，采用计算属性可以很方便的做到这点，**计算属性的主要特性就是为了将不经常变化的计算结果进行缓存，以节约我们的系统开销**
 
 
+
+### 补充：get() 与 set()
+
+- computed 中默认情况下只有 get，上面写成方法的形式
+- get 方法 是获取值，可以在 get 中给 computed 中定义的变量赋值，即返回当前计算属性值
+- set 方法 是 computed 中定义的变量改变时，会被触发的一个方法
+- 可在 set 方法中做一些操作，如值改变时可以监视当前值并更新
+- set 和 get 并不是只有计算属性中才有，涉及到对象属性或方法获取值（get）时被触发，同时设置值得时候也会触发（set）
+
+若想在计算属性中使用 `get()` 和 `set()` 方法，那么需要将上面的方法写成对象。其实上面那种方法的写法就是只有 get 情况的简写。
+
+示例：
+
+```vue
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="root">
+  姓：<input type="text" v-model="firstName"> <br><br>
+  名：<input type="text" v-model="lastName"> <br><br>
+  全名：<span>{{fullName}}</span>
+</div>
+
+<script>
+  let vm = new Vue({
+    el: '#root',
+    data: {
+      firstName: '张',
+      lastName: '三'
+    },
+    computed: {
+        // 测试 set 方法，写成对象的形式
+        fullName: {
+            get() {
+                console.log('get被调用');
+                return this.firstName + '-' + this.lastName;
+            },
+            
+            // value参数 为 fullName 传进来的值
+            set(value) {
+                console.log('set被调用，传入的参数为：', value);
+                const arr = value.split('-');
+                this.firstName = arr[0];
+                this.lastName = arr[1];
+            }
+        }
+    }
+  });
+</script>
+</body>
+</html>
+```
+
+运行，初始状态，此时 set 还没有被调用，只调用了 get 获取计算属性的值：
+
+![image-20220728003224590](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220728003224590.png)
+
+此时，在控制台修改 `fullName` 的值，触发 set 方法，可以发现，页面的姓和名都随之改变：
+
+![image-20220728003434601](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220728003434601.png)
+
+分析：
+
+- 当 `fullName` 被修改时，调用 set 方法，在 set 方法中通过 `this.firstName = arr[0]; this.lastName = arr[1];` 修改了 vm 实例中的 firstName 和 lastName 属性，所以姓和名发生改变。
+
+- 此时修改了计算属性中被依赖的数据，会刷新缓存，所以全名的位置也变成 `李-四`（并不是因为控制台把 `fullName` 修改成李-四，全名位置才显示的；而是计算属性的缓存重新刷新了，读取到的数据自然也更新了）。
 
 
 

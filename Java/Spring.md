@@ -1,5 +1,3 @@
-# Spring
-
 ## 1. Spring概述
 
 ![image-20220321222854686](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202203251737260.png)
@@ -84,7 +82,7 @@ Spring 框架是一个分层架构，由 7 个定义良好的模块组成。Spri
 
 ## 2. IoC
 
-**IoC（Inverse of Control:控制反转）** 是一种设计思想，而不是一个具体的技术实现。IoC 的思想就是将原本在程序中手动创建对象的控制权，交由 Spring 框架来管理。不过， IoC 并非 Spring 特有，在其他语言中也有应用。
+**IoC（Inverse of Control: 控制反转）** 是一种设计思想，而不是一个具体的技术实现。IoC 的思想就是将原本在程序中手动创建对象的控制权，交由 Spring 框架来管理。不过， IoC 并非 Spring 特有，在其他语言中也有应用。
 
 **为什么叫控制反转？**
 

@@ -1,6 +1,6 @@
-# 1. 初识JVM
+# 初识 JVM
 
-## 1.1 什么是JVM
+## 1. 什么是 JVM
 
 **定义**：Java Virtual Machine，Java程序的运行环境（Java 二进制 字节码的运行环境）。
 
@@ -12,20 +12,223 @@
 
 **比较**：JVM、JRE、JDK的关系如下图所示
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210207154634171.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+![image-20220804195745940](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220804195745940.png)
 
-## 1.2 JVM的组成
+JVM 的位置：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210207155820178.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+![image-20220805144808263](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805144808263.png)
 
-- ClassLoader：Java代码编译成二进制后，会经过类加载器，这样才能加载到JVM中运行。
-- Method Area：类是放在方法区中。
-- Heap：类的实例对象大部分存放在堆区。
-- 当类调用方法时，会用到JVM Stack、PC Register、本地方法栈。
-- 方法执行时的每行代码是由执行引擎中的解释器逐行执行，方法中的热点代码频繁调用的方法，由JIT编译器优化后执行，GC会对堆中不用的对象进行回收。
+## 2. JVM 整体结构
+
+1. HotSpot VM是目前市面上高性能虚拟机的代表作之一。
+2. 它采用解释器与即时编译器并存的架构。
+
+HotSpot VM 结构图：
+
+![image-20220805145026374](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805145026374.png)
+
+- ClassLoader：Java 代码编译成 Class 字节码后，会经过类加载器，这样才能加载到 JVM 中运行。
+- Method Area：类是放在方法区中。这是共享的。
+- Heap：类的实例对象大部分存放在堆区。这是共享的。
+- 当类调用方法时，会用到 JVM Stack、PC Register、本地方法栈。这三者是独享的。
+- 方法执行时的每行代码是由执行引擎中的解释器逐行执行，方法中的热点代码（频繁调用的方法），由 JIT 编译器（Class 字节码编译成二进制机器码）优化后执行，GC 会对堆中不用的对象进行回收。
 - 需要和操作系统打交道就需要使用到本地方法接口。
 
-# 2. 内存结构
+
+
+详细图：
+
+中文版
+
+![image-20220805154541660](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805154541660.png)
+
+中文版
+
+![image-20220805154621664](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805154621664.png)
+
+注意：方法区只有 HotSpot 虚拟机有，J9，JRockit 都没有。
+
+
+
+> Java 代码执行流程
+
+![image-20220805150448624](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805150448624.png)
+
+
+
+## 3. JVM 架构模型
+
+Java 编译器输入的指令流基本上是一种 **基于栈的指令集架构**；另外一种指令集架构则是 **基于寄存器的指令集架构**。
+
+这两种架构之间的区别：
+
+- 基于栈式架构的特点：
+  1. 设计和实现更简单，适用于资源受限的系统
+  2. 避开了寄存器的分配难题：使用零地址指令方式分配
+  3. 指令流中的指令大部分是零地址指令，其执行过程依赖于操作栈。指令集更小，编译器容易实现
+  4. **不需要硬件支持，可移植性更好，更好实现跨平台**
+
+- 基于寄存器架构的特点：
+  1. 典型的应用是 x86 的二进制指令集：比如传统的 PC 以及 Android 的 Davlik 虚拟机
+  2. **指令集架构则完全依赖硬件，与硬件的耦合度高，可移植性差**
+  3. **性能优秀和执行更高效**
+  4. 花费更少的指令去完成一项操作
+  5. 在大部分情况下，基于寄存器架构的指令集往往都以一地址指令、二地址指令和三地址指令为主，而基于栈式架构的指令集却是以零地址指令为主
+
+
+
+> 两种架构的举例
+
+同样执行下面这段相加的逻辑操作：
+
+```java
+class Test {
+    public static void main(String[] args) {
+        int i = 2;
+        int j = 3;
+        int k = i + j;
+    }
+}
+```
+
+其指令分别如下：
+
+- **基于栈的计算流程（以Java虚拟机为例）：**
+
+  ```java
+  iconst_2 	//常量 2 入栈
+  istore_1
+  iconst_3 	// 常量 3 入栈
+  istore_2
+  iload_1
+  iload_2
+  iadd 		//常量 2、3 出栈，执行相加
+  istore_0 	// 结果 5 入栈
+  ```
+
+  有 8 个指令。
+
+- **而基于寄存器的计算流程**：
+
+  ```java
+  mov eax,2 	//将 eax 寄存器的值设为 1
+  add eax,3 	//使 eax 寄存器的值加 3
+  ```
+
+  只有 2 个指令。
+
+
+
+> 总结
+
+- **由于跨平台性的设计，Java的指令都是根据栈来设计的**。不同平台 CPU 架构不同，所以不能设计为基于寄存器的。栈的优点：跨平台，指令集小，编译器容易实现，缺点是性能比寄存器差一些。
+
+- 时至今日，尽管嵌入式平台已经不是Java程序的主流运行平台了（准确来说应该是 HotSpot VM 的宿主环境已经不局限于嵌入式平台了），那么为什么不将架构更换为基于寄存器的架构呢？
+  - 因为基于栈的架构跨平台性好、指令集小，虽然相对于基于寄存器的架构来说，基于栈的架构编译得到的指令更多，执行性能也不如基于寄存器的架构好，但考虑到其跨平台性与移植性，我们还是选用栈的架构
+
+
+
+## 4. JVM 声明周期
+
+1. 虚拟机的启动：
+
+   Java 虚拟机的启动是通过引导类加载器（bootstrap class loader）创建一个初始类（initial class）来完成的，这个类是由虚拟机的具体实现指定的。
+
+2. 虚拟机的执行：
+
+   1. 一个运行中的Java虚拟机有着一个清晰的任务：执行Java程序
+   2. 程序开始执行时他才运行，程序结束时他就停止
+   3. **执行一个所谓的Java程序的时候，真真正正在执行的是一个叫做Java虚拟机的进程**
+
+3. 虚拟机的退出：
+
+   1. 程序正常执行结束
+   2. 程序在执行过程中遇到了异常或错误而异常终止
+   3. 由于操作系统用现错误而导致 Java 虚拟机进程终止
+   4. 某线程调用 Runtime 类或 System 类的 exit() 方法，或 Runtime 类的 halt() 方法，并且 Java 安全管理器也允许这次 exit() 或 halt() 操作。
+   5. 除此之外，JNI（Java Native Interface）规范描述了用 JNI Invocation API 来加载或卸载 Java 虚拟机时，Java 虚拟机的退出情况。
+
+
+
+
+
+# 类加载子系统
+
+## 1. 类加载器概述
+
+![image-20220805155807130](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805155807130.png)
+
+**类加载器子系统作用**：
+
+1. 类加载器子系统负责从文件系统或者网络中加载 Class 文件，Class 文件在文件开头有特定的文件标识。
+2. ClassLoader 只负责 Class 文件的加载，至于它是否可以运行，则由 Execution Engine 决定。
+3. **加载的类信息存放于一块称为方法区的内存空间**。除了类的信息外，方法区中还会存放运行时常量池信息，可能还包括字符串字面量和数字常量（这部分常量信息是 Class 文件中常量池部分的内存映射）
+
+
+
+**ClassLoader 角色**：
+
+1. class file（在下图中就是 Car.class 文件）存在于本地硬盘上。可以理解为设计师画在纸上的模板，而最终这个模板在执行的时候是要加载到 JVM 中，根据这个文件实例化出 n 个一模一样的实例。
+2. class file 加载到 JVM 中，被称为 DNA 元数据模板（在下图中就是内存中的 Car Class），放在方法区。
+3. 在 .class文件 –> JVM –> 最终成为元数据模板，此过程就要一个运输工具（类加载器 Class Loader），扮演一个快递员的角色。
+
+![image-20220805160111152](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805160111152.png)
+
+ ## 2. 类加载过程
+
+用一段代码来演示来加载过程：
+
+```java
+public class HelloLoader {
+    public static void main(String[] args) {
+        System.out.println("谢谢 ClassLoader 加载我....");
+        System.out.println("你的大恩大德，我下辈子再报！");
+    }
+}
+```
+
+加载过程：
+
+- 执行 main() 方法（静态方法）就需要先加载 main 方法所在类 HelloLoader
+- 加载成功，则进行链接、初始化等操作。完成后调用 HelloLoader 类中的静态方法 main
+- 加载失败则抛出异常
+
+![image-20220805160635388](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805160635388.png)
+
+类加载总体上分为 3 个阶段：加载阶段、链接阶段、初始化阶段。
+
+![image-20220805161044634](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220805161044634.png)
+
+### 2.1 加载阶段
+
+1. 通过一个类的全限定名获取定义此类的二进制字节流
+2. 将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构
+3. **在内存中生成一个代表这个类的 java.lang.Class 对象**，作为方法区这个类的各种数据的访问入口
+
+
+
+**加载 Class 文件的方式有如下几种**：
+
+1. 从本地系统中直接加载
+2. 通过网络获取，典型场景：Web Applet
+3. 从 zip 压缩包中读取，成为日后 jar、war 格式的基础
+4. 运行时计算生成，使用最多的是：动态代理技术
+5. 由其他文件生成，典型场景：JSP 应用从专有数据库中提取 .class 文件，比较少见
+6. 从加密文件中获取，典型的防 Class 文件被反编译的保护措施
+
+
+
+### 2.2 链接阶段
+
+链接分为三个子阶段：验证 -> 准备 -> 解析
+
+#### 验证（Verify）
+
+
+
+
+
+# 内存结构
 
 ## 2.1 程序计数器 PC Register
 

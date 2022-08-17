@@ -741,7 +741,7 @@ pay
 
 构造器的定义格式：`修饰符 类名(形参列表){ ······ }`		（类似于C++的构造函数）
 
-```
+```java
 public class Car{
 	//无参构造器
 	public Car(){
@@ -754,7 +754,7 @@ public class Car{
 }
 ```
 
-**注意：*
+注意：
 
 - 任何类定义出来，都带有无参构造器
 - 一旦定义了有参构造器，无参构造器就没有了，需要自己提供
@@ -1189,12 +1189,12 @@ public class Test {
 
 ### 2.1 泛型概述
 
-- ArrayList<E>：其实就是一个泛型类，可以在编译阶段约束集合对象只能操作某种数据类型。
+- `ArrayList<E>`：其实就是一个泛型类，可以在编译阶段约束集合对象只能操作某种数据类型。
 
 **举例：**
 
-- ArrayList<String>：此集合只能操作字符串类型的元素。
-- ArrayList<Integer>：此集合只能操作整数类型的元素。
+- `ArrayList<String>`：此集合只能操作字符串类型的元素。
+- `ArrayList<Integer>`：此集合只能操作整数类型的元素。
 
 ==注意：集合中只能存储引用类型，不支持基本数据类型。==
 
@@ -2139,7 +2139,7 @@ public class Test {
 
 **在子类方法中访问成员（成员变量/方法）满足：就近原则**
 
-- 先 子类局部范围查找
+- 先子类局部范围查找
 - 然后子类成员范围查找
 - 最后父类成员范围查找，如果父类范围还没有找到则报错
 
@@ -2608,7 +2608,7 @@ public class Test {
 - 接口中的成员都是public修饰的，写不写都是，因为规范的目的是为了公开化。
 
 ```java
-public interface SportManInterface {
+public interface SportManInterface { 
     // 接口中的成员：JDK 1.8之前只有常量 和 抽象方法
     // public static final 可以省略不写，接口默认会为你加上！
     // public static final String SCHOOL_NAME = "黑马";
@@ -2764,7 +2764,7 @@ public class Test {
 **接口的注意事项：**
 
 1. 接口不能创建对象。
-2. 一个类实现多个接口，多个接口中有同样的静态方法，不冲突（接口的静态方法只能自己调，实现类无法他调用，所以不存在二义性）。
+2. 一个类实现多个接口，多个接口中有同样的静态方法，不冲突（接口的静态方法只能自己调，实现类无法调用，所以不存在二义性）。
 3. 一个类继承了父类，同时又实现了接口，父类中和接口中有**同名方法**，默认用**父类**的。(即一个类既有继承又有接口实现类，继承在前，接口实现在后)
 4. 一个类实现了多个接口，多个接口中存在同名的默认方法，不冲突，这个类重写该方法即可（用自己的方法，永远用不了接口的方法）。
 5. 一个接口继承多个接口，是没有问题的，如果多个接口中存在规范冲突则(当方法名相同而方法返回值不同)不能多继承。
@@ -2775,19 +2775,19 @@ public class Test {
 
 - 同类型的对象，执行同一个行为，会表现出不同的行为特征。
 
-**多态的常见形式：**
+**多态的常见形式**：
 
 ```
 父类类型 对象名称 = new 子类构造器;
 接口     对象名称 = new 实现类构造器;
 ```
 
-**多态中成员访问特点：**
+**多态中成员访问特点**：
 
 - 方法调用：编译看左边，运行看右边。
 - 变量调用：编译看左边，运行也看左边。（多态侧重行为多态）
 
-==多态的前提条件：==
+**多态的前提条件**：
 
 - 有继承/实现关系；有父类引用指向子类对象；有方法重写
 
@@ -2814,10 +2814,10 @@ public class Test {
 
 - 注意： 如果转型后的类型和对象真实类型不是同一种类型，那么在转换的时候就会出现ClassCastException(类型转换异常)
 
-  ```
+  ```java
   Animal t = new Tortoise();
   Dog d = (Dog)t; 
-  //t是Tortoise类型，强转为Dog类型，出现异常 ClassCastException
+  // t是Tortoise类型，强转为Dog类型，出现异常 ClassCastException
   ```
 
 **Java建议强转转换前使用 instanceof 判断当前对象的真实类型，再进行强制转换。**
@@ -10842,7 +10842,7 @@ ExecutorService pools = new ThreadPoolExecutor(3, 5
 
 |                  策略                  |                             详解                             |
 | :------------------------------------: | :----------------------------------------------------------: |
-|     ThreadPoolExecutor.AbortPolicy     | 丢弃任务并抛出RejectedExecutionException异常。**是默认的策略** |
+|     ThreadPoolExecutor.AbortPolicy     | 丢弃任务并抛出 RejectedExecutionException 异常。**是默认的策略** |
 |   ThreadPoolExecutor.DiscardPolicy：   |          丢弃任务，但是不抛出异常 这是不推荐的做法           |
 | ThreadPoolExecutor.DiscardOldestPolicy |      抛弃队列中等待最久的任务 然后把当前任务加入队列中       |
 |  ThreadPoolExecutor.CallerRunsPolicy   |    由主线程负责调用任务的run()方法从而绕过线程池直接执行     |
