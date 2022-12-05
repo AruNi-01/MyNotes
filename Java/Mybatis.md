@@ -1774,7 +1774,11 @@ public class MapperTest {
 输出：
 
 ```
-Teacher(id=1, name=秦老师, students=[Student(id=1, name=小明, tid=1), Student(id=2, name=小红, tid=1), Student(id=3, name=小张, tid=1), Student(id=4, name=小李, tid=1), Student(id=5, name=小王, tid=1)])
+Teacher(id=1, name=秦老师, students=[Student(id=1, name=小明, tid=1), 
+						Student(id=2, name=小红, tid=1), 
+						Student(id=3, name=小张, tid=1), 
+						Student(id=4, name=小李, tid=1), 
+						Student(id=5, name=小王, tid=1)])
 
 Process finished with exit code 0
 ```

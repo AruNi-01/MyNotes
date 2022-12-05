@@ -3153,7 +3153,7 @@ public class VolatileDemo {
 
 ![image-20220704170540298](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704170540298.png)
 
-把 number 变量加上 valatile 关键字：`private volatile static Integer number = 0;`，即可使变量保证可见。输出结果如下：
+把 number 变量加上 volatile 关键字：`private volatile static Integer number = 0;`，即可使变量保证可见。输出结果如下：
 
 ![image-20220704170817595](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/image-20220704170817595.png)
 
@@ -3327,7 +3327,6 @@ y = x * x;          //4
 内存屏障 — CPU指令，作用：
 
 1. 保证特定操作的执行顺序；
-2. 可以保证某些变量的内存可见性（利用这些特性，就可以保证 volatile 实现的可见性）
 
 ![image-20200812220019582](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/85fa53d83ee4f89d5a7202e9e5a98987.png)
 
