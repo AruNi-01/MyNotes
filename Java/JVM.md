@@ -566,7 +566,7 @@ public static void main(String[] args) throws InterruptedException {
 
 - 字符串是延迟加载的，**执行到的时候才会加载**，不是一次性加载完
 
-利用IDEA中的 Memory（查看运行时类对象个数）验证：
+利用 IDEA 中的 Memory（查看运行时类对象个数）验证：
 
 ```java
 public static void main(String[] args) throws InterruptedException {
@@ -612,9 +612,9 @@ public static void main(String[] args) throws InterruptedException {
 - JDK1.8：将这个字符串对象尝试放入串池，**如果有则并不会放入**，如果没有则将该字符串放入串池， 最后把串池中的对象的引用返回
 - JDK1.6：将这个字符串对象尝试放入串池，**如果有则并不会放入**，如果没有会把**此对象复制一份**， **将复制的新对象放入串池**， 原来的对象还是在堆中，最后把串池中的对象返回
 
-**注意**：此时如果调用 `intern()` 方法成功，堆内存与串池中的字符串对象是同一个对象；如果失败，则不是同一个对象
+**JDK1.8** 环境下的示例：
 
-**JDK1.8**环境下的示例：
+**注意**：此时如果调用 `intern()` 方法成功，堆内存与串池中的字符串对象是同一个对象；如果失败，则不是同一个对象
 
 示例1：
 
@@ -628,7 +628,7 @@ public class Main {
         // 给 str3 赋值，因为此时串池中已有 "ab" ，则直接将串池中的内容返回
         String str3 = "ab";
         // 堆内存与串池中的 "ab" 是同一个对象
-        System.out.println(str == st2);		// true
+        System.out.println(str == str2);		// true
         System.out.println(str2 == str3);	// true
     }
 }
@@ -652,6 +652,8 @@ public class Main {
     }
 }
 ```
+
+
 
 **JDK1.6**环境下的示例：
 
@@ -953,7 +955,7 @@ public class DirectMemoryTest {
 
 - 循环引用时，两个对象的计数都为1，导致两个对象都无法被释放，但没有其他对象引用他们。如下图所示：
 
-![image-20220428141119784](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428141119784.png)
+    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210426132212247.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70)
 
 
 
@@ -961,8 +963,6 @@ public class DirectMemoryTest {
 
 - JVM中的垃圾回收器采用可达性分析来探索所有存活的对象
 - 扫描堆中的对象，看能否沿着 GC Root 对象为起点的引用链找到该对象，如果找不到，则表示可以回收
-
-
 
 
 
@@ -1030,7 +1030,7 @@ Eclipse Memory Analyzer 工具进行分析。
 
 通过下图来说明这五种引用被回收的情况，实线表示强引用：
 
-![image-20220428152509364](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428152509364.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706374.png)
 
 - **强引用**：只有**所有 GC Roots 对象都不通过强引用引用该对象**，该对象才能被垃圾回收
 - **软引用**：仅有软引用引用该对象时，在垃圾回收后，**内存仍不足时**会再次触发垃圾回收，回收软引用对象，可以配合引用队列来释放软引用自身(因为**软引用自身也是一个对象**)
@@ -1091,13 +1091,9 @@ public class SoftReferenceTest {
 
 method1 方法解析：
 首先会设置一个堆内存的大小为 20m，然后运行 mehtod1 方法，会抛异常，堆内存不足，因为 mehtod1 中的 list 都是强引用。
- ![image-20220428191029386](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428191029386.png)
+
 method2 方法解析：
 在 list 集合中存放了 软引用对象，当内存不足时，会触发 full gc，在垃圾回收后，**内存仍不足时**会再次触发垃圾回收，将软引用的对象回收。细节如图：
-
-![image-20220428192437466](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428192437466.png) 
-
-![image-20220428193249783](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428193249783.png)
 
 上面的代码中，当软引用引用的对象被回收了，但是**软引用还存在**，为null值，所以一般**软引用需要搭配一个引用队列**一起使用，将软引用本身也做一次清理。
 修改 method2 如下：
@@ -1136,11 +1132,7 @@ method2 方法解析：
     }
 ```
 
-可以看到，循环结束后，只剩下第五个byte数组对象：
-
-![image-20220428194151918](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428194151918.png)
-
-
+循环结束后，只剩下第五个byte数组对象。
 
 
 
@@ -1198,84 +1190,125 @@ public class WeakReferenceTest {
             System.out.print(wake.get() + ",");
         }
     }
-
 }
 ```
-
-method 1 分析：
-
-![image-20220428200843046](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428200843046.png)
-
-method 2 分析：
-
-![image-20220428201411175](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428201411175.png)
 
 ## 3.2 垃圾回收算法
 
 ### 1）标记清除
 
-定义：Mark Sweep
+Mark Sweep：标记清除算法顾名思义，是指在虚拟机执行垃圾回收的过程中，先采用标记算法确定可回收对象，然后垃圾收集器根据标识，清除相应的内容，给堆内存腾出相应的空间。
+
+这里的腾出内存空间并**不是将内存空间的字节清 0**，而是记录下这段内存的起始结束地址，下次分配内存的时候，会直接**覆盖**这段内存。
+
+优点：
 
 - 速度较快，不用管理被清除后的内存块
 - 不移动对象，与保守式GC算法兼容。在保守式GC算法中对象是不能移动的
-- 会产生内存碎片。因为对象不移动，所以导致块是不连续的，容易出现空闲内存很多，但分配大对象时找不到合适的块
 
-![image-20220428202817497](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428202817497.png)
+缺点：
+
+- **会产生内存碎片**。因为对象不移动，所以导致块是不连续的，容易出现空闲内存很多，但分配大对象时找不到合适的块。
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706632.png)
 
 ### 2）标记整理
 
-Mark Compact
+Mark Compact：会将不被GC Root引用的对象回收，清除其占用的内存空间，然后整理剩余的对象。
 
-- 速度慢，在整理移动时会花费时间
+优点：
+
 - 没有内存碎片。在标记清理后，会进行整理，将后面的内存向前移动，不会出现像标记清除那样的碎片化块
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210209143504936.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+
+缺点：
+
+- 速度慢，在整理移动时会花费时间。需要将移动后的地址重新赋给原来的对象。
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706968.png)
 
 ### 3）复制
 
-Copy
-
-- 不会有内存碎片
-- 需要占用两倍内存空间
+Copy：将内存分为等大小的两个区域，**FROM**和**TO**（TO中为空）。先将被GC Root引用的对象从FROM放入TO中，再回收不被GC Root引用的对象。然后交换FROM和TO。
 
 复制的过程如下：
 
-在垃圾回收后，将没有被回收的对象从FROM区复制到TO区：![在这里插入图片描述](https://img-blog.csdnimg.cn/20210209144026784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+当需要回收对象时，**先将GC Root直接引用的的对象(不需要回收)放入 TO区**：
 
-复制后交换FROM和TO的位置：
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706812.png)
 
-![image-20220428203525227](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428203525227.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706868.png)
 
-这样即可保证TO区域一直处于空闲状态
+然后 **清除 FROM区 中的需要回收的对象**：
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706867.png)
+
+最后 **交换 FROM区 和 TO区 的位置**，保证TO区为空：(FROM换成TO，TO换成FROM)：
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706837.png)
+
+优点：
+
+- 不会有内存碎片
+
+缺点：
+
+- 需要占用两倍内存空间
 
 ## 3.3 分代垃圾回收
 
-![image-20220428204857575](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428204857575.png)
+长时间使用的对象放在老年代中（长时间回收一次，回收花费时间久），用完即可丢弃的对象放在新生代中（频繁需要回收，回收速度相对较快）：
 
-> 整体过程
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706391.png)
 
-1. 新创建的对象首先分配在 eden区
+### 1）整体过程
 
-   ![image-20220428205016053](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428205016053.png)
+1. **新创建的对象首先分配在 eden区**：
 
-2. 新生代空间不足时，触发 minor gc ，eden区 和 from区存活的对象使用 - copy 复制到 to区 中，存活的对象年龄加1，然后交换 from 和 to 的位置
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706842.png)
 
-   ![image-20220428204742185](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428204742185.png)
+2. eden 空间不足时，触发 Minor GC，**eden区 和 from区** 存活的对象复制到 **to区** 中，**存活的对象年龄加 1**，然后交换 from 和 to 的位置：
 
-3. minor gc 会引发STW（stop the world），暂停其他线程，native代码可以执行，但不能与JVM交互。等垃圾回收结束后，恢复用户线程运行
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706646.png)
 
-4. 当伊甸园中继续添加对象，再次发生 minor gc，重复步骤2。此时幸存区from中没用的对象也会被回收
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706442.png)
 
-   ![image-20220428205830075](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428205830075.png)
+   伊甸园中不需要存活的对象清除：
 
-5. 当幸存区对象的寿命超过阈值时，会晋升到老年代，最大的寿命是 15（4bit）
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081706760.png)
 
-   ![image-20220428205934967](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428205934967.png)
+   交换FROM和TO：
 
-6. 当老年代空间不足时，会先触发 minor gc，如果空间仍然不足，那么就触发 full gc ，也会引发STW，停止的时间更长
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081705653.png)
 
-   
+   > Minor GC 会引发 **STW**（stop the world），**暂停其他线程**，native代码可以执行，但不能与JVM交互。等垃圾回收结束后，恢复用户线程运行。
 
-### 1）相关 JVM 参数
+3. 当伊甸园中继续添加对象，再次发生 Minor GC，重复步骤2。此时 **幸存区from中没用的对象也会被回收**：
+
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081705464.png)
+
+   流程相同，仍需要存活的对象寿命`+1` (图中FROM中寿命为1的对象是新从伊甸园复制过来的，而不是原来幸存区FROM中的寿命为1的对象)。
+
+4. **当幸存区对象的寿命超过阈值时，会晋升到老年代**，最大（默认）的寿命是 15（对象头中表示寿命的变量占 4bit）
+
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081705811.png)
+
+5. 当老年代空间不足时，会先触发 Minor GC，如果空间仍然不足，那么就触发 Full GC（也会引发STW，停止的时间更长）
+
+    ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081705685.png)
+
+**小结**：
+
+- 新创建的对象首先会被分配在伊甸园区域。
+
+- 新生代空间不足时，触发Minor GC，伊甸园和 FROM幸存区需要存活的对象会被COPY到TO幸存区中，存活的对象寿命+1，并且交换FROM和TO。
+
+    > Minor GC 会引发 Stop The World：暂停其他用户的线程，等待垃圾回收结束后，用户线程才可以恢复执行。
+
+- 当对象寿命超过阈值时，会晋升至老年代，最大寿命为15（4bit）。
+
+- 如果新生代、老年代中的内存都满了，就会先触发Minor GC，若空间还不足，再触发Full GC，扫描新生代和老年代中所有不再使用的对象并回收。
+
+### 2）JVM 相关参数
 
 | 含义                            | 参数                                                         |
 | ------------------------------- | ------------------------------------------------------------ |
@@ -1311,44 +1344,42 @@ public class GCTest {
         list.add(new byte[_2MB]);   //  tenured 占用90%
         list.add(new byte[_1MB]);   // 老年区内存不足，触发Full GC
     }
-
 }
 ```
 
-通过上面的代码，给 list 分配内存，来观察 新生代和老年代的情况，什么时候触发 minor gc，什么时候触发 full gc 等情况：
+通过上面的代码，给 list 分配内存，来观察 新生代和老年代的情况，什么时候触发 Minor GC，什么时候触发 Full GC 等情况：
 
 1. 当mian函数中没有代码时：
 
-   ![image-20220428212932300](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428212932300.png)
+   ![image-20230108153232760](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081532112.png)
 
 2. 将`_6MB`和`_512KB`添加进 list 中：
 
-   ![image-20220428213559160](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428213559160.png)
+   ![image-20230108155422968](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081554117.png)
 
-3. 再将`_7MB`和`_512MB`添加进 list 中：
+3. 再将`_7MB`和`_512MB`添加进 list 中，此时会触发第二次 Minor GC。
 
-   ![image-20220428214155354](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428214155354.png)
+4. 再将`_2MB`和`_1MB`添加进 list 中，老年代不够存放，触发 Full GC，Full GC 也没回收到垃圾，内存还是不足，发生堆溢出异常：
 
-4. 再将`_2MB`和`_1MB`添加进 list 中，老年代不够存放，发生堆溢出异常：
+   ![image-20230108160840582](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081608711.png)
 
-   ![image-20220428214947733](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428214947733.png)
 
 > 大对象的情况
 
 若新生代空间不够当前对象的储存，老年代空间够时，会直接将该对象晋升到老年代去，不会发生GC。
 
+例如，在上面那个例子中，直接放一个 9M 的对象，新生代空间的 eden区 和 from区 都是不够放的，但是老年区有 10M，所以该对象就会直接晋升到老年代：
 
-
-
+![image-20230108161538682](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081615939.png)
 
 > 子线程的堆内存溢出不会影响主线程
 
-- 当一个线程抛出OOM异常后，它所占据的内存资源会全部被释放掉，从而不会影响其他线程的运行。进程无法恢复。
+- **当一个线程抛出OOM异常后，那么 GC 链中就少了这个线程栈，下次 GC 时它所占据的内存资源会全部被释放掉，从而不会影响其他线程的运行**。
 
 ```java
 public class Test {
     
-    private static final int _8MB = 8 * 1024 * 1024;
+    private static final int _9MB = 9 * 1024 * 1024;
 
     // -Xms20m -Xmx20m -Xmn10m -XX:+UseSerialGC -XX:+PrintGCDetails -verbose:gc
     public static void main(String[] args) throws InterruptedException {
@@ -1356,8 +1387,8 @@ public class Test {
         new Thread(()->{
             System.out.println("子线程执行：");
             ArrayList<byte[]> list = new ArrayList<>();
-            list.add(new byte[_8MB]);   // 老年代只有10M
-            list.add(new byte[_8MB]);
+            list.add(new byte[_9MB]);   // 老年代只有10M
+            list.add(new byte[_9MB]);
         }).start();
 
         Thread.sleep(2000);
@@ -1366,32 +1397,14 @@ public class Test {
 }
 ```
 
-![image-20220428220257494](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220428220257494.png)
+![image-20230108163942754](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081639743.png)
 
 **注意**：
 
 - 但是实际情况中（线上）大多数都是该线程创建的对象无法被全部释放（存在可达的GC链），导致其余线程申请堆内存失败，发生Full GC，直到内存溢出。这也就是为什么一般情况下，发生OOM，进程基本就凉凉了，是一种链式恶性反应
-- 因为发生OOM之前要进行gc，就算其他线程能够正常工作，也会因为频繁gc产生较大的影响
+- 因为发生OOM之前要进行GC，就算其他线程能够正常工作，也会因为频繁GC产生较大的影响
 
 ## 3.4 垃圾回收器
-
-> 垃圾回收器发展史
-
-![image-20220429163917019](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429163917019.png)
-
-
-
-
-
-> 垃圾回收器的组合关系
-
-![img](http://cdn.processon.com/5ee964e87d9c0844201d6db6?e=1592357625&token=trhI0BY8QfVrIGn9nENop6JAc6l5nZuxhjQ62UfM:SpCgLUODyVHetkCInegZsbAZbao=?s=100_100)
-
-![image-20220429164408417](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429164408417.png)
-
-
-
-
 
 **相关概念**：
 
@@ -1399,102 +1412,132 @@ public class Test {
 - **并发收集**：指**用户线程与垃圾收集线程同时工作**（不一定是并行的可能会交替执行）。**用户程序在继续运行**，而**垃圾收集程序运行在另一个 CPU 上**
 - **吞吐量**：即 **CPU 用于运行用户代码的时间与 CPU 总消耗时间的比值**（吞吐量 = 运行用户代码时间 / ( 运行用户代码时间 + 垃圾收集时间 )）。例如：虚拟机共运行 100 分钟，垃圾收集器花掉 1 分钟，那么吞吐量就是 99 / (99 + 1) = 99% 
 
-### 1）串行
+> 垃圾回收器的组合关系
+
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081900517.png)
+
+注：当老年代配了 CMS收集器时, 如果内存使用率超过了一定的比例, 系统会抛出 Concurrent Mode Failure, 此时会自动采用 Serial Old收集器做 Full GC
+
+- 红色虚线在 Jdk8时, 将Serial与 CMS的组合和ParNew与 Serial Old的组合声明为废弃, 并在 Jdk9时完全弃用了
+- 黄色虚线在 Jdk14时, 弃用了 Parallel Scavenge与 Serial Old的组合
+- 绿色虚线在 Jdk14时, 完全弃用了 CMS垃圾收集器
+
+### 1）串行 Serial
 
 - 单线程
-- 堆内存较少，适合个人电脑
+- 适用场景：内存较小，个人电脑（CPU核数较少）。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210092812153.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+串行垃圾回收器开启语句：`-XX:+UseSerialGC = Serial + SerialOld`
 
-```java
--XX:+UseSerialGC=serial + serialOld
-```
+`Serial`：表示新生代，采用**复制算法**；`SerialOld`：表示老年代，采用的是**标记整理算法**。
 
-**安全点**：让其他线程都在这个点停下来，以免垃圾回收时移动对象地址，使得其他线程找不到被移动的对象
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081900604.png)
+
+**安全点**：让其他线程都在这个点停下来，以免垃圾回收时移动对象地址，使得其他线程找不到被移动的对象。
 
 因为是串行的，所以只有一个垃圾回收线程。且在该线程执行回收工作时，其他线程进入阻塞状态。
 
-**Serial 收集器**：Serial 收集器是最基本的、发展历史最悠久的收集器
-**特点**：单线程、简单高效（与其他收集器的单线程相比），采用复制算法。对于限定单个 CPU 的环境来说，Serial  收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。收集器进行垃圾回收时，必须暂停其他所有的工作线程，直到它结束（Stop The World）
+> **Serial 收集器**：Serial 收集器是最基本的、发展历史最悠久的收集器
+> **特点**：单线程、简单高效（与其他收集器的单线程相比），采用复制算法。对于限定单个 CPU 的环境来说，Serial  收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。收集器进行垃圾回收时，必须暂停其他所有的工作线程，直到它结束（Stop The World）
 
-**ParNew 收集器**：ParNew 收集器其实就是 Serial 收集器的多线程版本
-**特点**：多线程、ParNew 收集器默认开启的收集线程数与CPU的数量相同，在 CPU 非常多的环境中，可以使用 `-XX:ParallelGCThreads 参数`来限制垃圾收集的线程数。和 Serial 收集器一样存在 Stop The World 问题
+> **ParNew 收集器**：ParNew 收集器其实就是 Serial 收集器的多线程版本
+> **特点**：多线程、ParNew 收集器默认开启的收集线程数与CPU的数量相同，在 CPU 非常多的环境中，可以使用 `-XX:ParallelGCThreads 参数`来限制垃圾收集的线程数。和 Serial 收集器一样存在 Stop The World 问题
 
-**Serial Old 收集器**：Serial Old 是 Serial 收集器的老年代版本
-**特点**：同样是单线程收集器，采用标记 - 整理算法
+> **Serial Old 收集器**：Serial Old 是 Serial 收集器的老年代版本
+> **特点**：同样是单线程收集器，采用标记 - 整理算法
 
-### 2）吞吐量优先
+### 2）吞吐量优先 Parallel
 
 - 多线程
-- 堆内存较大，多核 cpu
-- 让**单位时间**内，STW 的时间最短，例如 0.2 0.2 = 0.4
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210094915306.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+- 适用场景：堆内存较大，多核 cpu
+- 让**单位时间**内，STW 的时间最短，例如一个小时内发生了2次回收：0.2 0.2 = 0.4（相当于少餐多食）
+- **JDK1.8默认使用**的垃圾回收器
 
 ```java
--XX:+UseParallelGC ~ -XX:+UsePrallerOldGC
--XX:+UseAdaptiveSizePolicy
--XX:GCTimeRatio=ratio	      // 1/(1+radio)
--XX:MaxGCPauseMillis=ms	    // 200ms
+// 吞吐量优先垃圾回收器开关：（默认开启）
+-XX:+UseParallelGC~-XX:+UseParallelOldGC
+// 采用自适应的大小调整策略：调整新生代(伊甸园 + 幸存区FROM、TO)内存的大小
+-XX:+UseAdaptiveSizePolicy  
+
+// 调整垃圾收集占用时间的比例（吞吐量的目标：吞吐量 = 垃圾回收时间/程序运行总时间）。公式：1/(1+ratio)。
+// 比如 ratio=19，则1/(1+ratio)=0.05，意思是在100分钟内允许有5分钟来进行GC，若不满足则会动态调大内存来满足
+-XX:GCTimeRatio=ratio
+
+// 垃圾收集时间最大停顿毫秒数：默认值是200ms。
+-XX:MaxGCPaiseMillis=ms
+
+// 控制ParallelGC运行时的线程数
 -XX:ParallelGCThreads=n
 ```
 
-**Parallel Scavenge 收集器**：与吞吐量关系密切，故也称为吞吐量优先收集器
-**特点**：属于新生代收集器也是采用复制算法的收集器（用到了新生代的幸存区），又是并行的多线程收集器（与 ParNew 收集器类似）
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081900186.png)
 
-该收集器的目标是达到一个可控制的吞吐量。还有一个值得关注的点是：GC自适应调节策略（与 ParNew 收集器最重要的一个区别）
+> **Parallel Scavenge 收集器**：与吞吐量关系密切，故也称为吞吐量优先收集器
+> **特点**：属于新生代收集器也是采用复制算法的收集器（用到了新生代的幸存区），又是并行的多线程收集器（与 ParNew 收集器类似）
+>
+> 该收集器的目标是达到一个可控制的吞吐量。还有一个值得关注的点是：GC自适应调节策略（与 ParNew 收集器最重要的一个区别）
+>
+> **GC自适应调节策略**：
+> Parallel Scavenge 收集器可设置 `-XX:+UseAdptiveSizePolicy 参数`。
+> 当开关打开时不需要手动指定新生代的大小（`-Xmn`）、Eden 与 Survivor 区的比例（`-XX:SurvivorRation`）、晋升老年代的对象年龄（`-XX:PretenureSizeThreshold`）等，虚拟机会根据系统的运行状况收集性能监控信息，动态设置这些参数以提供最优的停顿时间和最高的吞吐量，这种调节方式称为 GC 的自适应调节策略。
+>
+> Parallel Scavenge 收集器使用两个参数控制吞吐量：
+>
+> - `XX:MaxGCPauseMillis=ms` 控制最大的垃圾收集停顿时间（默认200ms）
+> - `XX:GCTimeRatio=rario` 直接设置吞吐量的大小
+>
 
-GC自适应调节策略：
-Parallel Scavenge 收集器可设置 `-XX:+UseAdptiveSizePolicy 参数`。
-当开关打开时不需要手动指定新生代的大小（`-Xmn`）、Eden 与 Survivor 区的比例（`-XX:SurvivorRation`）、晋升老年代的对象年龄（`-XX:PretenureSizeThreshold`）等，虚拟机会根据系统的运行状况收集性能监控信息，动态设置这些参数以提供最优的停顿时间和最高的吞吐量，这种调节方式称为 GC 的自适应调节策略。
+> **Parallel Old 收集器**：是 Parallel Scavenge 收集器的老年代版本
+> **特点**：多线程，采用标记 - 整理算法（老年代没有幸存区）
 
-Parallel Scavenge 收集器使用两个参数控制吞吐量：
-
-- `XX:MaxGCPauseMillis=ms` 控制最大的垃圾收集停顿时间（默认200ms）
-- `XX:GCTimeRatio=rario` 直接设置吞吐量的大小
-
-**Parallel Old 收集器**：是 Parallel Scavenge 收集器的老年代版本
-**特点**：多线程，采用标记 - 整理算法（老年代没有幸存区）
-
-### 3）响应时间优先
+### 3）响应时间优先 CMS
 
 - 多线程
-- 堆内存较大，多核 cpu
-- 尽可能让 **STW 的单次时间最短**，例如 0.1 0.1 0.1 0.1 0.1 = 0.5
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210104030390.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+- 适用场景：堆内存较大，多核 cpu
+- 尽可能让 **STW 的单次时间最短**，例如一个小时内发生了5次回收：0.1 0.1 0.1 0.1 0.1 = 0.5（相当于少食多餐）
 
 ```java
--XX:+UseConcMarkSweepGC ~ -XX:+UseParNewGC ~ SerialOld
--XX:ParallelGCThreads=n ~ -XX:ConcGCThreads=threads
+// 开关：
+-XX:+UseConMarkSweepGC~-XX:+UseParNewGC~SerialOld  
+// ParallelGCThreads=n  并行线程数 
+// ConcGCThreads=threads  并发线程数
+-XX:ParallelGCThreads=n~-XX:ConcGCThreads=threads
+// 执行CMS垃圾回收时机的内存占比。因为要预留一些空间保存浮动垃圾（进行垃圾收集时产生的垃圾）
 -XX:CMSInitiatingOccupancyFraction=percent
+// 重新标记之前，对新生代进行垃圾回收。减轻重新标记时的压力。
 -XX:+CMSScavengeBeforeRemark
 ```
 
-**CMS 收集器**：Concurrent Mark Sweep，一种以获取最短回收停顿时间为目标的**老年代收集器**
-**特点**：基于标记-清除算法实现。并发收集、低停顿，但是会产生内存碎片
-**应用场景**：适用于注重服务的响应速度，希望系统停顿时间最短，给用户带来更好的体验等场景下。如 web 程序、b/s 服务
+并行线程数一般等于核心数，并发线程数一般等于并行线程数的四分之一。这样可以保证进行垃圾收集的核心只占小部分，其他的核心可以分配给用户线程处理任务。
 
-**CMS 收集器的运行过程分为下列4步**：
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301081900185.png)
 
-1. **初始标记**：标记 GC Roots 能直接到的对象。速度很快但是仍存在 Stop The World 问题。
-2. **并发标记**：进行 GC Roots Tracing 的过程，找出存活对象且用户线程可并发执行。
-3. **重新标记**：为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录。仍然存在 Stop The World 问题。
-4. **并发清除**：对标记的对象进行清除回收，清除的过程中，可能任然会有新的垃圾产生，这些垃圾就叫浮动垃圾，如果当用户需要存入一个很大的对象时，新生代放不下去，老年代由于浮动垃圾过多，就会退化为 serial Old 收集器，将老年代垃圾进行标记 - 整理，当然这也是很耗费时间的。
-
-CMS 收集器的内存回收过程是与用户线程一起并发执行的，可以搭配 ParNew 收集器（多线程，新生代，复制算法）与 Serial Old 收集器（单线程，老年代，标记 - 整理算法）使用。
+> **CMS 收集器**：Concurrent Mark Sweep，一种以获取最短回收停顿时间为目标的**老年代收集器**
+> **特点**：基于**标记-清除**算法实现。**并发**收集、低停顿，但是会产生内存碎片
+> **应用场景**：适用于注重服务的响应速度，希望系统停顿时间最短，给用户带来更好的体验等场景下。如 web 程序、b/s 服务
+>
+> **CMS 收集器的运行过程分为下列4步**：
+>
+> 1. **初始标记**：标记 GC Roots 能直接到的对象。速度很快但是仍存在 Stop The World 问题。
+> 2. **并发标记**：进行 GC Roots Tracing 的过程，找出存活对象且用户线程可并发执行。
+> 3. **重新标记**：为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录。仍然存在 Stop The World 问题。
+> 4. **并发清除**：对标记的对象进行清除回收，清除的过程中，可能任然会有新的垃圾产生，这些垃圾就叫浮动垃圾。如果当用户需要存入一个很大的对象时，新生代放不下去，老年代由于浮动垃圾过多，就会退化为 serial Old 收集器，将老年代垃圾进行标记 - 整理，当然这也是很耗费时间的。
+>
+> CMS 收集器的内存回收过程是与用户线程一起并发执行的，可以搭配 ParNew 收集器（多线程，新生代，复制算法）与 Serial Old 收集器（单线程，老年代，标记 - 整理算法）使用。
 
 ### 4）G1 收集器
 
-**定义**： Garbage First
- **适用场景**：
+**定义**： Garbage First，JDK 9以后默认使用，而且替代了CMS 收集器
+
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131423182.png)
+
+**适用场景**：
 
 - 同时注重吞吐量和低延迟（响应时间）
 - 超大堆内存（内存大的），会将堆内存划分为多个大小相等的区域
-- 整体上是标记-整理算法，两个区域之间是复制算法
+- 整体上是**标记-整理**算法，两个区域之间是**复制**算法
 
-**相关参数**：
- JDK8 并不是默认开启的，所需要参数开启
+**相关参数**：JDK8 并不是默认开启的，所需要参数开启
 
 ```java
 -XX:+UseG1GC
@@ -1502,13 +1545,11 @@ CMS 收集器的内存回收过程是与用户线程一起并发执行的，可�
 -XX:MaxGCPauseMillis=time
 ```
 
-> G1 收集器运行示意图
-
-![image-20220429230521829](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429230521829.png)
-
 #### G1 垃圾回收阶段
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210114932887.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+![image-20230113142518569](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131425838.png)
+
+**新生代伊甸园垃圾回收**—–>**内存不足，新生代回收+并发标记**—–>**回收新生代伊甸园、幸存区、老年代内存**——>**新生代伊甸园垃圾回收** (重新开始)。
 
 - **Young Collection**：对新生代垃圾收集
 - **Young Collection + Concurrent Mark**：如果老年代内存到达一定的阈值了，新生代垃圾收集同时会执行一些并发的标记。
@@ -1526,35 +1567,44 @@ E：eden，S：幸存区，O：老年代
 
 新创建的对象存放在 E 区：
 
-![image-20220429231117878](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231117878.png)
+![image-20230113142905268](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131429582.png)
 
 垃圾回收时，会把 E 区中幸存对象复制到 S 区：
 
-![image-20220429231235358](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231235358.png)
+![image-20230113142954477](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131429568.png)
 
-当 S 区中的对象也比较多触发GC，S 区对象寿命超过阈值时，S 区中的一部分对象(寿命达到阈值)会晋升到 O，寿命未达到阈值的会被再次复制到另一个 S 区：
+当 S 区中的对象也比较多触发 GC，S 区对象寿命超过阈值时，S 区中的一部分对象(寿命达到阈值)会晋升到 O，寿命未达到阈值的会被再次复制到另一个 S 区：
 
-![image-20220429231430947](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220429231430947.png)
+![image-20230113143030859](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131430859.png)
 
 #### Young Collection + CM
 
-在 Young GC 时会进行 GC Root 的初始化标记
-老年代占用堆空间比例达到阈值时，进行**并发标记**（不会STW），由下面的 JVM 参数决定 `-XX:InitiatingHeapOccupancyPercent=percent` （默认45%）
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210122601873.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+- 在 Young GC 时会进行 GC Root 的初始化标记
+- 老年代占用堆空间比例达到阈值时，进行 **CM 并发标记**（不会STW），由下面的 JVM 参数决定 `-XX:InitiatingHeapOccupancyPercent=percent` （默认45%）
+
+![image-20230113143441548](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131434134.png)
 
 #### Mixed Collection
 
-会对 E S O 进行**全面的回收**
+会对 E S O 区进行**全面的回收**
 
 - 最终标记 (会STW)
 - 拷贝存活 (会STW)
 
 `-XX:MaxGCPauseMills=xxms` 用于指定最长的停顿时间。
 
-为什么有的老年代被拷贝了，有的没拷贝？
-因为指定了**最大停顿时间**，如果对所有老年代都进行回收，耗时可能过高。为了保证时间不超过设定的停顿时间，**只会先回收最有价值的老年代**（回收后，能够得到更多内存）
+![image-20230113143536226](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131435431.png)
 
-例如下图，橙色的两个老年代更有回收的价值，因为它们收回后能获得更多的内存，所以先回收这两个中没有被标记的对象(被标记的是有用的)，被标记的会继续存活在老年区![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210144216170.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+为什么有的老年代被拷贝了，有的没拷贝？
+
+- 因为指定了**最大停顿时间**，如果对所有老年代都进行回收，耗时可能过高。为了保证时间不超过设定的停顿时间，**只会先回收最有价值的老年代**（回收后，能够得到更多内存）
+
+例如上图，橘色的两个老年代更有回收的价值，因为它们收回后能获得更多的内存，所以先回收这两个中没有被标记的对象(被标记的是有用的)，被标记的会继续存活在老年区。
+
+G1 老年代内存不足时（老年代所占内存超过阈值）：
+
+- 如果**垃圾产生速度慢于垃圾回收速度**，**不会触发 Full GC**，还是**并发地进行清理**
+- 如果**垃圾产生速度快于垃圾回收速度**，便会**触发 Full GC**，然后退化成 Serial Old 收集器串行的收集，就会导致**停顿的时间长**。
 
 #### Full GC
 
@@ -1579,18 +1629,23 @@ E：eden，S：幸存区，O：老年代
 G1 老年代内存不足时（老年代所占内存超过阈值）：
 
 - 如果**垃圾产生速度慢于垃圾回收速度**，**不会触发 Full GC**，还是**并发地进行清理**
-- 如果**垃圾产生速度快于垃圾回收速度**，便会**触发 Full GC**，然后退化成 serial Old 收集器串行的收集，就会导致**停顿的时间长**。
+- 如果**垃圾产生速度快于垃圾回收速度**，便会**触发 Full GC**，然后退化成 Serial Old 收集器串行的收集，就会导致**停顿的时间长**。
 
 #### Young Collection 跨代引用
 
 - 新生代回收的跨代引用（老年代引用新生代）问题
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210154730275.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+
+   ![image-20230113144643700](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131446936.png)
+
 - 卡表 与 Remembered Set   
-  - Remembered Set 存在于E中，用于**保存新生代对象对应的脏卡**     
+  - Remembered Set 存在于 E 中，用于**保存新生代对象对应的脏卡**（记录外部对自己的引用，也就是脏卡）  
     - 脏卡：O 被划分为多个区域（一个区域512K），如果**该区域引用了新生代对象**，则该区域被称为**脏卡**
+
 - 在引用变更时通过 `post-write barried + dirty card queue`
+
 - concurrent refinement threads 更新 Remembered Set
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210154940579.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+
+   ![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131451258.png)
 
 #### Remark
 
@@ -1599,15 +1654,14 @@ G1 老年代内存不足时（老年代所占内存超过阈值）：
 - 黑色：已被处理，需要保留的
 - 灰色：正在处理中的
 - 白色：还未处理的，最后被回收
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161204728.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
 
-
-
-
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131458987.png)
 
 > Remark 使用时机
 
-在并发标记过程中，有可能 A 被处理了以后未引用 C ，但该处理过程还未结束，在处理 B 之后， A 又引用了 C ，这样当整个标记过程结束以后，C 仍然是白色的，会被错误的当成垃圾回收掉，但这时 A 正强引用着 C ，回收就会出故障；这时就会用到 remark 。
+在**并发标记**过程中，有可能 A 被处理了以后未引用 C ，但该处理过程还未结束。接着在处理 B 之后， A 又引用了 C ，这样当整个标记过程结束以后，C 仍然是白色的，会被错误的当成垃圾回收掉，但这时 A 正强引用着 C ，回收就会出故障。这时就会用到 remark 。
+
+![image-20230113161811331](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131618891.png)
 
 过程如下：
 
@@ -1615,8 +1669,8 @@ G1 老年代内存不足时（老年代所占内存超过阈值）：
 - 在**并发标记阶段结束以后**，**重新标记阶段**会 STW ，然后将**放在该队列中的对象重新处理**，发现**有强引用引用它**，就会处理它，由灰色变成黑色
 - pre-write barrier + satb_mark_queue
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161559793.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210210161527103.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl81MDI4MDU3Ng==,size_16,color_FFFFFF,t_70)
+![image-20230113161948094](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131619190.png)
+ ![image-20230113162030667](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131620573.png)
 
 #### JDK 8u20 字符串去重
 
@@ -1642,10 +1696,6 @@ String s2 = new String("hello");	// 底层存储为：char[]{'h','e','l','l','o'
 - 节省了大量内存
 - 新生代回收时间略微增加，导致略微多占用 CPU
 
-
-
-
-
 > 具体实现方式
 
 垃圾收集器会在访问String对象时对其字符数组进行标记，并将String的哈希值以及弱引用保存到一个数组中。当垃圾收集器发现另一个具有相同哈希值的String对象时，它就会逐字符比对这两个对象。如果他们完全匹配，那其中一个String就会被修改指向到另一个String的字符数组。由于第一个字符数组已经不再被引用，所以它也就可以被回收了。垃圾收集器会尽量减少整个操作的开销，比如某个String对象扫描未发现有重复，那接下来的一段时间内它不会再被检查。
@@ -1661,9 +1711,9 @@ String s2 = new String("hello");	// 底层存储为：char[]{'h','e','l','l','o'
 - H表示巨型对象，当一个对象大于region的一半时，就称为巨型对象
 - G1不会对巨型对象进行拷贝
 - 回收时被优先考虑
-- G1会跟踪老年代所有 incoming 引用，如果老年代 incoming 引用为0的巨型对象就可以在新生代垃圾回收时处理掉
+- G1会跟踪老年代所有 incoming 引用，老年代 incoming 引用为 0 的巨型对象就可以在新生代垃圾回收时处理掉
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210428074913263.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MTk4MA==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301131635220.png)
 
 巨型对象越早回收越好，最好是在新生代的垃圾回收就回收掉！
 
@@ -1891,7 +1941,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
 5. 类加载器
 6. 运行期优化
 
-![image-20220623165523436](C:\Users\AruNi、\AppData\Roaming\Typora\typora-user-images\image-20220623165523436.png)
+![在这里插入图片描述](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202301171459636.png)
 
 ## 4.1 类文件结构
 

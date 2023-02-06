@@ -84,7 +84,21 @@ Java 基本数据类型的 **包装类型** 的大部分都用到了 **缓存机
 - 只有在发生 **自动装箱** 的过程，才会使用缓存；
 - 自动装箱（就是编译器自动调用包装类的 `valueOf` 方法）；
 
-而直接 `new` 出来的包装类型数据，无论值是多少，都不会用到缓存；
+而直接 `new` 出来的包装类型数据，无论值是多少，都不会用到缓存。不过 JDK 9 之后就弃用包装类型的构造方法了，所以现在一般都是直接基本类型进行赋值或使用 `valueOf()` 方法。所以一定要注意这个缓存问题；
+
+```java
+class Test {
+    public static void main(String[] args) {
+        Integer a = 200;
+        Integer b = 200;
+        System.out.println(a == b);     // false
+
+        Integer c = 100;
+        Integer d = 100;
+        System.out.println(c == d);     // true
+    }
+}
+```
 
 
 
@@ -467,7 +481,7 @@ protected void finalize() throws Throwable { }
 
 
 
-#### == 和 eauals() 的区别
+#### == 和 equals() 的区别
 
 **`==`** 对于基本类型和引用类型的作用效果是不同的：
 
@@ -535,13 +549,9 @@ public boolean equals(Object anObject) {
 
 `hashCode()` 的作用是获取哈希码（`int` 整数），也称为散列码。这个哈希码的作用是确定该对象在哈希表中的索引位置。
 
-`hashCode()`定义在 JDK 的 `Object` 类中，这就意味着 Java 中的任何类都包含有 `hashCode()` 函数。另外需要注意的是： `Object` 的 `hashCode()` 方法是本地方法，也就是用 C 语言或 C++ 实现的，该方法通常用来将对象的内存地址转换为整数之后返回。
+`hashCode() `定义在 JDK 的 `Object` 类中，这就意味着 Java 中的任何类都包含有 `hashCode()` 函数。另外需要注意的是： `Object` 的 `hashCode()` 方法是本地方法，也就是用 C 语言或 C++ 实现的，该方法通常用来将对象的内存地址转换为整数之后返回。
 
 散列表存储的是键值对(key-value)，它的特点是：**能根据“键”快速的检索出对应的“值”。这其中就利用到了散列码！（可以快速找到所需要的对象）**
-
-**hashCode() 在散列表中才有用，在其它情况下没用**。
-
-
 
 #### 为什么要有 hashCode
 
@@ -573,9 +583,9 @@ public boolean equals(Object anObject) {
 
 
 
-#### 为什么重写 equals() 时必须重写 hashCode() ？
+#### 重写 equals() 时必须重写 hashCode() ？
 
-以 “**类的用途**” 来将 “`hashCode()` 和 `equals()` 的关系” 分2种情况来说明：
+以 “**类的用途**” 来将 “`hashCode()` 和 `equals()` 的关系” 分 2 种情况来说明：
 
 **1、不会创建 “类对应的散列表”：不存在重写 equals() 要重写 hashCode()**：
 
@@ -585,9 +595,9 @@ public boolean equals(Object anObject) {
 
 
 
-2、会创建 “类对应的散列表”：**重写 equals() 一定要重写 hashCode()**：
+**2、会创建 “类对应的散列表”：重写 equals() 一定要重写 hashCode()**：
 
-- 不会创建 “类对应的散列表” 的情况下，该类的 “hashCode() 和 equals() ” 是有关系的：
+- 会创建 “类对应的散列表” 的情况下，该类的 “hashCode() 和 equals() ” 是有关系的：
   1. 如果两个对象相等，那么它们的 hashCode() 值一定相同。这里的 “对象相等” 是指通过 equals() 比较两个对象时返回 true。
   2. 如果两个对象 **hashCode() 相等**，它们的 **equals() 不一定相等**。因为在散列表中，两个键值对的哈希值相等，并不一定能得出键值对相等，因为会出现 **哈希冲突**。
 - 这里所说的 “会创建类对应的散列表” 是说：我们会在 HashSet, HashTable, HashMap 等等这些本质是散列表的数据结构中用到该类。
@@ -600,6 +610,78 @@ public boolean equals(Object anObject) {
 
 
 
+示例：
+
+只重写了 equals()：
+
+```java
+class Test {
+    public static void main(String[] args) {
+        User user1 = new User(1, "aaa"), user2 = new User(1, "aaa");
+        HashSet<User> set = new HashSet<>();
+        set.add(user1); set.add(user2);
+        for (User user : set) System.out.println(user);
+    }
+}
+/* 输出：
+User{id=1, name='aaa'}
+User{id=1, name='aaa'}
+*/
+
+class User {
+    int id;
+    String name;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+        return this.id == user.id && this.name.equals(user.name);
+    }
+    
+    // 构造方法、toString() 略
+}
+```
+
+equals() 和 hashCode() 都重写了：
+
+```java
+class Test {
+    public static void main(String[] args) {
+        User user1 = new User(1, "aaa"), user2 = new User(1, "aaa");
+        HashSet<User> set = new HashSet<>();
+        set.add(user1); set.add(user2);
+        for (User user : set) System.out.println(user);
+    }
+}
+/* 输出：
+User{id=1, name='aaa'}
+*/
+
+class User {
+    int id;
+    String name;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+        return this.id == user.id && this.name.equals(user.name);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+    
+    // 构造方法、toString() 略
+}
+```
+
 ### 5.2 String
 
 #### String、StringBuffer、StringBuilder 的区别
@@ -608,11 +690,12 @@ public boolean equals(Object anObject) {
 
 - `String` 是不可变的，它被 `final` 和 `private` 修饰；
 
-- `StringBuilder` 与 `StringBuffer` 都继承自 `AbstractStringBuilder` 类，在 `AbstractStringBuilder` 中也是使用字符数组保存字符串，不过没有使用 `final` 和 `private` 关键字修饰，最关键的是这个 **`AbstractStringBuilder` 类还提供了很多修改字符串的方法** 比如 `append` 方法。
+- `StringBuilder` 与 `StringBuffer` 都继承自 `AbstractStringBuilder` 类，在 `AbstractStringBuilder` 中也是使用 byte 数组保存字符串，不过没有使用 `final` 和 `private` 关键字修饰，最关键的是这个 **`AbstractStringBuilder` 类还提供了很多修改字符串的方法** 比如 `append` 方法。
 
   ```java
   abstract class AbstractStringBuilder implements Appendable, CharSequence {
-      char[] value;
+      byte[] value;
+      
       public AbstractStringBuilder append(String str) {
           if (str == null)
               return appendNull();
@@ -691,8 +774,8 @@ public final class String
 
 - String 类用 `final` 修饰，说明 String 类 **不可继承**；
 - String 类的主力成员字段 `value` 是一个 `byte[]` 数组（JDK 9 之前是 `char[]`），也是用 `final` 修饰，被 final 修饰的字段创建后就 **不可改变**。注意数组是引用类型，说明 `value` 只是不能再指向其他对象；
-- 注意：是这个 `byte[]` 类型的 **变量 `value` 不可改变**，并不是这个数组不可变。也就是说只是 `value` 这个 **变量引用的地址不可改变**，而 **数组本身是可变的**；
-- 也就是说 **`value` 变量** 只是 **stack 上的一个引用**，**数组的本体结构在 heap 中**。String 类里的 `value` 用 `final` 修饰，只是说 stack 里的这个叫 `value` 所引用的地址不可变，没有说 heap 中数组本身中的数据不可变；
+- 注意：是这个 `byte[]` 类型的 **变量 `value` 不可改变**，并不是这个数组不可变。也就是说只是 `value` **变量引用的地址不可改变**，而 **数组本身是可变的**；
+- **`value` 变量** 只是 **stack 上的一个引用**，**数组的本体结构在 heap 中**。String 类里的 `value` 用 `final` 修饰，只是说 stack 里的这个叫 `value` 所引用的地址不可变，没有说 heap 中数组本身中的数据不可变；
 
 举个例子：
 

@@ -232,9 +232,9 @@ Java 的四种引用类型如下：
 
 ### 2.5 value 为什么不设计成弱引用呢？
 
-首先我们得知道，**value 除了指向 Object 外，没有任何引用指向它**。所以如果 value 被设计成弱引用，那么它 **肯定会被 GC 回收**，那再调用 ThreadLocal.get() 时，得到的就是一个 null 值。
+首先我们得知道，**Object（存储的对象）除了被 value 指向外，没有任何引用指向它**。所以如果 value 被设计成弱引用，则 **Object 就只被弱引用指向**，那么 **Object 肯定会被 GC 回收**，那再调用 `ThreadLocal.get()` 时，得到的就是一个 null 值。
 
-所以，value 是绝对不可以设计成弱引用的。
+所以，value 是绝对不可以设计成弱引用的，我们要确保它指向的 Object 不为 null。
 
 ## 3. ThreadLocal 应用场景
 
@@ -918,22 +918,53 @@ Process finished with exit code 0
 
 ![image-20221205221706365](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202212052217570.png)
 
-可以看到，在方法中如果判断父线程的 `inheritableThreadLocals` 不为 null，则会 **通过 `createInheritedMap()` 方法创建当前子线程的 `inheritableThreadLocals`**。
+可以看到，在方法中如果判断 **父线程的 `inheritableThreadLocals` 不为 null**，则会 **通过 `createInheritedMap()` 方法创建当前子线程的 `inheritableThreadLocals`**。
 
 来看看 ThreadLocal 的 `createInheritedMap(ThreadLocalMap parentMap)` 方法，可以发现，**传入的参数是父线程的 Map**（`parent.inheritableThreadLocals`），这个方法其实就是 **根据父线程的 ThreadLocalMap，拷贝里面的数据给子线程的 ThreadLocalMap**：
 
 ![image-20221205223112365](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202212052231389.png)
 
-从上面的这个方法可以很清晰的看得到，如果 parent 的 `inheritableThreadLocals` 不是 null，
-那么就会将当前子线程的 `inheritableThreadLocals` 设置为 parent 的 `inheritableThreadLocals`。
+从上面的这个方法可以很清晰的看得到，**如果 parent 的 `inheritableThreadLocals` 不是 null，**
+**那么就会将当前子线程的 `inheritableThreadLocals` 设置为 parent 的 `inheritableThreadLocals`**。
 
 所以借助于 `inheritableThreadLocals`，可以实现创建线程向被创建线程进行数据的传递。
 
-> InheritableThreadLocal 的缺陷
+这里需要注意以下 `key.childValue(e.value)` 这个方法：
 
-InheritableThreadLocal 仍然有缺陷，一般我们做异步化处理都是使用的线程池，线程池是线程复用的逻辑，而 InheritableThreadLocal 是在 Thread 构造方法中的 `init()` 方法给赋值的，所以这里会存在问题。
+![image-20221214164047117](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202212141640894.png)
 
-`JDK` 的 `InheritableThreadLocal` 类可以完成父线程到子线程的值传递。但对于使用线程池等会池化复用线程的执行组件的情况，线程由线程池创建好，并且线程是池化起来反复使用的；这时父子线程关系的 `ThreadLocal` 值传递已经没有意义，应用需要的实际上是把 **任务提交给线程池时** 的 `ThreadLocal` 值传递到 **任务执行时** 使用。
+可以发现，它直接返回传入的参数，也就是把传进来的父类的 value 对象直接赋值给子类，即 **子类和父类使用的是同一个 value 对象**。
+
+另外，在 JDK 17 中 Thread 的 `init()` 方法不再被使用，Thread 的构造函数中不会调用 `init()` 方法，而是直接把 `init()` 的代码放到自己的构造函数中，所以只需要调用本身的构造方法即可。
+
+### 6.2 InheritableThreadLocal 的缺陷
+
+InheritableThreadLocal 仍然有缺陷，一般我们做异步化处理都是使用的 **线程池**，线程池是线程复用的逻辑，而 InheritableThreadLocal 是在 Thread 构造方法中的 `init()` 方法给赋值的，所以这里会存在问题。
+
+在线程池中，我们都是直接使用线程池已经创建好的线程，所以可能会出现如下两个问题：
+
+下面假设业务线程是父线程，线程池中的线程是子线程，需要执行业务线程执行过程中的某个任务。
+
+- 问题一：处理业务的线程并不创建线程池中的线程，因此线程池中的线程在被创建时，它的父线程的 `inheritableThreadLocals` 肯定为 null，那么 **线程池中的线程也就获取不到业务线程中的 InheritableThreadLocal 变量**；
+- 问题二：如果处理业务的线程就是主线程，主线程也负责创建线程池中的线程，那么虽然线程池中的线程能获取到业务线程的 InheritableThreadLocal 变量，但每个线程获取到的都是一样的（因为所有子类和父类共用一个 value 对象）。也就是说，**线程池中的某个线程改变了 InheritableThreadLocal 变量的值，那么其他线程也会被影响**。
+
+> 问题二的解决方法
+
+第二个问题很好解决，上面也提到了 `key.childValue(e.value)` 这个方法：
+
+![image-20221214164047117](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202212141640894.png)
+
+它直接返回传入的参数，也就是把传进来的父类的 value 对象直接赋值给子类，即 **子类和父类使用的是同一个 value 对象**。
+
+该方法的注释中也说明了，“此方法仅返回其输入参数，如果需要不同的行为，则应该重写该方法”。
+
+所以，我们可以继承 InheritableThreadLocal 重写 `childValue()` 方法，做一次深拷贝即可，让子类和父类使用不同的对象。但是这样做之后，父类中的对象更改就不能影响子类的对象了。
+
+> 问题一的解决方法
+
+问题一的关键在于业务和功能不在同一个地方进行，这是常见的场景，例如业务线程只是将任务对象（实现了 Runnable 或者 Callable 的对象）加入到任务队列中，然后让线程池去执行任务队列中的任务。
+
+所以我们实际上需要的是：**把任务提交给线程池时** 的 `ThreadLocal` 值传递到 **任务执行时** 继续使用。
 
 阿里开源了一个 [TransmittableThreadLocal](https://github.com/alibaba/transmittable-thread-local) 组件，可以解决这个问题。
 
@@ -945,8 +976,7 @@ InheritableThreadLocal 仍然有缺陷，一般我们做异步化处理都是使
 
 由于线程池会复用 Thread 对象，因此 Thread 类的成员变量 threadLocals（ThreadLocalMap）也会被复用。
 
-如果在一个线程处理完当前任务后，**忘记将 threadlocals 进行清理 `remove()`**，并且这个线程在处理下一个任务时，
-**不调用 `set()` 设置初始值**（调用 `set()` 会将之前 ThreadLocal key 对应的 value 修改掉），那么这时也能获取到这个 threadlocals。
+如果在一个线程处理完当前任务后，**忘记将该 ThreadLocal 进行清理 `remove()`**，并且这个线程在处理下一个任务时，**不调用 `set()` 设置值**（调用 `set()` 会将之前 ThreadLocal 对应的 value 修改掉），那么这时也 **能获取到之前的 ThreadLocal 变量对应的值**。
 
 例如，thread-1 在处理下一个任务时，能获取到上一个任务中 ThreadLocal 的值：
 
