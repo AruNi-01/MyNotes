@@ -92,6 +92,10 @@ Docker通过隔离机制，可以将服务器利用到极致！
 - 容器内的应用直接运行在宿主机的内容，容器是没有自己的内核的，也没有虚拟我们的硬件，所以就轻便了
 - 每个容器间是互相隔离，每个容器内都有一个属于自己的文件系统，互不影响
 
+![image-20230528133919106](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281339456.png)
+
+Hypervisor 相当于虚拟机的管理程序。
+
 
 
 > DevOps（开发、运维）
@@ -826,7 +830,12 @@ docker attach 容器id
 #docker attach ：进入容器正在执行的终端，不会启动新的进程。
 ```
 
+**两种方式的区别**：
 
+- docker exec（常用）：进入当前容器后开启一个新的终端，可以在里面操作。**所以当使用 exit 退出时，运行的容器也不会停止**。
+- docker attach ：进入容器正在执行的终端，不会启动新的进程。当使用 exit 时，直接把运行的容器给停止了。（风险大）
+
+所以一般都是先使用 -d 参数后台运行容器，然后再使用 exec 进入，保证当前交互终端 exit 后不会停止容器。
 
 ###  从容器内拷贝到主机上
 
@@ -858,6 +867,50 @@ exit
 [root@VM-16-12-centos ~]# cd /home
 [root@VM-16-12-centos home]# ls
 jdk-8u202-linux-x64.rpm  lighthouse  test.java
+```
+
+### 导入和导出容器
+
+导入导出比上面的 cp 文件更牛，直接导入导出整个容器。
+
+```shell
+# 命令：
+# 导出
+docker export 容器ID > 文件名.tar
+# 导入：先执行 cat 查看文件，然后使用管道传递给 import...
+cat 文件名.tar | docker import -镜像用户/镜像名:版本号
+
+# 测试（MacOS 上）
+☁  ~  docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS      NAMES
+834a74083f4a   redis     "docker-entrypoint.s…"   29 minutes ago   Up 17 minutes   6379/tcp   my-redis1
+
+# 导出容器
+☁  ~  docker export 834a74083f4a > my-redis.tar
+☁  ~  ls
+...		my-redis.tar	  ......
+# 把容器删除
+☁  ~  docker rm -f my-redis1
+my-redis1
+☁  ~  docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED          STATUS                      PORTS     NAMES
+
+# 导入容器（导入为镜像文件），用户/镜像名:版本号 随意
+☁  ~  cat my-redis.tar | docker import - aarynlu/redis:6.2.0
+sha256:de9fda33660f490ced1bfa6a50079a24032031388ca164171dcdb8f991b5f654
+# 查看导入容器的镜像
+☁  ~  docker images
+REPOSITORY      TAG       IMAGE ID       CREATED         SIZE
+aarynlu/redis   6.2.0     de9fda33660f   3 seconds ago   109MB
+redis           latest    7614ae9453d1   16 months ago   113MB
+# 根据该镜像启动容器
+☁  ~  docker run -d --name my-redis aarynlu/redis:6.2.0 redis-server
+7212e8dafdf94f5867ecc72e0617a461bc81bcd0ace5f8199aa913bfe945ef61
+☁  ~  docker ps
+CONTAINER ID   IMAGE                 COMMAND          CREATED         STATUS         PORTS     NAMES
+7212e8dafdf9   aarynlu/redis:6.2.0   "redis-server"   3 seconds ago   Up 2 seconds             my-redis
+☁  ~  docker exec -it my-redis bash
+root@7212e8dafdf9:/#
 ```
 
 ### 命令大全
@@ -1409,9 +1462,9 @@ root@53bca03e5f9d:/usr/local/tomcat# cd webapps
 root@53bca03e5f9d:/usr/local/tomcat/webapps# ls
 ROOT  docs  examples  host-manager  manager
 
-# 4、将操作过的容器通过commit提交为一个镜像！以后就使用我们修改过的镜像即可，而不需要每次都重新拷贝webapps.dist下的文件到webapps了，这就是我们自己的一个修改过的镜像。
-# 命令：
-# docker commit -m="描述信息" -a="作者" 容器id 目标镜像名:[TAG]
+# 4、将操作过的容器通过commit提交为一个镜像！以后就使用我们修改过的镜像即可，
+#       而不需要每次都重新拷贝webapps.dist下的文件到webapps了，这就是我们自己的一个修改过的镜像。
+# 命令：docker commit -m="描述信息" -a="作者" 容器id 目标镜像名:[TAG]
 [root@VM-16-12-centos ~]# docker commit -a="AruNi" -m="add webapps app" 53bca03e5f9d tomcat02:1.0
 sha256:6175d1c7c9c26b109e2b15f13e81f81857be14dce1e701f3042a256903056588
 
@@ -1429,7 +1482,9 @@ kibana                7.6.2     f70986bc5191   2 years ago      1.01GB
 elasticsearch         7.6.2     f29a1ee41030   2 years ago      791MB
 ```
 
-如果你想要保存当前容器的状态，就可以通过commit来提交，获得一个镜像，就好比我们我们使用虚拟机的快照。
+如果你想要保存当前容器的状态，就可以通过 commit 来提交，获得一个镜像，就好比我们我们使用虚拟机的快照。
+
+这就是在原来的镜像上面堆叠了一层新的镜像，使其功能更强大。
 
 # 容器数据卷
 
@@ -1813,7 +1868,7 @@ docker01		# 同步了 docker01的数据
 # 测试发现：数据依旧保留在docker02和docker03中没有被删除
 ```
 
-**原理**：三个容器都公用宿主机上的匿名数据卷中的文件，如果把宿主机上的文件删了，容器里面的文件也就没了。
+**原理**：**三个容器都共用宿主机上的匿名数据卷中的文件，如果把宿主机上的文件删了，容器里面的文件也就没了**。
 
 
 
@@ -1846,6 +1901,8 @@ docker01		# 同步了 docker01的数据
 3. docker run运行镜像
 4. docker push发布镜像（DockerHub 、阿里云仓库)
 
+与多次 commit 镜像来构建新镜像相比，DockerFile 文件更加灵活、只需要构建一次即可。
+
 
 
 查看官方的镜像：
@@ -1864,10 +1921,14 @@ docker01		# 同步了 docker01的数据
 
 **基础知识**：
 
-1. 每个保留关键字(指令）都是必须是大写字母
+1. 每个保留关键字（指令）都是必须是 **大写** 字母
 2. 执行从上到下顺序
 3. `#` 表示注释
-4. 每一个指令都会创建提交一个新的镜像层，并提交
+4. **每一个指令都会创建一个新的镜像层**，并提交
+
+Docker 执行 DockerFile 大致流程：
+
+![image-20230522170738282](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221707898.png)
 
 ![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/413b15ed70dea098b4ed3d3964096471.png)
 
@@ -1881,28 +1942,51 @@ DockerImages：通过 DockerFile 构建生成的镜像，最终发布和运行�
 
 Docker 容器：容器就是镜像运行起来提供服务。
 
+![image-20230522170810939](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221708018.png)
+
 ## DockerFile 指令
 
-```shell
-FROM				# from: 基础镜像，一切从这里开始构建
-MAINTAINER			# maintainer: 镜像是谁写的， 姓名+邮箱
-RUN					# run: 镜像构建的时候需要运行的命令
-ADD					# add: 步骤，tomcat镜像，这个tomcat压缩包！添加内容 添加同目录
-WORKDIR				# workdir: 镜像的工作目录
-VOLUME				# volume: 挂载的目录
-EXPOSE				# expose: 暴露端口配置
-CMD					# cmd: 指定这个容器启动的时候要运行的命令，只有最后一个会生效，可被替代
-ENTRYPOINT			# entrypoint: 指定这个容器启动的时候要运行的命令，可以追加命令
-ONBUILD				# onbuild: 当构建一个被继承 DockerFile 的时候就会运行onbuild的指令，触发指令
-COPY				# copy: 类似ADD，将我们文件拷贝到镜像中
-ENV					# env: 构建的时候设置环境变量！
-```
+常用的指令如下：
+
+- FROM: 该镜像的基础镜像是什么，一切从这里开始构建
+
+- MAINTAINER: 镜像是谁写的， 姓名+邮箱
+
+- RUN: 镜像构建（docker build）的时候需要运行的命令（终端的 shell 命令）
+
+- WORKDIR: 镜像的工作目录，进入容器后的默认目录
+
+- ENV: 构建的时候设置环境变量！
+
+- ADD: 将宿主机目录下的文件拷贝进镜像且会自动处理 URL 和解压 tar 压缩包
+
+- COPY: 类似ADD，将我们文件拷贝到镜像中，比 ADD 少了个解压
+
+- VOLUME: 挂载的目录
+
+- EXPOSE: 暴露端口配置
+
+- CMD: 指定容器启动时要运行的命令，在 docker run 的时候运行。**注意**：
+
+  - **DockerFile 中可以有多个 CMD，但只有最后一个会生效**；
+  - **当 docker run 后面有命令时，CMD 命令会被覆盖**。因为如果在 run 后面加了命令参数，相当于又在 DockerFile 最后一行加了这个 CMD 命令，就把原来的覆盖了。
+
+  ![image-20230522172843533](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221728257.png)
+
+- ENTRYPOINT: 也是用来指定容器启动时要运行的命令，类似于 CMD，但是：
+
+  - **不会被 docker run 后面的命令覆盖**，而且这些命令参数会被当做参数传给 ENTRYPOINT 指令指定的程序；
+  - **也只有最后一个 ENTRYPOINT 会生效**。
+
+  ![image-20230522173929988](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221739566.png)
+
+- ONBUILD: 当构建一个被继承 DockerFile 的时候就会运行onbuild的指令，触发指令
 
 ![image-20220519111320642](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/d649a2d66b8e16db7ad0b5242a8954e7.png)
 
 ## DockerFile 构建自己的镜像
 
-Docker Hub 中 99% 的镜像都是 `FROM scratch` 这个基础的镜像而来的，然后添加需要的软件和配置来进行构建。
+Docker Hub 中 99% 的镜像都是 **`FROM scratch`** 这个基础的镜像而来的，然后添加需要的软件和配置来进行构建。
 
 ![image-20220519111510545](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/e678c5bfad8467ff3054b9bb029904be.png)
 
@@ -1981,10 +2065,19 @@ eeb6ee3f44bd   8 months ago    /bin/sh -c #(nop)  CMD ["/bin/bash"]            0
 
 ## CMD 和 ENTRYPOINT 的区别
 
-```shell
-CMD					# 指定这个容器启动的时候要运行的命令，只有最后一个会生效，可被替代。
-ENTRYPOINT			# 指定这个容器启动的时候要运行的命令，可以追加命令
-```
+- CMD: 指定容器启动时要运行的命令，在 docker run 的时候运行。**注意**：
+
+  - **DockerFile 中可以有多个 CMD，但只有最后一个会生效**；
+  - **当 docker run 后面有命令时，CMD 命令会被覆盖**。因为如果在 run 后面加了命令参数，相当于又在 DockerFile 最后一行加了这个 CMD 命令，就把原来的覆盖了。
+
+  ![image-20230522172843533](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221728257.png)
+
+- ENTRYPOINT: 也是用来指定容器启动时要运行的命令，类似于 CMD，但是：
+
+  - **不会被 docker run 后面的命令覆盖**，而且这些命令参数会被当做参数传给 ENTRYPOINT 指令指定的程序；
+  - **也只有最后一个 ENTRYPOINT 会生效**。
+
+  <img src="https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305221739566.png" alt="image-20230522173929988"  />
 
 **测试cmd**：
 
@@ -2084,7 +2177,7 @@ COPY readme.md /usr/local/readme.md						# 复制README文件
 ADD jdk-8u333-linux-x64.tar.gz /usr/local/ 			# 添加jdk，ADD 命令会自动解压
 ADD apache-tomcat-9.0.63.tar.gz /usr/local/ 		# 添加tomcat，ADD 命令会自动解压
 
-RUN yum -y install vim								# 安装 vim 命令
+RUN yum -y install vim								# 安装 vim 命令，注意 centos8 会出现问题
 ENV MYPATH /usr/local 								# 环境变量设置 工作目录
 WORKDIR $MYPATH
 
@@ -2099,7 +2192,8 @@ ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin
 
 EXPOSE 8080 										# 设置暴露的端口
 
-CMD /usr/local/apache-tomcat-9.0.63/bin/startup.sh && tail -F /usr/local/apache-tomcat-9.0.63/logs/catalina.out 					# 设置默认命令
+# 设置默认命令，启动 tomcat 并且使用 tail 实时追踪日志文件的变化
+CMD /usr/local/apache-tomcat-9.0.63/bin/startup.sh && tail -F /usr/local/apache-tomcat-9.0.63/logs/catalina.out
 ```
 
 ### 3、构建镜像
@@ -2367,7 +2461,32 @@ The push refers to repository [registry.cn-hangzhou.aliyuncs.com/run-docker-stud
 
 # Docker 网络
 
-## 理解Docker 0
+## Docker 的网络模式
+
+先来了解一下 docker 的四种网络模式：
+
+![image-20230528105910011](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281059296.png)
+
+使用：
+
+- bridge 模式：默认，或者使用 `--netword bridge` 指定，默认使用 docker0；
+- host 模式：使用 `--network host` 指定；
+- none 模式：使用 `--network none` 指定；
+- container 模式：使用 `--network container:容器名/ID` 指定。
+
+docker 安装时会创建三种网络，但默认使用 bridge：
+
+```shell
+docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+33ac263b4208   bridge    bridge    local
+667cea2f4d50   host      host      local
+eb37be31f571   none      null      local
+```
+
+
+
+## Docker 0
 
 学习之前**清空下前面的docker 镜像、容器**
 
@@ -2377,18 +2496,15 @@ $ docker rm -f $(docker ps -aq)
 
 # 删除全部镜像
 $ docker rmi -f $(docker images -aq)
-12345
 ```
 
 > 测试
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTIyMzIzNjc3Mi5wbmc?x-oss-process=image/format,png)
+![image-20230528103312377](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281035215.png)
 
 **三个网络**
 
 > 问题： docker 是如果处理容器网络访问的？
-
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3MjA0MTk4NS5wbmc?x-oss-process=image/format,png)
 
 ```shell
 # 测试  运行一个tomcat
@@ -2409,149 +2525,112 @@ $ ip addr
        valid_lft forever preferred_lft forever
 
        
-# 思考？ linux能不能ping通容器内部！ 可以 容器内部可以ping通外界吗？ 可以！
+# 思考？ linux能不能ping通容器内部！ 可以 容器内部可以ping通外界吗？ 也可以！
 $ ping 172.18.0.2
 PING 172.18.0.2 (172.18.0.2) 56(84) bytes of data.
 64 bytes from 172.18.0.2: icmp_seq=1 ttl=64 time=0.069 ms
 64 bytes from 172.18.0.2: icmp_seq=2 ttl=64 time=0.074 ms
-1234567891011121314151617181920212223
 ```
 
 > 原理
 
-1、我们每启动一个docker容器，docker就会给docker容器分配一个ip，我们只要按照了docker，就会有一个docker0桥接模式，使用的技术是veth-pair技术！
+1、我们每启动一个docker容器，docker就会给docker容器分配一个ip，我们只要安装了docker，就会有一个 docker0 桥接模式，使用的技术是 veth-pair 技术！
 
 https://www.cnblogs.com/bakari/p/10613710.html
 
-再次测试 ip addr
+我们启动一个容器，再次测试 ip addr：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNTIyNDAzNjg4My5wbmc?x-oss-process=image/format,png)
+![image-20230528103848353](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281040128.png)
 
 2 、再启动一个容器测试，发现又多了一对网络
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3MzI1OTQ1OC5wbmc?x-oss-process=image/format,png)
+![image-20230528104007048](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281040241.png)
 
-```shell
-# 我们发现这个容器带来网卡，都是一对对的
-# veth-pair 就是一对的虚拟设备接口，他们都是成对出现的，一端连着协议，一端彼此相连
-# 正因为有这个特性 veth-pair 充当一个桥梁，连接各种虚拟网络设备的
-# OpenStac,Docker容器之间的连接，OVS的连接，都是使用evth-pair技术
-1234
-```
+我们发现这个容器带来网卡，都是一对对的。veth-pair 就是一对的虚拟设备接口，他们都是成对出现的，一端连着协议，一端彼此相连。
+
+正因为有这个特性，veth-pair 充当一个桥梁，连接各种虚拟网络设备的。OpenStac，Docker容器之间的连接，OVS的连接，都是使用 evth-pair 技术。
 
 3、我们来测试下tomcat01和tomcat02是否可以ping通
 
 ```shell
-# 获取tomcat01的ip 172.17.0.2
+# 获取 tomcat01的 ip 172.17.0.2
 $ docker-tomcat docker exec -it tomcat01 ip addr  
 550: eth0@if551: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
     link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
        valid_lft forever preferred_lft forever
        
-# 让tomcat02 ping tomcat01       
+# 让 tomcat02 ping tomcat01       
 $ docker-tomcat docker exec -it tomcat02 ping 172.17.0.2
 PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
 64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.098 ms
 64 bytes from 172.17.0.2: icmp_seq=2 ttl=64 time=0.071 ms
 
-# 结论：容器和容器之间是可以互相ping通
-1234567891011121314
+# 结论：容器和容器之间是可以互相 ping 通
 ```
 
-**网络模型图**
+**网络模型图**:
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3NDI0ODYyNi5wbmc?x-oss-process=image/format,png)
+使用 `docker network inspect bridge` 查看下 docker 默认的 bridge 网桥信息：
 
-结论：tomcat01和tomcat02公用一个路由器，docker0。
+![image-20230528104536259](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281045838.png)
 
-所有的容器不指定网络的情况下，都是docker0路由的，docker会给我们的容器分配一个默认的可用ip。
+再来看网络模型图：
+
+![image-20230528104809719](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281048728.png)
+
+结论：tomcat01 和 tomcat02 公用一个网关（相当于路由器）docker0。
+
+所有的容器不指定网络的情况下，都是 docker0 路由的，docker 会给我们的容器分配一个默认的可用 ip。
 
 > 小结
 
-Docker使用的是Linux的桥接，宿主机是一个Docker容器的网桥 docker0
+Docker 使用的是 Linux 的桥接，宿主机是一个 Docker 容器的网桥 docker0
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3NDcwMTA2My5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281050344.png)
 
-Docker中所有网络接口都是虚拟的，虚拟的转发效率高（内网传递文件）
+Docker 中所有网络接口都是虚拟的，虚拟的转发效率高（内网传递文件）
 
 只要容器删除，对应的网桥一对就没了！
 
-**思考一个场景：我们编写了一个微服务，database url=ip: 项目不重启，数据ip换了，我们希望可以处理这个问题，可以通过名字来进行访问容器**？
+**思考一个场景：我们编写了一个微服务，database url=ip: 项目不重启，但是数据库 ip 换了，此时通过 ip 就访问不到了。所以我们希望可以解决这个问题，可以通过服务名字来进行访问容器**。
 
 ## –-link
 
 ```shell
-$ docker exec -it tomcat02 ping tomca01   # ping不通
+$ docker exec -it tomcat02 ping tomca01   # 通过服务名 ping 不通
 ping: tomca01: Name or service not known
 
-# 运行一个tomcat03 --link tomcat02 
+# 运行一个 tomcat03，使用 --link tomcat02，连接到 tomcat02（单向）
 $ docker run -d -P --name tomcat03 --link tomcat02 tomcat
 5f9331566980a9e92bc54681caaac14e9fc993f14ad13d98534026c08c0a9aef
 
-# 3连接2
-# 用tomcat03 ping tomcat02 可以ping通
+# 此时用 tomcat03 ping tomcat02 可以 ping 通
 $ docker exec -it tomcat03 ping tomcat02
 PING tomcat02 (172.17.0.3) 56(84) bytes of data.
 64 bytes from tomcat02 (172.17.0.3): icmp_seq=1 ttl=64 time=0.115 ms
 64 bytes from tomcat02 (172.17.0.3): icmp_seq=2 ttl=64 time=0.080 ms
 
-# 2连接3
-# 用tomcat02 ping tomcat03 ping不通
-12345678910111213141516
+# 但反过来，用 tomcat02 ping tomcat03 则 ping 不通
+$ docker exec -it tomcat02 ping tomca03
+ping: tomca01: Name or service not known
 ```
 
 **探究：**
 
-docker network inspect 网络id 网段相同
+`docker network inspect 网络id` ，可以发现三个容器的网段是相同的：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE3NTkwNDU1MS5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281106534.png)
 
-docker inspect tomcat03
+查看 tomcat03 里面的 /etc/hosts 发现有 tomcat02 的配置：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE4MDMwODUzMC5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281106185.png)
 
-查看tomcat03里面的/etc/hosts发现有tomcat02的配置
+–-link 本质就是在 hosts 配置中添加映射，所以现在 Docker 已经不建议使用 -–link 了！
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE4MDYyOTAxMi5wbmc?x-oss-process=image/format,png)
-
-–link 本质就是在hosts配置中添加映射
-
-现在使用Docker已经不建议使用–link了！
-
-自定义网络，不适用docker0！
-
-docker0问题：不支持容器名连接访问！
+从上面可以发现 **docker0 问题**：不支持服务名（容器名）连接访问！这导致容器 ip 更变后就连接不上了。这就需要使用到自定义网络了。
 
 ## 自定义网络
-
-```shell
-docker network
-connect     -- Connect a container to a network
-create      -- Creates a new network with a name specified by the
-disconnect  -- Disconnects a container from a network
-inspect     -- Displays detailed information on a network
-ls          -- Lists all the networks created by the user
-prune       -- Remove all unused networks
-rm          -- Deletes one or more networks
-12345678
-```
-
-> 查看所有的docker网络
-
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MDMxNjA3My5wbmc?x-oss-process=image/format,png)
-
-**网络模式**
-
-bridge ：桥接 docker（默认，自己创建也是用bridge模式）
-
-none ：不配置网络，一般不用
-
-host ：和所主机共享网络
-
-container ：容器网络连通（用得少！局限很大）
-
-测试
 
 ```shell
 # 我们直接启动的命令 --net bridge,而这个就是我们得docker0
@@ -2560,71 +2639,263 @@ $ docker run -d -P --name tomcat01 tomcat
 等价于 => docker run -d -P --name tomcat01 --net bridge tomcat
 
 # docker0，特点：默认，域名不能访问。 --link可以打通连接，但是很麻烦！
-# 我们可以 自定义一个网络
+# 所以我们可以 自定义一个网络
 $ docker network create --driver bridge --subnet 192.168.0.0/16 --gateway 192.168.0.1 mynet
-12345678
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MTEzOTk0NC5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281107273.png)
 
-```shell
-$ docker network inspect mynet;
-1
-```
+查看自建网络信息：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MTQwNzA2NS5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281108628.png)
 
-启动两个tomcat,再次查看网络情况
+用我们自定义的网络启动两个 tomcat，再次查看网络情况
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MTg0NDI0MC5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281109022.png)
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MjAwNzM3MS5wbmc?x-oss-process=image/format,png)
+**在自定义的网络下，通过服务名可以互相 ping 通**，不用使用 -–link：
 
-在自定义的网络下，服务可以互相ping通，不用使用–link
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281109558.png)
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MjEzNDY3My5wbmc?x-oss-process=image/format,png)
-
-我们自定义的网络docker当我们维护好了对应的关系，推荐我们平时这样使用网络！
+我们自定义的网络 docker 帮我们维护好了对应的关系，推荐我们平时这样使用网络！
 
 好处：
 
-redis -不同的集群使用不同的网络，保证集群是安全和健康的
+- redis -不同的集群使用不同的网络，保证集群是安全和健康的
 
-mysql-不同的集群使用不同的网络，保证集群是安全和健康的
+- mysql-不同的集群使用不同的网络，保证集群是安全和健康的
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MjUwNDM2Ny5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281109014.png)
 
 ## 网络连通
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MzI0MzE0Ni5wbmc?x-oss-process=image/format,png)
+看看 network 有哪些命令：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MzI1OTE4NS5wbmc?x-oss-process=image/format,png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281111463.png)
+
+看看 connect 的用法：
+
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281111468.png)
 
 ```shell
-# 测试两个不同的网络连通  再启动两个tomcat 使用默认网络，即docker0
+# 测试两个不同的网络连通  再启动两个 tomcat 使用默认网络，即 docker0
 $ docker run -d -P --name tomcat01 tomcat
 $ docker run -d -P --name tomcat02 tomcat
-# 此时ping不通
-1234
+# 此时两个容器通过服务名是 ping 不通的
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5MzU1NDkzMS5wbmc?x-oss-process=image/format,png)
+要将 tomcat01 连通 tomcat-net-01 ，就要让 tomcat01加到 mynet网络，此时一个 tomcat01 容器就有两个 ip：
 
-```shell
-# 要将tomcat01 连通 tomcat—net-01 ，连通就是将 tomcat01加到 mynet网络
-# 一个容器两个ip（tomcat01）
-12
+![image-20230528111345408](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281116590.png)
+
+加入后已经可以让 tomcat01 和 tomcat-01-net ping 通了，但是为 connect 的 tomcat02 是依旧不通的。
+
+结论：假设要跨网络操作别人，就需要使用 docker network connect 连通！
+
+
+
+# Docker Compose
+
+## 为什么需要 Compose？
+
+docker建议我们每一个容器中只运行一个服务，因为 docker 容器本身占用资源极少，所以最好是将每个服务单独的分割开来但是这样我们又面临了一个问题？
+
+如果我需要同时部署好多个服务，难道要每个服务单独写 Dockerfile 然后在构建镜像，构建容器，这样累都累死了。比如要启动一个微服务项目，要像下面这样启动：
+
+1. 启动 MySQL 和 Redis 容器实例；
+2. 启动微服务工程；
+
+这样启动会有如下问题：
+
+- 先后顺序要求固定，得先启动 MySQL + Redis，微服务项目才能访问成功；
+- 执行多个 docker run 命令；
+- 容器间的启停或宕机，可能导致 IP 地址对应的容器实例发生变换，导致映射出错，则要么把生产 IP 写死（不推荐），要么通过服务名调用。
+
+所以 docker 官方给我们提供了 docker-compose 多服务部署的工具。例如要实现一个Web微服务项目，除了Web服务容器本身，往往还需要再加上后端的数据库mysql服务容器，redis服务器，注册中心eureka，甚至还包括负载均衡容器等等。。。。。。
+
+Compose 允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。可以很容易地用一个配置文件定义一个多容器的应用，然后使用一条指令安装这个应用的所有依赖，完成构建。
+
+Docker-Compose 解决了容器与容器之间如何管理编排的问题。它通过一个配置文件来描述整个应用涉及的所有容器与容器之间的依赖关系，然后可以用一条指令来启动或停止整个应用。
+
+## Compose 核心概念与使用
+
+Compose 的核心概念由 “一文件，两要素” 组成：
+
+- 一文件：docker-compose.yml；
+- 两要素：
+  - 服务（service）：一个个应用容器实例，比如订单微服务、MySQL 容器、Redis 容器等；
+  - 工程（project）：由一组关联的应用容器组成的一个完整的业务单元，在 docker-compose.yml 文件中定义。
+
+
+
+使用 docker-compose 布署应用主要分为三步：
+
+- 编写 Dockerfile 定义各个微服务应用并构建出镜像（应用的运行环境）；
+- 使用 docker-compose.yml 定义一个完整的业务单元，安排好整体应用中的各个容器服务；
+- 最后使用 docker-compose up 命令启动整个应用，一键部署上线。
+
+## Compose 常用命令
+
+![image-20230528112606076](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305281126100.png)
+
+## 使用 Compose
+
+下列为一个 docker-compose 配置文件的示例，其定义的工程包含了两个 service，一个是数据库服务 test_db*，*一个是 web 服务 test_web。其中 web 服务包含了两个副本，并且要在数据库服务启动之后才能启动。
+
+```yml
+version: '3'                               # 配置版本号
+
+services: 
+  webapp:						# 服务名称 
+    depends_on:                          # 配置当前服务依赖的服务
+      - database
+    build: ./                            # 配置构建image的Dockerfile文件位置
+    image: test-web
+#    container_name: test-web            # 容器名必须唯一，所以如果服务包两个以上容器，则不能指定容器名
+    restart: always
+    volumes:
+      - /home/logs/test/web/test_web/service:/home/logs/test/web/test_web/service
+    ports:
+      - "8888:8888"
+    deploy:                              # 布署配置
+      replicas: 2                        # 创建两个副本
+    networks:
+      - test-net
+  
+  database:                                # 服务名称             
+    image: mysql:5.7                       # 使用的镜像
+    container_name: test-db                # 容器名称
+    ports:                                 # 端口映射配置
+      - "3307:3306"
+    restart: always                        # 重启方式
+    networks:                              # 服务连接到的指定网络
+      - deploy-net
+    environment:                           # 配置环境变量
+      MYSQL_DATABASE: "test_db"
+      MYSQL_ROOT_PASSWORD: "@QWEqwe123"
+      MYSQL_ROOT_HOST: "%"
+#    command: mysql -hlocalhost -uroot -p@QWEqwe123
+    volumes:                               # 配置容器内文件或目录挂载到宿主机
+      - "/home/db/test/test_db:/var/lib/mysql"
+      - "/home/dbtest/test_db/conf/my.cnf:/etc/my.cnf"
+      - "/home/db/test/test_db/init:/docker-entrypoint-initdb.d/"
+      
+networks:                                # 网络配置
+  test-net:
+    driver: bridge                       # 指定网络驱动器为bridge
 ```
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2NoZW5nY29kZXgvY2xvdWRpbWcvbWFzdGVyL2ltZy9pbWFnZS0yMDIwMDUxNjE5Mzg0ODMzNy5wbmc?x-oss-process=image/format,png)
 
-```shell
-# 01连通 ，加入后此时，已经可以tomcat01 和 tomcat-01-net ping通了
-# 02是依旧不通的
-12
+执行 docker-compose up 启动 compose 即可。
+
+
+
+# Docker Swarm
+
+Docker Compose 只能在单个节点上使用，而大型的项目都是运行在集群上的，这就给 Docker Compose 的使用带来了很大的限制，所以我们需要一个在集群上进行容器启动、停止、复制、状态监控等操作的容器编排工具。
+
+目前可以实现这个目标的比较知名的工具主要有:
+
+- Docker Swarm：Docker自带的编排工具，使用方便且轻量化；
+- 第三方编排工具: mesos+marathon；
+- kubernetes（k8s）：最流行的第三方容器编排工具，功能强大，发展迅速，但使用成本高，布署运维工作量较大，软件也越来越重。
+
+## 基本原理
+
+Swarm 是使用Docker 引擎内置的集群管理和编排工具。Swarm集群的框架与Hadoop集群或其他分布式系统类似，它也是由节点构成，每一个节点就是一台主机或者虚拟机。工作的机制也是主从模式（master/slaver）,节点分为两种，一种是负责管理的Manager另一种是具体干活的Worker。
+
+- 管理节点：用于 Swarm 集群的管理，docker swarm 命令基本只能在管理节点执行（节点退出集群命令 docker swarm leave 可以在工作节点执行）。为了避免单点故障，一个Swarm 集群可以有多个管理节点，但只有一个管理节点可以成为 leader，leader 通过 raft 协议实现。
+- 工作节点：是任务执行节点，管理节点将任务 (Task) 下发至工作节点执行。管理节点默认也作为工作节点，也可以通过配置让服务只运行在管理节点。
+
+![Swarm mode cluster](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305261113335.png)
+
+这样一来，多个 Docker 主机就被抽象为单个大型的虚拟 Docker 主机，在管理节点上，用户可以像在单机一样在集群上操作容器或服务。
+
+## 基本概念
+
+Swarm集群中管理的对象主要由三个，Task、Service与Node，其中Node上面已经介绍过，这里解释下Task与Service的概念。
+
+**任务（Task）**
+
+Swarm 中的最小的调度单位，目前一个Task就是一个容器。
+
+**服务（Service）**
+
+Service一般是由一组相同的Task组成，Service是这组Task要完成的任务的一个抽象。按照其包含的Task的布署方式分为两种：
+
+- replicated services 按照一定规则在各个工作节点上运行指定个数的任务。
+- global services 每个工作节点上运行一个任务。
+
+这两种模式是在服务创建时通过创建命令docker service create的 --mode 参数指定的。
+
+Service与Task以及容器的关系如下：
+
+![ HTTP listener service with three replicas](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202305261137971.png)
+
+总结成一句话就是，swarm集群（cluster）是由节点（node）组成；服务（service）一般包含若干个任务（Task），一个Task就是运行一个容器，所有这些Task都是在节点上执行的，具体在那个个节点上执行是由管理节点调度的。
+
+## 常见操作
+
+### 集群造作
+
+- 集群初始化：在任意一台机器上执行下列命令会初始化一个集群，且当前节点为Manager.
+
+```sh
+docker swarm init 
+docker swarm init --advertise-addr xxx.xxx.xxx.xxx #主机包含多个ip情形
 ```
 
-结论：假设要跨网络操作别人，就需要使用docker network connect 连通！
+- 增加工作节点：在执行集群初始化命令后会出现提示如何加入新的节点到Swarm集群，也可以通过下列命令查看如何将新的节点以Worker或Manager身份加入集群。quiet选项表示只显示token。
+
+```sh
+docker swarm join-token worker [--quiet]
+docker swarm join-token manager [--quiet]
+```
+
+- 列出集群的节点
+
+```sh
+docker node ls
+```
+
+- 改变节点角色
+
+```sh
+docker node promote work-node1 # 将work-node1节点升级为manager
+docker node demote work-node1 # 将work-node1节点降级为worker
+```
+
+### 服务操作
+
+Swarm集群中服务的管理操作是通过 docker service [command]命令实现的，具体有哪些子命令与选项参数可查看help，常见操作如下。
+
+- 创建服务：下列命令根据nginx镜像创建一个名为nginx的服务，该服务包含3个副本，服务映射到主机的80端口供外部访问。
+
+```sh
+docker service create --replicas 3 -p 80:80 --name nginx nginx
+```
+
+- 查看服务
+
+```sh
+docker service ls # 列出所有服务
+docker service ps nginx # 查看nginx服务详情
+docker service logs nginx # 查看nginx控制台日志
+```
+
+- 服务伸缩：通过docker service scale命令可以实时的调整服务的副本的数量，从而可以根据流量的波动弹性地伸缩服务规模，如下列命令可以将nginx服务的副本数量调整为5个。
+
+```sh
+docker service scale nginx=5
+```
+
+- 删除服务：通过docker service rm [name]实现，如删除nginx服务
+
+```sh
+docker service rm nginx
+```
+
+
 
 # 实战：部署Redis集群
 
@@ -2679,7 +2950,6 @@ docker搭建redis集群完成！
 
 ```
 mvn package
-1
 ```
 
 3、编写dockerfile
@@ -2690,7 +2960,6 @@ COPY *.jar /app.jar
 CMD ["--server.port=8080"]
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
-12345
 ```
 
 4、构建镜像
@@ -2699,7 +2968,6 @@ ENTRYPOINT ["java","-jar","app.jar"]
 # 1.复制jar和DockerFIle到服务器
 # 2.构建镜像
 $ docker build -t xxxxx:xx  .
-123
 ```
 
 5、发布运行
