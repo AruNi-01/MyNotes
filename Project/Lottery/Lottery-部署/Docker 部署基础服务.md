@@ -395,7 +395,7 @@ docker pull xuxueli/xxl-job-admin:2.3.0
 运行：
 
 ```sh
-docker run -e PARAMS=" --server.port=7397 --spring.datasource.url=jdbc:mysql://175.24.165.212:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8 --spring.datasource.username=root --spring.datasource.password=123456 --xxl.job.accessToken=84de7125-8e06-4d97-9f34-8e3d4f6b2e0f" -p 7397:7397 -v /logs/xxl-job:/data/applogs --name xxl-job-admin  -d xuxueli/xxl-job-admin:2.3.0
+docker run -e PARAMS=" --server.port=7397 --spring.datasource.url=jdbc:mysql://115.227.3.246/:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8 --spring.datasource.username=root --spring.datasource.password=123456 --xxl.job.accessToken=84de7125-8e06-4d97-9f34-8e3d4f6b2e0f" -p 7397:7397 -v /logs/xxl-job:/data/applogs --name xxl-job-admin  -d xuxueli/xxl-job-admin:2.3.0
 ```
 
 进入后台：ip:7397/xxl-job-admin/

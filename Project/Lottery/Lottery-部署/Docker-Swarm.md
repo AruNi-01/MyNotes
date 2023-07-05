@@ -206,21 +206,45 @@ sh start_basic_service.sh
 
 ### 3.3 Nacos 启动
 
-> Nacos 的 Docker-Compose 文件暂未写好，故先用最原始的方法 run 起来。
+> 目前问题：使用官方镜像的 compose 文件不起来，提示：stat bin/docker-startup.sh: no such file or directory: unknown"
 
 拉取镜像：
 
 ```sh
-docker pull nacos/nacos-server
+docker pull nacos/nacos-server:v2.2.3
 ```
 
 部署服务：
 
 ```sh
-docker service create -d -p 8848:8848 --env MODE=standalone  --name nacos nacos/nacos-server
+docker service create -d -p 8848:8848 --env MODE=standalone --network framework_swarm_backend --hostname nacos --name nacos nacos/nacos-server:v2.2.3
 ```
 
-### 3.4 Kafka 创建 Topic
+### 3.4 xxl-job 启动
+
+> 目前问题：compose 文件通过 PARAMS 指定的端口不生效，xxl-job 在启动时还是监听者 8080 端口。而且在浏览器通过暴露的端口访问不了。
+
+拉去镜像：
+
+```sh
+docker pull xuxueli/xxl-job-admin:2.3.0
+```
+
+部署服务：
+
+```sh
+docker service create \
+-e PARAMS=" --server.port=7397 --spring.datasource.url=jdbc:mysql://115.227.3.246:10060/xxl_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8 --spring.datasource.username=root --spring.datasource.password=123456 --xxl.job.accessToken=84de7125-8e06-4d97-9f34-8e3d4f6b2e0f" \
+--network framework_swarm_backend \
+--hostname xxl-job-admin  \
+-p 7397:7397 \
+--name xxl-job-admin  \
+-d xuxueli/xxl-job-admin:2.3.0
+```
+
+
+
+### 3.5 Kafka 创建 Topic
 
 进入 kafka 容器，在 kafka 目录下 `/opt/kafka_2.13-2.8.1` 执行脚本命令，添加两个 topic：
 
