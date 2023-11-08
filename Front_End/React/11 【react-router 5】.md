@@ -4,56 +4,52 @@
 
 ### 1.1 SPA
 
-而为了减少这样的情况，我们还有另一种应用，叫做 SPA ，单页应用程序
+SPA ，单页应用程序，它比传统的 Web 应用程序更快，因为它们在 Web 浏览器本身而不是在服务器上执行逻辑。在初始页面加载后，**只有数据来回发送**，而不是整个 HTML，这会降低带宽。它们可以独立请求标记和数据，并直接在浏览器中呈现页面。
 
-它比传统的 Web 应用程序更快，因为它们在 Web 浏览器本身而不是在服务器上执行逻辑。在初始页面加载后，**只有数据来回发送**，而不是整个 HTML，这会降低带宽。它们可以独立请求标记和数据，并直接在浏览器中呈现页面
+SPA 整个应用只有 **一个完整的页面**，点击页面中的链接 **不会刷新页面**，只会做页面的 **局部更新**。数据都通过 ajax 请求获取，并在前端异步展现。
+
+所以，可以这样理解 SPA：**单页面，多组件**。想要应用 SPA，就得先了解路由技术了。
 
 ### 1.2 什么是路由？
 
-路由是根据不同的 URL 地址展示不同的内容或页面
+路由是根据不同的 URL path 展示不同的内容或页面，在 SPA 应用中，大部分页面结果不改变，只改变部分内容的使用
 
-在 SPA 应用中，大部分页面结果不改变，只改变部分内容的使用
+一个路由其实就是一个映射关系（k:v）：key 为路径，value可能是 function 或者是 component
 
-一个路由其实就是一个映射关系（k:v）
+**后端路由**：
 
-key为路径，value可能是function 或者是 component
+- value 是 function，用来处理客户端提交的请求
 
-**后端路由：**
+- 注册路由：`router.get(path,function(req,res))`
 
-value是function，用来处理客户端提交的请求
+- 工作过程：当 node 接收一个请求的时候，根据请求路径找到匹配的路由，调用路由中的函数来处理请求，返回响应的数据
 
-注册路由：router.get(path,function(req,res))
+**前端路由**：
 
-工作过程：当node接收一个请求的时候，根据请求路径找到匹配的路由，调用路由中的函数来处理请求，返回响应的数据
+- 浏览器端路由，value 是 Component，用于展示页面内容
 
-**前端路由：**
+- 注册路由：`< Route path="/test" component={Test}>`
 
-浏览器端路由，value是Component，用于展示页面内容
+- 工作过程：当浏览器的 path 变为 `/test` 的时候，当前路由组件就会变成 Test 组件
 
-注册路由：< Route path="/test" component={Test}>
+**优点**：
 
-工作过程：当浏览器的path变为/test的时候，当前路由组件就会变成Test组件
+- 用户体验好，不需要每次都从服务器全部获取整个 HTML，快速展现给用户
 
-**前端路由的优缺点**
+**缺点**：
 
-**优点**
-
-用户体验好，不需要每次都从服务器全部获取整个 HTML，快速展现给用户
-
-**缺点**
-
-1. SPA 无法记住之前页面滚动的位置，再次回到页面时无法记住滚动的位置
-2. 使用浏览器的前进和后退键会重新请求，没有合理利用缓存
+- SPA 无法记住之前页面滚动的位置，再次回到页面时无法记住滚动的位置
+- 使用浏览器的前进和后退键会重新请求，没有合理利用缓存
 
 ### 1.3 前端路由的原理
 
-前端路由的主要依靠的时 history ，也就是浏览器的历史记录
+前端路由的主要依靠的时 history ，也就是浏览器的历史记录，history 中会记录 URL path 的变化，可以前进和后退。
 
-> history 是 BOM 对象下的一个属性，在 H5 中新增了一些操作 history 的 API
+> history 是 BOM 对象下的一个属性，在 H5 中新增了一些操作 history 的 API（history.js）
 
 浏览器的历史记录就类似于一个栈的数据结构，前进就相当于入栈，后退就相当于出栈
 
-并且历史记录上可以采用 `listen` 来监听请求路由的改变，从而判断是否改变路径
+并且历史记录上可以采用 `listen` 来监听请求路由的改变，从而判断是否改变了 URL path
 
 在 H5 中新增了 `createBrowserHistory` 的 API ，用于创建一个 history 栈，允许我们手动操作浏览器的历史记录
 
@@ -61,21 +57,27 @@ value是function，用来处理客户端提交的请求
 
 ## 2.react-router-dom 的理解和使用
 
-react的路由有三类：
+react 的路由有三类：
 
-web【主要适用于前端】,native【主要适用于本地】,anywhere【任何地方】
+- web【主要适用于前端】
+- native【主要适用于本地】
+- anywhere【任何地方】
 
-在这主要使用web也就是这个标题 react-router-dom
-
-> 专门给 web 人员使用的库
+我们主要使用 web，即 `react-router-dom`（专门给 web 人员使用的库）：
 
 1. 一个 react 的仓库
 2. 很常用，基本是每个应用都会使用的这个库
 3. 专门来实现 SPA 应用
 
-安装：`npm i react-router-dom@5 `
 
-首先我们要明确好页面的布局 ，分好导航区、展示区
+
+脚手架中并没有安装 react-router-dom，先安装：
+
+```sh
+npm i react-router-dom@5
+```
+
+首先我们要明确好页面的布局 ，分好导航区、展示区。
 
 要引入 `react-router-dom` 库，暴露一些属性 `Link、BrowserRouter...`
 
@@ -83,71 +85,160 @@ web【主要适用于前端】,native【主要适用于本地】,anywhere【任�
 import { Link, BrowserRouter, Route } from 'react-router-dom'
 ```
 
-导航区的 a 标签改为 Link 标签
+导航区的 a 标签改为 Link 标签，编写路由链接（引起路径变化）：
 
-```html
+```jsx
+{/*编写路由链接（引起路径变化）*/}
 <Link className="list-group-item" to="/about">About</Link>
+<Link className="list-group-item" to="/home">Home</Link>
 ```
 
-同时我们需要用 `Route` 标签，来进行路径的匹配，从而实现不同路径的组件切换
+注册路由（路径变化后对应的组件），需要用 `Route` 标签：
 
-```html
+```jsx
+{/*注册路由（路径变化后对应的组件）*/}
 <Route path="/about" component={About}></Route>
 <Route path="/home" component={Home}></Route>
 ```
 
-这样之后我们还需要一步，加个路由器，在上面我们写了两组路由，同时还会报错指示我们需要添加 `Router` 来解决错误，这就是需要我们添加路由器来管理路由，如果我们在 Link 和 Route 中分别用路由器管理，那这样是实现不了的，只有在一个路由器的管理下才能进行页面的跳转工作。
+这样之后我们还需要一步，加个路由器，在上面我们写了两组路由，同时还会报错指示我们需要添加 `Router` 来解决错误，**这就是需要我们添加路由器来管理路由**，如果我们在 Link 和 Route 中分别用路由器管理，那这样是实现不了的，只有 **在一个路由器的管理下才能进行页面的跳转工作**。
 
-因此我们也可以在 Link 和 Route 标签的外层标签采用 `BrowserRouter`(或者`HashRouter`) 包裹，但是这样当我们的路由过多时，我们要不停的更改标签包裹的位置，因此我们可以这么做
+因此我们也可以在 Link 和 Route 标签的 **最外层标签采用 `BrowserRouter`(或者`HashRouter`) 包裹**，但是这样当我们的路由过多时，我们要不停的更改标签包裹的位置，因此我们可以回到 `App.jsx` 目录下的 `index.js` 文件，**将整个 App 组件标签采用 `BrowserRouter` 标签去包裹**，这样整个 App 组件都在**一个路由器**的管理下。
 
-我们回到 App.jsx 目录下的 `index.js` 文件，将整个 App 组件标签采用 `BrowserRouter` 标签去包裹，这样整个 App 组件都在**一个路由器**的管理下
+`index.js`：
 
-```html
-// index.js
-<BrowserRouter>
-< App />
-</BrowserRouter>
+```js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {BrowserRouter} from "react-router-dom";
+
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+root.render(
+    <React.StrictMode>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </React.StrictMode>
+)
 ```
 
-![image-20221025230322592](https://i0.hdslb.com/bfs/album/d1516434cc58795b9846722a542361d032aefe86.png)
+`App.jsx`：
+
+```jsx
+import React, {Component} from "react";
+import {Link, Route} from "react-router-dom";
+import About from "./components/About";
+import Home from "./components/Home";
+
+export default class App extends Component {
+    render() {
+        return (
+            <div>
+                <div className="row">
+                    <div className="col-xs-offset-2 col-xs-8">
+                        <div className="page-header"><h2>React Router Demo</h2></div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-xs-2 col-xs-offset-2">
+                        <div className="list-group">
+                            {/*原生 HTML 靠 <a> 跳转页面*/}
+                            {/*<a className="list-group-item active" href="./about.html">About</a>
+                            <a className="list-group-item" href="./home.html">Home</a>*/}
+
+                            {/*编写路由链接（引起路径变化）*/}
+                            <Link className="list-group-item" to="/about">About</Link>
+                            <Link className="list-group-item" to="/home">Home</Link>
+                        </div>
+                    </div>
+                    <div className="col-xs-6">
+                        <div className="panel">
+                            <div className="panel-body">
+                                {/*<h3>我是About的内容</h3>*/}
+
+                                {/*注册路由（路径变化后对应的组件*/}
+                                <Route path="/about" component={About}></Route>
+                                <Route path="/home" component={Home}></Route>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+```
+
+About 路由和 Home 路由都只是一行简单的 h2 标签，就不展示代码了。效果如下：
+
+![](https://i0.hdslb.com/bfs/album/d1516434cc58795b9846722a542361d032aefe86.png)
+
+再顺便说一下 `Switch` 标签的使用，一般要加上：
+
+```jsx
+{/* Switch，匹配到一个路由后就不往下匹配了，否则每次都会把所有路由匹配一遍，效率低 */}
+<Switch>
+    {/*路由组件：注册路由（路径变化后对应的组件）*/}
+    <Route path="/about" component={About}></Route>
+    <Route path="/home" component={Home}></Route>
+</Switch>
+```
+
+
 
 ## 3.路由组件和一般组件
 
 在我们前面的内容中，我们是把组件 Home 和组件 About 当成是一般组件来使用，我们将它们写在了 src 目录下的 components 文件夹下，但是我们又会发现它和普通的组件又有点不同，对于普通组件而言，我们在引入它们的时候我们是通过标签的形式来引用的。但是在上面我们可以看到，我们把它当作路由来引用时，我们是通过 `{Home}` 来引用的。
 
-从这一点我们就可以认定一般组件和路由组件存在着差异
+从这一点我们就可以认定一般组件和路由组件存在着差异：
 
-1. 写法不同
+1. **写法不同**：
 
-**一般组件**：`<Demo/>`，**路由组件**：`<Route path="/demo" component={Demo}/>`
+    - 一般组件：`<Demo/>`；
+    - 路由组件：`<Route path="/demo" component={Demo}/>`。
 
-2. 存放的位置不同
+2. 为了规范书写，它们 **存放的位置不同**：
 
-同时为了规范我们的书写，一般将路由组件放在 `pages`/`views` 文件夹中，路由组件放在 `components`
+    - 路由组件放在 `pages`/`views` 文件夹中；
 
-而最重要的一点就是它们接收到的 `props` 不同，在一般组件中，如果我们不进行传递，就不会收到值。而对于路由组件而言，它会接收到 3 个固定属性 `history` 、`location` 以及 `match`
+    - 一般组件放在 `components` 文件夹中。
 
-![image-20221025230429965](https://i0.hdslb.com/bfs/album/f4e260e444ed34c142745674a5ea57a5731de492.png)
+3. 最重要的一点是它们 **接收到的 `props` 不同**：
 
-重要的属性
+    - 在一般组件中，如果我们不进行传递，props 就不会收到值；
 
-```css
-history:
-    go: ƒ go(n)
-    goBack: ƒ goBack()
-    goForward: ƒ goForward()
-    push: ƒ push(path, state)
-    replace: ƒ replace(path, state)
-location:
-    pathname: "/about"
-    search: ""
-    state: undefined
+    - **对于路由组件，它会接收到 3 个固定的 props，分别是 `history` 、`location` 和 `match`**。
 
-match:
-    params: {}
-    path: "/about"
-    url: "/about"
-```
+        ![image-20221025230429965](https://i0.hdslb.com/bfs/album/f4e260e444ed34c142745674a5ea57a5731de492.png)
+
+        重要、常用的属性：
+
+        ```yaml
+        history:
+            go: ƒ go(n)
+            goBack: ƒ goBack()
+            goForward: ƒ goForward()
+            push: ƒ push(path, state)
+            replace: ƒ replace(path, state)
+        location:
+            pathname: "/about"
+            search: ""
+            state: undefined
+        
+        match:
+            params: {}
+            path: "/about"
+            url: "/about"
+        ```
+
+        
+
+将刚刚的 Demo 修整规范，把 Header 抽取出来，当成一般组件：
+
+![image-20231108154537291](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311081545628.png)
 
 ## 4.NavLink 标签
 
@@ -155,103 +246,111 @@ match:
 
 NavLink 标签是和 Link 标签作用相同的，但是它又比 Link 更加强大。
 
-在前面的 demo 展示中，你可能会发现点击的按钮并没有出现高亮的效果，正常情况下我们给标签多添加一个 `active` 的类就可以实现高亮的效果
+在前面的 demo 中，会发现点击的按钮并没有出现高亮的效果，正常情况下我们给标签多添加一个 `active` 的类就可以实现高亮的效果。而 NavLink 标签正可以帮助我们实现这一步。
 
-而 NavLink 标签正可以帮助我们实现这一步
-
-当我们选中某个 NavLink 标签时，就会自动的在类上添加一个 `active` 属性
+当我们 **选中某个 NavLink 标签时，就会自动的在类上添加一个 `active` 属性**：
 
 ```html
 <NavLink className="list-group-item" to="/about">About</NavLink>
 ```
 
-当然 NavLink 标签是默认的添加上 `active` 类，我们也可以改变它，在标签上添加一个属性 `activeClassName`
+当然 NavLink 标签是默认的添加上 `active` 类，我们也可以改变它，在标签上添加一个属性 `activeClassName`。
 
-如下代码，就写了`activeClassName`，当点击的时候就会触发这个class的样式
+如下代码，就写了 `activeClassName`，当点击的时候就会触发这个 class 的样式
 
-```html
-{/*NavLink在点击的时候就会去找activeClassName="ss"所指定的class的值，如果不添加默认是active
- 这是因为Link相当于是把标签写死了，不能去改变什么。*/}
-
-<NavLink  activeClassName="ss" className="list-group-item"  to="/about">About</NavLink>
-<NavLink className="list-group-item"  to="/home">Home</NavLink> 
+```jsx
+{/* NavLink在点击的时候就会去找 style01 所指定的 class 的值，如果不添加默认是 active */}
+<NavLink activeClassName="style01" className="list-group-item" to="/home">Home</NavLink>
 ```
 
 ### 4.2 NavLink 封装
 
-在上面的 NavLink 标签种，我们可以发现我们每次都需要重复的去写这些样式名称或者是 `activeClassName` ，这并不是一个很好的情况，代码过于冗余。那我们是不是可以想想办法封装一下它们呢？
+在上面的 NavLink 标签种，只有 `to` 属性不一样，我们每次都需要重复的去写这些样式名称或者是 `activeClassName` ，这并不是一个很好的情况，代码过于冗余。
 
-我们可以采用 `MyNavLink` 组件，对 NavLink 进行封装
+那我们是不是可以想想办法封装一下它们呢？我们可以采用 `MyNavLink` 组件，对 NavLink 进行封装。
 
-首先我们需要新建一个 MyNavLink 组件
+首先我们需要新建一个 MyNavLink 组件，return 一个结构：
 
-`return` 一个结构
+```jsx
+import React, {Component} from 'react';
+import {NavLink} from "react-router-dom";
 
-```html
- // 通过{...对象}的形式解析对象，相当于将对象中的属性全部展开
-<NavLink className="list-group-item" {...this.props} />
+ // 封装 NaviLink
+class MyNavLink extends Component {
+    render() {
+        return (
+            // 通过 {...对象} 展开所有 MyNavLink 传递过来的属性，就放在了 NavLink 标签上
+            <NavLink activeClassName="style01" className="list-group-item" {...this.props}></NavLink>
+        );
+    }
+}
+
+export default MyNavLink;
 ```
 
-首先，有一点非常重要的是，我们在标签体内写的内容都会成为一个 `children` 属性，因此我们在调用 `MyNavLink` 时，在标签体中写的内容，都会成为 `props` 中的一部分，从而能够实现
+这样直接使用 MyNavLink 标签即可：
 
-接下来我们在调用时，直接写
-
-```html
-{/*将NavLink进行封装，成为MyNavLink,通过props进行传参数，标签体内容props是特殊的一个属性，叫做children */}
-<MyNavLink to="/home">home</MyNavLink>
+```jsx
+{/* 使用自己封装的 MyNavLink */}
+<MyNavLink to="/about">About</MyNavLink>
+<MyNavLink to="/home">Home</MyNavLink>
 ```
 
-## 5.解决二级路由样式丢失的问题
+你可以会觉得很神奇，MyNavLink 的标签体内容（About、Home）是怎么传递给 NavLink 的呢？
 
-拿上面的案例来说：
+有一点非常重要的是，**标签体内容会成为 props 中的一个 `children` 属性**，因此我们在调用 `MyNavLink` 时，在标签体中写的内容，都会成为 `props` 中的一部分，NavLink 在展开的时候，就能获取到，而 **在标签中写 `children="xxx"` 属性与在标签体中直接写 `"xxx"` 是一样的效果**。
 
-这里面会有一个样式：
+## 5.多级路由样式丢失问题
 
-![image-20221025231105964](https://i0.hdslb.com/bfs/album/158831b5fe7a736472cf027cc246d0fcef815582.png)
-
-此时，加载该样式的路径为：
+拿上面的案例来说，有一个 css 样式文件路径为 `public/css/bootstrap.css`。此时，加载该样式的路径为：
 
 ![image-20221025231114257](https://i0.hdslb.com/bfs/album/8ba0d1fa3f50ca170ec0768d4347bbd8d52cfe12.png)
 
-但是在写路由的时候，有的时候就会出现多级路由，
+但是在写路由的时候，有的时候就会出现多级路由：
 
-```html
-<MyNavLink to = "/cyk/about" >About</MyNavLink>
-
-<Route path="/cyk/about"component={About}/>
+```jsx
+<MyNavLink to = "/aarynlu/about" >About</MyNavLink>
+// ......
+<Route path="/aarynlu/about"component={About}/>
 ```
 
-这个时候就在刷新页面，就会出现问题：
+这个时候如果刷新页面，就会出现样式因为路径问题加载失败，因为 `localhost:3000` 这个服务器是 webpack 内置搭建的，默认使用 public 作为根路径，如果 css 样式引入使用的是相对位置：
 
-样式因为路径问题加载失败，此时页面返回public下面的Index.html
+```html
+<link rel="stylesheet" href="./css/bootstrap.css">
+```
 
-![image-20221025231213614](https://i0.hdslb.com/bfs/album/9f88f7fbf8792714faa7c1fa2870899803b1e2a8.png)
+**在 `aarynlu/about` 路径下刷新页面** 时，那么请求的 css 路径就会变为如下：
+
+![image-20231108165420991](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311081654528.png)
+
+很明显，路径中多了 `/aarynlu/`，肯定是找不到这个 css 文件的，而 webpack 规定了：**如果请求了一个不存在的资源，就会返回 public下面的 `index.html`**，所以才会显示 200 状态码（指请求 `index.html` 成功）。我们可以来看看 response：
+
+![image-20231108165624354](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311081656424.png)
 
 解决这个问题，有三个方法：
 
-1.样式加载使用绝对位置
+1. 样式加载使用 **绝对路径**：
 
-```html
- <link href="/css/bootstrap.css" rel="stylesheet"> 
-```
+    ```html
+     <link href="/css/bootstrap.css" rel="stylesheet">
+    ```
 
-2.使用 `%PUBLIC_URL%`
+2. 使用 **`%PUBLIC_URL%`**，代理 public 文件夹的绝对路径：
 
-```html
- <link href="%PUBLIC_URL%/css/bootstrap.css" rel="stylesheet">
-```
+    ```html
+    <link href="%PUBLIC_URL%/css/bootstrap.css" rel="stylesheet">
+    ```
 
-3.使用`HashRouter`
-
-因为HashRouter会添加#，默认不会处理#后面的路径，所以也是可以解决的
+3. 使用 **`HashRouter`**：因为 HashRouter 会添加 `#`，**默认不会处理 `#` 后面的路径**，所以刷新时不会管 `#` 后面的路径，也就能请求到正确的资源了。
 
 ## 6.模糊匹配和精准匹配
 
-路由的匹配有两种形式，一种是精准匹配一种是模糊匹配，React 中默认开启的是模糊匹配
+路由的匹配有两种形式，一种是精准匹配一种是模糊匹配，React 中默认开启的是模糊匹配：
 
-模糊匹配可以理解为，在匹配路由时，只要有匹配到的就好了
+- 模糊匹配可以理解为，在匹配路由时，只要有匹配到的就好了
 
-精准匹配就是，两者必须相同
+- 精准匹配就是，两者必须相同
 
 比如：
 
@@ -261,7 +360,7 @@ NavLink 标签是和 Link 标签作用相同的，但是它又比 Link 更加强
 
 此时该标签匹配的路由，分为三个部分 home a b；将会根据这个先后顺序匹配路由。
 
-如下就可以匹配到相应的路由：
+如下，`/home/a/b` 就可以匹配到下面的路由：
 
 ```html
 <Route path="/home"component={Home}/>
@@ -273,9 +372,7 @@ NavLink 标签是和 Link 标签作用相同的，但是它又比 Link 更加强
 <Route path="/a" component={Home}/>
 ```
 
-当然也可以使用这个精确的匹配` exact={true}`
-
-如以下：这样就精确的匹配/home，则上面的/home/a/b就不行了
+当然也可以使用精确的匹配，加上属性 ` exact={true}` 即可。如下这样就精确的匹配 `/home`，则上面的 `/home/a/b` 就不行了
 
 ```html
 <Route exact={true}  path="/home" component={Home}/>
@@ -323,17 +420,17 @@ NavLink 标签是和 Link 标签作用相同的，但是它又比 Link 更加强
 <Redirect to="/home" />
 ```
 
-当我们加上这条语句时，页面找不到指定路径时，就会重定向到 `/home` 页面下因此当我们请求3000端口时，就会重定向到 `/home` 这样就能够实现我们想要的效果了
+当我们加上这条语句时，**页面找不到指定路径时，就会重定向到 `/home` 页面下**，因此当我们请求 3000 端口时，就会重定向到 `/home` 这样就能够实现我们想要的效果了。
 
-如下的代码就是默认匹配/home路径所到的组件
+如下的代码就是默认匹配 `/home` 路径所到的组件
 
 ```html
 <Switch>
     <Route path="/about"component={About}/>
     {/* exact={true}：开启严格匹配的模式，路径必须一致 */}
     <Route   path="/home" component={Home}/>
-    {/* Redirect:如果上面的都没有匹配到，就匹配到这个路径下面 */}
-    <Redirect  to = "/home"/>
+    {/* Redirect: 如果上面的都没有匹配到，就匹配到这个路径下面 */}
+    <Redirect to = "/home"/>
 </Switch>
 ```
 
