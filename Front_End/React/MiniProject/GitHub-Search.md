@@ -157,7 +157,7 @@ http://localhost:5000 为服务端，提供了请求 GitHub 搜索的接口，�
 >
 >     ```js
 >     const proxy = require('http-proxy-middleware')	// 安装脚手架时已安装 http-proxy-middleware
->         
+>             
 >     module.exports = function(app) {
 >       app.use(
 >         proxy('/api1', {  	// api1是需要转发的请求(所有带有/api1前缀的请求都会转发给5000)
@@ -170,7 +170,7 @@ http://localhost:5000 为服务端，提供了请求 GitHub 搜索的接口，�
 >           */
 >           pathRewrite: {'^/api1': ''} 	// 去除请求前缀，保证交给后台服务器的是正常请求地址(必须配置)
 >         }),
->             
+>                 
 >         proxy('/api2', { 
 >           target: 'http://localhost:5001',
 >           changeOrigin: true,
@@ -404,7 +404,6 @@ fetch 版如下：
     ```
 
     
-
 
 
 

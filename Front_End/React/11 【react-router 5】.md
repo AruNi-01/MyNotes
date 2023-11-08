@@ -380,6 +380,8 @@ export default MyNavLink;
 <Route exact path="/home" component={Home}/>
 ```
 
+需要注意一个点：**严格匹配不要随便开启，有时候会导致无法匹配二级路由**（后面嵌套路由会讲到）。
+
 ## 7.Switch 解决相同路径问题
 
 首先我们看一段这样的代码
@@ -436,38 +438,53 @@ export default MyNavLink;
 
 ## 9.嵌套路由
 
-嵌套路由也就是我们前面有提及的二级路由，但是嵌套路由包括了二级、三级...还有很多级路由，当我们需要在一个路由组件中添加两个组件，一个是头部，一个是内容区
+嵌套路由也就是我们前面有提及的二级路由，但是嵌套路由包括了二级、三级...还有很多级路由。
 
-我们将我们的嵌套内容写在相应的组件里面，这个是在 Home 组件的 return 内容
+下面我们在前面案例的基础上，在 Home 路由组件中再嵌套一层组件，里面分为Header 区和内容区，效果如下：
 
-```html
-<div>
-    <h2>Home组件内容</h2>
-    <div>
-        <ul className="nav nav-tabs">
-            <li>
-                <MyNavLink className="list-group-item" to="/home/news">News</MyNavLink>
-            </li>
-            <li>
-                <MyNavLink className="list-group-item " to="/home/message">Message</MyNavLink>
-            </li>
-        </ul>
-        {/* 注册路由 */}
-        <Switch>
-            <Route path="/home/news" component={News} />
-            <Route path="/home/message" component={Message} />
-        </Switch>
-    </div>
-</div>
+![image-20231108223758319](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311082237432.png)
+
+我们将我们的嵌套内容写在相应的组件里面，News 和 Message 组件是在 Home 组件内的：
+
+```jsx
+import React, {Component} from 'react';
+import News from "./News";
+import Message from "./Message";
+import {Route, Switch} from "react-router-dom";
+import MyNavLink from "../../components/MyNavLink";
+
+class Home extends Component {
+    render() {
+        return (
+            <div>
+                <h2>Home 内容</h2>
+                <ul className="nav nav-tabs">
+                    <li>
+                        <MyNavLink className="list-group-item" to="/home/news">News</MyNavLink>
+                    </li>
+                    <li>
+                        <MyNavLink className="list-group-item" to="/home/message">Message</MyNavLink>
+                    </li>
+                </ul>
+
+                {/* 注册路由 */}
+                <Switch>
+                    <Route path="/home/news" component={News}/>
+                    <Route path="/home/message" component={Message}/>
+                </Switch>
+            </div>
+        );
+    }
+}
+
+export default Home;
 ```
 
-在这里我们需要使用嵌套路由的方式，才能完成匹配
 
-首先我们得 React 中路由得注册是有顺序的，我们在匹配得时候，因为 Home 组件是先注册得，因此在匹配的时候先去找 home 路由，由于是模糊匹配，会成功的匹配
 
-在 Home 组件里面去匹配相应的路由，从而找到 /home/news 进行匹配，因此找到 News 组件，进行匹配渲染
+React 中 **路由得注册是有顺序的，逐层的**，在匹配得时候，因为 Home 组件是先注册的，因此在匹配的时候先去找 home 路由，由于是模糊匹配（**注意，`/home` 路由不要开精准匹配**），会成功的匹配，成功后再在 Home 组件里面去匹配相应的路由，从而找到 `/home/news` 进行匹配，因此找到 News 组件，进行匹配渲染。
 
-> 如果开启精确匹配的话，第一步的 `/home/news` 匹配 `/home` 就会卡住不动，这个时候就不会显示有用的东西了！
+> 如果开启精确匹配的话，第一步的 `/home/news` 匹配 `/home` 就会卡住不动，从而执行最后的 Redirect，这个时候就达不到想要的效果了。
 
 ## 10.传递参数
 
