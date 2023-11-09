@@ -488,123 +488,215 @@ React 中 **路由得注册是有顺序的，逐层的**，在匹配得时候，
 
 ## 10.传递参数
 
-### 10.1 传递 params 参数
+接着上面的案例，这里需要实现的效果是，点击 Message 的消息列表，在下方展示出消息的详细内容（Detail 组件）。
 
 ![image-20221026132713300](https://i0.hdslb.com/bfs/album/fa7796c368394294427cf86ca9eb16a3ddae2a42.png)
 
-首先我们需要实现的效果是，点击消息列表，展示出消息的详细内容
+可以发现，其实就是一个三级路由，参考前面的很快就能写出来，但是 Detail 组件中的结构都是相同的，只是数据不同（根据不同的 Message），因此我们不要直接写死，而是要根据哪个 Message，把对应的数据传递给 Detail 展示就好了。
 
-这个案例实现的方法有三种，第一种就是传递 params 参数，由于我们所显示的数据都是从数据集中取出来的，因此我们需要有数据的传输给 Detail 组件
+我们首先别把 Message 写死，使用动态数据：
+```jsx
+import React, {Component} from 'react';
+import {Link, Route} from "react-router-dom";
+import Detail from "./Detail";
 
-我们首先需要将详细内容的数据列表，保存在 DetailData 中，将消息列表保存在 Message 的 state 中。
+class Message extends Component {
 
-我们可以通过将数据拼接在路由地址末尾来实现数据的传递
+    state = {
+        messageArr: [
+            {id: '01', title: '消息 1''},
+            {id: '02', title: '消息 2''},
+            {id: '03', title: '消息 3''}
+        ],
+    }
 
-```html
- <Link to={`/home/message/detail/${msgObj.id}/${msgObj.title}`}>{msgObj.title}</Link>
+    render() {
+        const {messageArr} = this.state
+
+        return (
+            <div>
+                <ul>
+                    {
+                        messageArr.map((message) => {
+                            return (
+                                <li key={message.id}>
+                                    <Link to={`/home/message/detail/${message.id}`}>{message.title}</Link>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+                <hr/>
+                <Route path={`/home/message/detail/???`} component={Detail}></Route>
+            </div>
+        );
+    }
+}
+
+export default Message;
 ```
 
-如上，我们将消息列表的 id 和 title 写在了路由地址后面
+Detail 组件：
 
-> 这里我们需要注意的是：需要采用模板字符串以及 `$` 符的方式来进行数据的获取
+```jsx
+import React, {Component} from 'react';
 
-在注册路由时，我们可以通过 `:参数名` 来传递数据
+// mock 数据
+// const details = [
+//     {id: '01', content: '消息 1 详情'},
+//     {id: '02', content: '消息 2 详情'},
+//     {id: '03', content: '消息 3 详情'},
+// ]
 
-```html
-<Route path="/home/message/detail/:id/:title" component={Detail} />
+class Detail extends Component {
+    render() {
+        console.log(this.props)
+        return (
+            <div>
+                <ul>
+                    <li>title: msg title</li>
+                    <li>content: Detail content</li>
+                </ul>
+            </div>
+        );
+    }
+}
+
+export default Detail;
 ```
 
-如上，使用了 `:id/:title` 成功的接收了由 Link 传递过来的 id 和 title 数据
+可以发现，Route 标签中需要把 message 的 id 和 title 传递给 Detail（Detail 中再拿到对应的详情），所以就涉及到了路由参数的传递。有三种方式：
 
-这样我们既成功的实现了路由的跳转，又将需要获取的数据传递给了 Detail 组件
+- 传递 params 参数；
+- 传递 search 参数；
+- 传递 state 参数。
 
-我们在 Detail 组件中打印 `this.props` 来查看当前接收的数据情况
+### 10.1 传递 params 参数
 
-我们可以发现，我们传递的数据被接收到了对象的 match 属性下的 params 中
+通过将数据拼接在路由地址末尾来实现数据的传递，我们将消息列表的 id 写在了路由地址后面：
 
-因此我们可以在 Detail 组件中获取到又 Message 组件中传递来的 params 数据
+```jsx
+{/* 向路由组件传递 params 参数 */}
+<Link to={`/home/message/detail/${message.id}/${message.title}`}>{message.title}</Link>
+```
 
-并通过 params 数据中的 `id` 值，在详细内容的数据集中查找出指定 `id` 的详细内容	
+在注册路由时，我们可以通过 `:参数名` 来声明接收并传递数据：
+
+```jsx
+{/* Route 声明接收 params（id, title）并传递 */}
+<Route path={`/home/message/detail/:id/:title`} component={Detail}></Route>
+```
+
+这样我们既成功的实现了路由的跳转，又将需要获取的数据传递给了 Detail 组件。
+
+我们在 Detail 组件中使用 `this.props` 来查看当前接收的数据。
+
+我们可以发现，我们传递的数据被接收到了对象的 match 属性下的 params 中：
+
+![image-20231109095857793](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311090959826.png)
+
+因此通过 params 数据中的 `id` 值，在详细内容的数据集中查找出指定 `id` 的详细内容即可：
 
 ```js
-const { id, title } = this.props.match.params
-const findResult = DetailData.find((detailObj) => {
-    return detailObj.id === id
-})
+import React, {Component} from 'react';
+
+// mock 数据
+const details = [
+    {id: '01', content: '消息 1 详情'},
+    {id: '02', content: '消息 2 详情'},
+    {id: '03', content: '消息 3 详情'},
+]
+
+class Detail extends Component {
+    render() {
+        // 接收 params 参数
+        const {id, title} = this.props.match.params;
+        const findDetail = details.find((detail) => {
+            return detail.id === id;
+        })
+
+        return (
+            <div>
+                <ul>
+                    <li>title: {title}</li>
+                    <li>content: {findDetail.content}</li>
+                </ul>
+            </div>
+        );
+    }
+}
+
+export default Detail;
 ```
 
-最后渲染数据即可
+最后渲染数据即可：
+
+![image-20231109100328078](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/202311091003976.png)
 
 ### 10.2 传递 search 参数
 
-我们还可以采用传递 search 参数的方法来实现
+我们还可以采用传递 search 参数的方法来实现，search 参数其实就是在地址栏上搜索什么，就会以下面这种格式呈现：
 
-首先我们先确定数据传输的方式
-
-我们先在 Link 中采用 `?` 符号的方式来表示后面的为可用数据
-
-```html
-<Link to={`/home/message/detail/?id=${msgObj.id}&title=${msgObj.title}`}>{msgObj.title}</Link>
+```text
+https://www.bing.com/search?q=react&mkt=zh-CN
 ```
 
-采用 `search` 传递的方式，无需在 Route 中再次声明，可以在 Detail 组件中直接获取到
+- 问号后面的就是 search 参数，参数之间是用 & 连接的。
+
+我们先在 Link 中采用 `?` 符号的方式来表示后面的为可用数据：
+
+```jsx
+{/* 向路由组件传递 search 参数 */}
+<Link to={`/home/message/detail/?id=${message.id}&title=${message.title}`}>{message.title}</Link>
+```
+
+采用 `search` 传递的方式，无需在 Route 中再次声明传递，可以在 Detail 组件中直接获取到。数据保存在了 `location` 对象下的 `search` 中，是一种字符串的形式保存的：
 
 ![image-20221026132937804](https://i0.hdslb.com/bfs/album/69449e3f4ed6426440f3396601426796fecbe283.png)
 
-我们可以发现，我们的数据保存在了 `location` 对象下的 `search` 中，是一种字符串的形式保存的，我们可以引用一个库来进行转化 `qs`
+我们可以引用一个库来进行字符串到对象的转化：
 
->   qs是一个npm仓库所管理的包,可通过npm install qs命令进行安装.
+>   `qs` 是一个 npm 仓库所管理的包，可通过 `yarn add qs` 命令进行安装。
 >
-> 1. qs.parse()将URL解析成对象的形式
+>   1. `qs.parse()` 将URL解析成对象的形式
 >
-> 2. qs.stringify()将对象 序列化成URL的形式，以&进行拼接
+>   2. `qs.stringify()` 将对象 序列化成 URL 的形式，以&进行拼接
 >
-> ```js
-> // nodejs中调试
-> const qs = require('qs');
-> 
-> 1.qs.parse()
-> const str = "username='admin'&password='123456'";
-> console.log(qs.parse(str)); 
-> // Object { username: "admin", password: "123456" }
-> 
-> 2.qs.stringify()
-> const a = qs.stringify({ username: 'admin', password: '123456' });
-> console.log(a); 
-> // username=admin&password=123456
-> 
-> 
-> 
-> qs.stringify() 和JSON.stringify()有什么区别?
-> 
->     var a = {name:'hehe',age:10};
->     qs.stringify序列化结果如
->     name=hehe&age=10
->     --------------------
->     而JSON.stringify序列化结果如下：
->     "{"a":"hehe","age":10}"
-> ```
+>   ```js
+>   // nodejs中调试
+>   const qs = require('qs');
+>   
+>   // 1.qs.parse()
+>   const str = "username='admin'&password='123456'";
+>   console.log(qs.parse(str)); 
+>   // Object { username: "admin", password: "123456" }
+>   
+>   // 2.qs.stringify()
+>   const a = qs.stringify({ username: 'admin', password: '123456' });
+>   console.log(a); 
+>   // username=admin&password=123456
+>   ```
 
 我们可以采用 `parse` 方法，将字符串转化为键值对形式的对象
 
 ```js
-const { search } = this.props.location
-const { id, title } = qs.parse(search.slice(1)) // 从?后面开始截取字符串
+// 接收 search 参数，是一个 querystring 形式
+const {search} = this.props.location;
+const {id, title} = qs.parse(search.slice(1));  // 从?后面开始截取字符串
 ```
-
-这样我们就能成功的获取数据，并进行渲染
 
 ### 10.3 传递 state 参数
 
-采用传递 state 参数的方法，是我觉得最完美的一种方法，因为它不会将数据携带到地址栏上，采用内部的状态来维护
+采用传递 state 参数的方法，有一个优势，**它不会将数据携带到地址栏上，采用内部的状态来维护**。
 
-```html
-<Link to={{ pathname: '/home/message/detail', state: { id: msgObj.id, title: msgObj.title } }}>{msgObj.title}</Link>
+首先，我们需要在 Link 中注册跳转时，传递一个路由对象，包括一个 跳转地址名，一个 state 数据，这样我们就可以在 Detail 组件中获取到这个传递的 state 数据：
+
+> 注意：采用这种方式传递，也无需声明接收
+
+```jsx
+{/* 向路由组件传递 state 参数，to 属性接收一个对象，里面指定路径，state */}
+<Link to={ {pathname: `/home/message/detail`, state: {id: message.id, title: message.title}} }>{message.title}</Link>
 ```
-
-首先，我们需要在 Link 中注册跳转时，传递一个路由对象，包括一个 跳转地址名，一个 state 数据，这样我们就可以在 Detail 组件中获取到这个传递的 state 数据
-
-> 注意：采用这种方式传递，无需声明接收
 
 我们可以在 Detail 组件中的 location 对象下的 state 中取出我们所传递的数据
 
@@ -614,134 +706,176 @@ const { id, title } = this.props.location.state
 
 ![image-20221026133411288](https://i0.hdslb.com/bfs/album/6853ae0a50d6f85112b8c667b88f789fb74df793.png)
 
-解决清除缓存造成报错的问题，我们可以在获取不到数据的时候用空对象来替代，例如，
+不过这样会有一个隐藏的 bug，由于 state 方式没有在地址栏上体现参数，所以当清除了浏览器缓存后（把浏览器 history 清空了），在地址栏直接输入 `http://localhost:3000/home/message/detail`，会报错，因为此时 `this.props.location.state` 为 `undefined`（因为 state 还没传递，要点击一下消息 Link 才传递）。
+
+为了解决这个问题，可以在获取不到 `state` 时，则用空对象代替，这样不会报错，只是会展示空值：
 
 ```js
-const { id, title } = this.props.location.state || {}
+// 接收 state 参数
+const {id, title} = this.props.location.state || {};
+
+const findDetail = details.find((detail) => {
+    return detail.id === id;
+}) || {};
 ```
 
-当获取不到 `state` 时，则用空对象代替
-
-> 这里的 state 和状态里的 state 有所不同
+注意：**这里的 state 和组件三大属性里的 state 有所不同**。
 
 ### 10.4 小结
 
-```html
-1.params参数
-            路由链接(携带参数)：<Link to='/demo/test/tom/18'}>详情</Link>
-            注册路由(声明接收)：<Route path="/demo/test/:name/:age" component={Test}/>
-            接收参数：this.props.match.params
-2.search参数
-            路由链接(携带参数)：<Link to='/demo/test?name=tom&age=18'}>详情</Link>
-            注册路由(无需声明，正常注册即可)：<Route path="/demo/test" component={Test}/>
-            接收参数：this.props.location.search
-            备注：获取到的search是urlencoded编码字符串，需要借助querystring解析
-3.state参数
-            路由链接(携带参数)：<Link to={{pathname:'/demo/test',state:{name:'tom',age:18}}}>详情</Link>
-            注册路由(无需声明，正常注册即可)：<Route path="/demo/test" component={Test}/>
-            接收参数：this.props.location.state
-            备注：刷新也可以保留住参数
-```
-
-**接收参数**
-
-```js
-// 接收params参数
-// const {id,title} = this.props.match.params 
-
-// 接收search参数
-// const {search} = this.props.location
-// const {id,title} = qs.parse(search.slice(1))
-
-// 接收state参数
-const {id,title} = this.props.location.state || {}
-```
+1. params 参数：
+    - 路由链接(携带参数)：`<Link to='/demo/test/tom/18'}>详情</Link>`
+    - 注册路由(声明接收)：`<Route path="/demo/test/:name/:age" component={Test}/>`
+    - 接收参数：`this.props.match.params`
+2. search 参数：
+    - 路由链接(携带参数)：`<Link to='/demo/test?name=tom&age=18'}>详情</Link>`
+    - 注册路由(无需声明，正常注册即可)：`<Route path="/demo/test" component={Test}/>`
+    - 接收参数：`this.props.location.search`
+    - 备注：获取到的 search 是 urlencoded 编码字符串，需要借助 querystring 解析
+3. state 参数：
+    - 路由链接(携带参数)：`<Link to={{pathname:'/demo/test',state:{name:'tom',age:18}}}>详情</Link>`
+    - 注册路由(无需声明，正常注册即可)：`<Route path="/demo/test" component={Test}/>`
+    - 接收参数：`this.props.location.state`
+    - 备注：刷新也可以保留住参数，为了防止清除缓存后刷新，可以使用空对象代替 undefined
 
 ## 11.路由跳转
 
 ### 11.1 push 与 replace 模式
 
-默认情况下，开启的是 push 模式，也就是说，每次点击跳转，都会向栈中压入一个新的地址，在点击返回时，可以返回到上一个打开的地址，
+默认情况下，开启的是 push 模式，也就是说，每次点击跳转，都会向栈中压入一个新的地址，在点击返回时，可以返回到上一个打开的地址。
 
-当我们在读消息的时候，有时候我们可能会不喜欢这种繁琐的跳转，我们可以开启 replace 模式，这种模式与 push 模式不同，它会将当前地址**替换**成点击的地址，也就是替换了新的栈顶
+当我们在读消息的时候，有时候我们可能会不喜欢这种繁琐的跳转，我们可以开启 replace 模式，这种模式与 push 模式不同，它会将当前地址**替换**成点击的地址，也就是 **替换了新的栈顶**。
 
-我们只需要在需要开启的链接上加上 `replace` 即可
+我们只需要在需要开启的链接上加上 `replace` 即可。
 
 ```jsx
-<Link replace to={{ pathname: '/home/message/detail', state: { id: msgObj.id, title: msgObj.title } }}>{msgObj.title}</Link>
+<Link replace to={ {pathname: `/home/message/detail`, state: {id: message.id, title: message.title}} }>{message.title}</Link>
 ```
 
-![image-20221026134437721](https://i0.hdslb.com/bfs/album/d4f827a7081d70c77bfe97dcb89ad56d9f3f45a1.png)
+这样当从 `/home/news` 点击到 `/home/message` -> `/home/message/detail`（把消息都点一遍），当回退时，直接会返回 `/home/news` 页面，因为当点击 `/home/message/detail` 时把 `/home/message` 替换了。
 
 ### 11.2 编程式路由导航
 
-```js
-借助this.prosp.history对象上的API对操作路由跳转、前进、后退
-        -this.prosp.history.push()
-        -this.prosp.history.replace()
-        -this.prosp.history.goBack()
-        -this.prosp.history.goForward()
-        -this.prosp.history.go(1)
+我们之前的 Demo 都是借助 `<Link>` 或 `<NavLink>` 实现的路由导航，是需要鼠标点击才能跳转。但如果我要实现从 `/home/news` 三秒后自动跳转到 `/home/message`，如何实现呢？
+
+这就要使用编程式的路由导航了，借助 `this.prosp.history` 对象上的 API 操作路由跳转、前进、后退等：
+
+- `this.prosp.history.push(path)`：push 方式跳转；
+- `this.prosp.history.replace(path)`：replace 方式跳转；
+- `this.prosp.history.goBack()`：后退；
+- `this.prosp.history.goForward()`：前进；
+- `this.prosp.history.go(n)`：前进/后退 |±n| 步。
+
+我们可以采用绑定事件的方式实现路由的跳转，我们在 News 组件的 render 中启动定时器，3s 后跳转到 `/home/message` 路由即可：
+
+```jsx
+class News extends Component {
+    render() {
+        setTimeout(() => {
+            this.props.history.push('/home/message');
+        }, 3000);
+
+        return (
+            <div>
+                <ul>
+                    <li>news001</li>
+                    <li>news002</li>
+                    <li>news003</li>
+                </ul>
+            </div>
+        );
+    }
+}
 ```
 
-我们可以采用绑定事件的方式实现路由的跳转，我们在按钮上绑定一个 `onClick` 事件，当事件触发时，我们执行一个回调 
+下面再展示一下编程式路由导航传递参数的方式，其实和使用标签的形式差不多，只是换成了函数：
 
 ```js
-//push跳转+携带params参数
-// this.props.history.push(`/home/message/detail/${id}/${title}`)
+showByPush = (id, title) => {
+    //push 跳转+携带params参数
+    // this.props.history.push(`/home/message/detail/${id}/${title}`)
 
-//push跳转+携带search参数
-// this.props.history.push(`/home/message/detail?id=${id}&title=${title}`)
+    //push 跳转+携带search参数
+    // this.props.history.push(`/home/message/detail?id=${id}&title=${title}`)
 
-//push跳转+携带state参数
-this.props.history.push(`/home/message/detail`,{id,title})
+    //push 跳转+携带state参数
+    this.props.history.push(`/home/message/detail`, {id, title})
+}
 
-//replace跳转+携带params参数
-//this.props.history.replace(`/home/message/detail/${id}/${title}`)
+showByReplace = (id, title) => {
+    //replace 跳转+携带params参数
+    //this.props.history.replace(`/home/message/detail/${id}/${title}`)
 
-//replace跳转+携带search参数
-// this.props.history.replace(`/home/message/detail?id=${id}&title=${title}`)
+    //replace 跳转+携带search参数
+    // this.props.history.replace(`/home/message/detail?id=${id}&title=${title}`)
 
-//replace跳转+携带state参数
-this.props.history.replace(`/home/message/detail`,{id,title})
+    //replace 跳转+携带state参数
+    this.props.history.replace(`/home/message/detail`, {id, title})
+}
 ```
 
 ### 11.3 withRouter
 
-当我们需要在页面内部添加回退前进等按钮时，由于这些组件我们一般通过一般组件的方式去编写，因此我们会遇到一个问题，**无法获得 history 对象**，这正是因为我们采用的是一般组件造成的。
+当我们需要在页面内部添加回退前进等按钮时，由于这些组件可能是通过 **一般组件** 的方式去编写，因此 **无法获得 history 对象**，只有路由组件才能获取到 history 对象，因此我们需要如何解决这个问题呢
 
-只有路由组件才能获取到 history 对象
+我们可以利用 `react-router-dom` 对象下的 `withRouter` 函数来 **对导出的 `Header` 组件进行包装**，这样我们就能获得一个拥有 `history` 对象的一般组件。
 
-因此我们需要如何解决这个问题呢
-
-我们可以利用 `react-router-dom` 对象下的 `withRouter` 函数来对我们导出的 `Header` 组件进行包装，这样我们就能获得一个拥有 `history` 对象的一般组件
-
-我们需要对哪个组件包装就在哪个组件下引入
+我们需要对哪个组件包装就在哪个组件下引入：
 
 ```js
-// Header/index.jsx
-import { withRouter } from 'react-router-dom'
-// 在最后导出对象时，用 `withRouter` 函数对 index 进行包装
-export default withRouter(index);
-```
+import React, {Component} from 'react';
+import {withRouter} from "react-router-dom";
 
-这样就能让一般组件获得路由组件所特有的 API
+class Header extends Component {
+
+    // 编程式路由导航，一般组件中不能直接使用，得用 withRouter 包装该组件
+    back = () => {
+        this.props.history.goBack();
+    }
+    forward = () => {
+        this.props.history.goForward();
+    }
+
+    render() {
+        return (
+            <div className="page-header">
+                <h2>React Router Demo</h2>
+                <button onClick={this.back}>后退</button> &nbsp;
+                <button onClick={this.forward}>前进</button>
+            </div>
+        );
+    }
+}
+
+// withRouter 可包装一般组件，返回一个新组件，能让其有路由组件的 API
+export default withRouter(Header);
+```
 
 ## 12.BrowserRouter 和 HashRouter 的区别
 
-#### **它们的底层实现原理不一样**
+**标签不同**：
 
-对于 BrowserRouter 来说它使用的是 React 为它封装的 history API ，这里的 history 和浏览器中的 history 有所不同噢！通过操作这些 API 来实现路由的保存等操作，但是这些 API 是 H5 中提出的，因此不兼容 IE9 以下版本。
+```jsx
+<BrowserRouter>
+    <App />
+</BrowserRouter>
 
-对于 HashRouter 而言，它实现的原理是通过 URL 的哈希值，但是这句话我不是很理解，用一个简单的解释就是
+<HashRouter>
+    <App />
+</HashRouter>
+```
 
-我们可以理解为是锚点跳转，因为锚点跳转会保存历史记录，从而让 HashRouter 有了相关的前进后退操作，HashRouter 不会将 `#` 符号后面的内容请求。兼容性更好！
+**它们的底层实现原理不一样**：
 
-**地址栏的表现形式不一样**
+- 对于 BrowserRouter 来说它使用的是 React 为它封装的 history API ，这里的 history 和浏览器中的 history 有所不同！通过操作这些 API 来实现路由的保存等操作，但是这些 API 是 H5 中提出的，因此不兼容 IE9 以下版本。
+- 对于 HashRouter 而言，它实现的原理是通过 URL 的哈希值。用一个简单的解释就是可以理解为是锚点跳转，因为锚点跳转会保存历史记录，从而让 HashRouter 有了相关的前进后退操作，HashRouter 不会将 `#` 符号后面的内容请求。兼容性更好！
+
+**地址栏的表现形式不一样**：
 
 - HashRouter 的路径中包含 `#` ，例如 `localhost:3000/#/demo/test`
 
-**刷新后路由 state 参数改变**
+**刷新后路由 state 参数改变**：
 
-1. 在BrowserRouter 中，state 保存在history 对象中，刷新不会丢失
-2. HashRouter 则刷新会丢失 state
+- 在 BrowserRouter 中，state 保存在 history 对象中，刷新不会丢失
+- **HashRouter 刷新会丢失 state**
+
