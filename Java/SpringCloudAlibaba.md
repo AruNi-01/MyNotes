@@ -10,7 +10,7 @@ Spring Cloud Alibaba 致力于提供 **微服务开发的一站式解决方案**
 
 ## 1.2 Spring Cloud Alibaba 的定位
 
-![spring-cloud](https://sca.aliyun.com/zh-cn/assets/images/spring-cloud-alibaba-img-ca9c0e5c600bfe0c3887ead08849a03c.png)
+![spring-cloud](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/Java%2FSpringCloudAlibaba.assets-2023_12_02-1701519046.png)
 
 Spring Cloud Alibaba 是阿里巴巴结合自身丰富的微服务实践而推出的微服务开发的一站式解决方案，是 Spring Cloud 第二代实现的主要组成部分。吸收了 Spring Cloud Netflix 微服务框架的核心架构思想，并进行了高性能改进。自 Spring Cloud Netflix 进入停更维护后，Spring Cloud Alibaba 逐渐代替它成为主流的微服务框架。
 
@@ -30,7 +30,7 @@ Spring Cloud Alibaba 是阿里巴巴结合自身丰富的微服务实践而推�
 
 分层结构如下：
 
-![img](https://img.alicdn.com/imgextra/i1/O1CN01QvzFcc1s1rCCQdLOl_!!6000000005707-2-tps-3200-2001.png)
+![img](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/Java%2FSpringCloudAlibaba.assets-2023_12_02-1701519055.png)
 
 # 2. Nacos 服务注册和配置中心
 
@@ -56,7 +56,7 @@ Nacos 的关键特性包括：
 
 Nacos 的基本架构：
 
-![nacos_arch.jpg](https://cdn.nlark.com/yuque/0/2019/jpeg/338441/1561217892717-1418fb9b-7faa-4324-87b9-f1740329f564.jpeg)
+![nacos_arch.jpg](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/Java%2FSpringCloudAlibaba.assets-2023_12_02-1701519064.jpeg)
 
 核心专业术语：
 
@@ -1191,7 +1191,7 @@ clusterMode：是否集群。
 
 查看 Sentinel Dashboard，发现已经有了该流控规则：
 
-![image-20231128203627668](D:\MyNotes\Java\SpringCloudAlibaba.assets\image-20231128203627668.png)
+![image-20231128203627668](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/Java%2FSpringCloudAlibaba.assets-2023_12_02-1701521469.png)
 
 快速访问 http://localhost:8401/rateLimit/byUrl，流控规则也是可以生效的。
 
@@ -1703,8 +1703,18 @@ ALTER TABLE `undo_log` ADD INDEX `ix_log_created` (`log_created`);
         </dependency>
         <!--seata-->
         <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.seata</groupId>
+                    <artifactId>seata-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--feign，Hoxton.M2 RELEASED 版本之后不再使用 ribbon，而是 spring-cloud-loadbalancer-->
         <dependency>
@@ -2112,30 +2122,4 @@ spring:
 来看看 seata 数据库和 seata-server（读取的 seata 数据库），都有对应的回滚记录：
 
 ![image-20231202004353858](https://run-notes.oss-cn-beijing.aliyuncs.com/notes/Java%2FSpringCloudAlibaba.assets-2023_12_02-1701449035.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
